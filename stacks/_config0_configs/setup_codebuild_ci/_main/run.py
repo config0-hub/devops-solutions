@@ -39,21 +39,21 @@ class Main(newSchedStack):
                                 default="arn:aws:lambda:eu-west-1:553035198032:layer:git-lambda2:8")
 
         # Add substack
-        self.stack.add_substack('config0-hub:::aws_s3_bucket')
-        self.stack.add_substack('config0-hub:::aws_dynamodb')
-        self.stack.add_substack('config0-hub:::aws-lambda-python-codebuild', 'py_lambda')
-        self.stack.add_substack('config0-hub:::apigw_lambda-integ', 'apigw')
+        self.stack.add_substack('config0-publish:::aws_s3_bucket')
+        self.stack.add_substack('config0-publish:::aws_dynamodb')
+        self.stack.add_substack('config0-publish:::aws-lambda-python-codebuild', 'py_lambda')
+        self.stack.add_substack('config0-publish:::apigw_lambda-integ', 'apigw')
 
-        #self.stack.add_substack('config0-hub:::aws-lambda-python', 'py_lambda')
+        #self.stack.add_substack('config0-publish:::aws-lambda-python', 'py_lambda')
 
-        self.stack.add_substack('config0-hub:::codebuild_complete_trigger',
+        self.stack.add_substack('config0-publish:::codebuild_complete_trigger',
                                 'sns_subscription')
 
         # this is lock versioning of execgroups
-        self.stack.add_execgroup("config0-hub:::github::lambda_codebuild")
-        self.stack.add_execgroup("config0-hub:::github::lambda_check_codebuild")
-        self.stack.add_execgroup("config0-hub:::github::lambda_s3")
-        self.stack.add_execgroup("config0-hub:::github::lambda_webhook")
+        self.stack.add_execgroup("config0-publish:::github::lambda_codebuild")
+        self.stack.add_execgroup("config0-publish:::github::lambda_check_codebuild")
+        self.stack.add_execgroup("config0-publish:::github::lambda_s3")
+        self.stack.add_execgroup("config0-publish:::github::lambda_webhook")
 
         self.stack.init_execgroups()
         self.stack.init_substacks()
