@@ -20,11 +20,11 @@ class Main(newSchedStack):
         self.parse.add_required(key="disksize",default="20") 
 
         self.parse.add_required(key="gitlab_runners_token_hash")
-        #self.parse.add_required(key="gitlab_runners_ami",default="ami-0d75513e7706cf2d9")  # ubuntu 22.04 lts eu-west-1
-        #self.parse.add_required(key="gitlab_runners_ami",default="ami-0f93e856d36a101f8")  # ubuntu 20.04 lts eu-west-1
-        self.parse.add_required(key="gitlab_runners_ami",default="ami-0f03fd8a6e34800c0") # ubuntu 18.04 lts
         self.parse.add_required(key="gitlab_runner_aws_access_key")
         self.parse.add_required(key="gitlab_runner_aws_secret_key")
+        self.parse.add_required(key="gitlab_runners_ami",default="ami-0f03fd8a6e34800c0")  # ubuntu 18.04 lts
+        #self.parse.add_required(key="gitlab_runners_ami",default="ami-0d75513e7706cf2d9")  # ubuntu 22.04 lts eu-west-1
+        #self.parse.add_required(key="gitlab_runners_ami",default="ami-0f93e856d36a101f8")  # ubuntu 20.04 lts eu-west-1
 
         self.parse.add_optional(key="gitlab_runner_autoscaling_hash",default="null")
 
@@ -49,17 +49,15 @@ class Main(newSchedStack):
     
         s3_bucket = self._get_bucket_name()
 
-        s3 = { "ServerAddress": "s3.amazonaws.com",
+        s3 = {"ServerAddress": "s3.amazonaws.com",
                "AccessKey": self.stack.gitlab_runner_aws_access_key,
                "SecretKey": self.stack.gitlab_runner_aws_secret_key,
                "BucketName": s3_bucket,
-               "BucketLocation": self.stack.aws_default_region
-               }
+               "BucketLocation": self.stack.aws_default_region}
     
-        cache = { "Type": "s3",
+        cache = {"Type": "s3",
                   "Shared": True,
-                  "s3": s3
-                  }
+                  "s3": s3}
     
         return cache
     
@@ -74,22 +72,24 @@ class Main(newSchedStack):
                            "amazonec2-use-private-address=true",
                            "amazonec2-tags=gitlab-runner-autoscaler,gitlab,group-runner,{}".format(self.stack.ci_environment),
                            "amazonec2-security-group={}".format(self.stack.sg_id.split("sg-")[1]),
-                           "amazonec2-instance-type={}".format(self.stack.instance_type),
-                           "amazonec2-request-spot-instance=true",
-                           "amazonec2-spot-price={}".format(self.stack.spot_price)
+                           "amazonec2-security-group-readonly=true",
+                           "amazonec2-instance-type={}".format(self.stack.instance_type)
                            ]
+                           # revisit 
+                           #"amazonec2-request-spot-instance=true",
+                           #"amazonec2-spot-price={}".format(self.stack.spot_price)
 
-        if self.stack.gitlab_runners_ami: 
+        if self.stack.get_attr("gitlab_runners_ami"):
             MachineOptions.append("amazonec2-ami={}".format(self.stack.gitlab_runners_ami))
     
-        machine = { "MachineDriver": "amazonec2",
+        machine = {"MachineDriver": "amazonec2",
                     "MachineName": "gitlab-ci-machine-%s",
                     "OffPeakTimezone": "",
                     "OffPeakIdleCount": 0,
                     "OffPeakIdleTime": 0,
                     "IdleCount": 0,
-                    "MachineOptions": MachineOptions
-                    }
+                    "IdleTime": 1800,
+                    "MachineOptions": MachineOptions}
     
         return machine
     
@@ -97,7 +97,7 @@ class Main(newSchedStack):
     
         autoscaling = None
     
-        if self.stack.gitlab_runner_autoscaling_hash:
+        if self.stack.get_attr("gitlab_runner_autoscaling_hash"):
             try:
                 autoscaling = self.stack.b64_decode(self.stack.gitlab_runner_autoscaling_hash)
             except:
@@ -105,12 +105,11 @@ class Main(newSchedStack):
     
         if autoscaling: return autoscaling
     
-        autoscaling = [ { "Periods": [ "* * 1-23 * * mon-sun *"],
+        autoscaling = [{"Periods": [ "* * 1-23 * * mon-sun *"],
                           "IdleCount": 1,
                           "IdleTime": 60,
                           "Timezone": "UTC"
-                          }
-                        ]
+                          }]
     
         return autoscaling
     
@@ -118,29 +117,29 @@ class Main(newSchedStack):
         
         import toml
     
-        runner = { "name": "gitlab-runner-autoscaler",
+        runner = {"name": "gitlab-runner-autoscaler",
                    "url": "https://gitlab.com/",
                    "token": self.stack.b64_decode(self.stack.gitlab_runners_token_hash),
                    "executor": "docker+machine",
                    "limit": 4,
                    "docker": { "tls_verify": False,
                                "image": self.stack.runner_docker_image,
+                               "disable_entrypoint_overide": False,
+                               "oom_kill_disable": False,
                                "privileged": True,
-                               "disable_cache": True,
+                               "disable_cache": False,
                                "shm_size": 0
                                },
                    "cache": self._get_cache_config(),
-                   "machine": self._get_machine_options(),
-                   }
+                   "machine": self._get_machine_options()}
     
         autoscaling = self._get_autoscaling()
     
         if autoscaling: runner["autoscaling"] = autoscaling
     
-        values = { "concurrent": int(self.stack.runner_concurrent),
+        values = {"concurrent": int(self.stack.runner_concurrent),
                    "check_interval": 0,
-                   "runners": [ runner ]
-                   }
+                   "runners": [ runner ]}
     
         with open(self.stack.gitlab_runner_config_file,"w") as _f:
             toml.dump(values,_f )
@@ -215,26 +214,25 @@ gitlab-runner restart
         self.stack.set_variable("subnet_id",self.stack.subnet_ids.split(",")[0])
         self.stack.set_variable("hostname","gitlab-runner-manager-admin")
 
-        if not self.stack.bastion_sg_id:
+        if not self.stack.get_attr("bastion_sg_id"):
             self.stack.set_variable("bastion_sg_id",self.sg_id)
 
         user_data_hash = self.stack.b64_encode(self._get_user_data())
 
-        overide_values = { "hostname":self.stack.hostname,
+        overide_values = {"hostname":self.stack.hostname,
                            "ip_key": "public_ip",
                            "user_data_hash": user_data_hash,
-                           "ssh_key_name": self._get_ssh_key_name() }
+                           "ssh_key_name": self._get_ssh_key_name()}
                            #"spot": None,
 
-        default_values = { "vpc_id":self.stack.vpc_id,
+        default_values = {"vpc_id":self.stack.vpc_id,
                            "subnet_ids":self.stack.subnet_ids,
                            "instance_type": self.stack.instance_type,
                            "disksize": self.stack.disksize,
                            "aws_default_region":self.stack.aws_default_region,
-                           "sg_id":self.stack.bastion_sg_id,
-                           }
-        human_description= 'Create EC2 {}'.format(self.stack.hostname)
+                           "sg_id":self.stack.bastion_sg_id}
 
+        human_description = "Create EC2 {}".format(self.stack.hostname)
         inputargs = {"default_values": default_values,
                      "overide_values": overide_values,
                      "automation_phase": "infrastructure",
@@ -247,7 +245,7 @@ gitlab-runner restart
         s3_bucket = self._get_bucket_name()
 
         policy = { "Version": "2012-10-17",
-                   "Statement": [ { "Effect": "Allow",
+                   "Statement": [{ "Effect": "Allow",
                                     "Action": "ec2:*",
                                               "Resource": "*"
                                     },
@@ -255,8 +253,7 @@ gitlab-runner restart
                                     "Action": [ "s3:*" ],
                                     "Resource": [ "arn:aws:s3:::{}".format(s3_bucket), 
                                                   "arn:aws:s3:::{}/*".format(s3_bucket) ]
-                                    }
-                                  ]
+                                    }]
                    }
 
         return self.stack.b64_encode(policy)
@@ -268,7 +265,8 @@ gitlab-runner restart
 
     def _determine_suffix_id(self):
 
-        if self.stack.suffix_id: return str(self.stack.suffix_id).lower()
+        if self.stack.get_attr("suffix_id"): 
+            return str(self.stack.suffix_id).lower()
 
         return self.stack.b64_encode(self.stack.ci_environment)[0:int(self.stack.suffix_length)].lower()
 
@@ -306,7 +304,7 @@ gitlab-runner restart
         overide_values = { "key_name":ssh_key_name }
         default_values = { "aws_default_region":self.stack.aws_default_region }
 
-        human_description= 'Create and upload ssh key name {}'.format(ssh_key_name)
+        human_description = "Create and upload ssh key name {}".format(ssh_key_name)
         inputargs = {"default_values": default_values,
                      "overide_values": overide_values,
                      "automation_phase": "infrastructure",
@@ -322,14 +320,13 @@ gitlab-runner restart
 
         name = "gitlab-{}-iam".format(self.stack.ci_environment)
 
-        overide_values = { "policy_hash":policy_hash,
+        overide_values = {"policy_hash":policy_hash,
                            "iam_name": name,
-                           "policy_name": name
-                           }
+                           "policy_name": name}
 
-        default_values = { "aws_default_region":self.stack.aws_default_region }
+        default_values = {"aws_default_region":self.stack.aws_default_region}
 
-        human_description= "Create IAM role for {}".format(self.stack.ci_environment)
+        human_description = "Create IAM role for {}".format(self.stack.ci_environment)
         inputargs = {"default_values": default_values,
                      "overide_values": overide_values,
                      "automation_phase": "infrastructure",
@@ -345,14 +342,14 @@ gitlab-runner restart
         cloud_tags_hash = self._set_cloud_tag_hash()
         s3_bucket = self._get_bucket_name()
 
-        default_values = { "aws_default_region":self.stack.aws_default_region }
+        default_values = {"aws_default_region":self.stack.aws_default_region}
 
-        overide_values = { "bucket": s3_bucket,
+        human_description = "Create s3 bucket {}".format(s3_bucket)
+        overide_values = {"bucket": s3_bucket,
                            "acl": self.stack.bucket_acl,
                            "cloud_tags_hash":cloud_tags_hash,
-                           "force_destroy": "true" }
+                           "force_destroy": "true"}
 
-        human_description= 'Create s3 bucket {}'.format(s3_bucket)
         inputargs = {"default_values": default_values,
                      "overide_values": overide_values,
                      "automation_phase": "infrastructure",
@@ -366,17 +363,18 @@ gitlab-runner restart
 
         default_values = {}
 
-        overide_values = { "group_name": self._get_gitlab_group_name(),
-                           "visibility_level":self.stack.visibility_level }
+        overide_values = {"group_name": self._get_gitlab_group_name(),
+                          "visibility_level": self.stack.visibility_level}
 
-        human_description= "Add subgroup {}".format(overide_values["group_name"])
-
+        human_description = "Add subgroup {}".format(overide_values["group_name"])
         inputargs = {"default_values": default_values,
                      "overide_values": overide_values,
                      "automation_phase": "infrastructure",
                      "human_description": human_description}
 
-        return self.stack.gitlab_subgroup.insert(display=True,**inputargs)
+
+        return self.stack.gitlab_subgroup.insert(display=True,
+                                                 **inputargs)
 
     def run(self):
     

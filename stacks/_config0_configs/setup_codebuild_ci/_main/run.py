@@ -17,7 +17,7 @@ class Main(newSchedStack):
 
         self.parse.add_optional(key="aws_default_region",
                                 types="str",
-                                default="us-west-1")
+                                default="eu-west-1")
 
         self.parse.add_optional(key="cloud_tags_hash",
                                 types="str")
@@ -39,21 +39,19 @@ class Main(newSchedStack):
                                 default="arn:aws:lambda:eu-west-1:553035198032:layer:git-lambda2:8")
 
         # Add substack
-        self.stack.add_substack('config0-publish:::aws_s3_bucket')
-        self.stack.add_substack('config0-publish:::aws_dynamodb')
-        self.stack.add_substack('config0-publish:::aws-lambda-python-codebuild', 'py_lambda')
-        self.stack.add_substack('config0-publish:::apigw_lambda-integ', 'apigw')
+        self.stack.add_substack("config0-hub:::aws_s3_bucket")
+        self.stack.add_substack("config0-hub:::aws_dynamodb")
+        self.stack.add_substack("config0-hub:::aws-lambda-python-codebuild","py_lambda")
+        self.stack.add_substack("config0-hub:::apigw_lambda-integ","apigw")
 
-        #self.stack.add_substack('config0-publish:::aws-lambda-python', 'py_lambda')
-
-        self.stack.add_substack('config0-publish:::codebuild_complete_trigger',
-                                'sns_subscription')
+        self.stack.add_substack("config0-hub:::codebuild_complete_trigger",
+                                "sns_subscription")
 
         # this is lock versioning of execgroups
-        self.stack.add_execgroup("config0-publish:::github::lambda_codebuild")
-        self.stack.add_execgroup("config0-publish:::github::lambda_check_codebuild")
-        self.stack.add_execgroup("config0-publish:::github::lambda_s3")
-        self.stack.add_execgroup("config0-publish:::github::lambda_webhook")
+        self.stack.add_execgroup("config0-hub:::github::lambda_codebuild")
+        self.stack.add_execgroup("config0-hub:::github::lambda_check_codebuild")
+        self.stack.add_execgroup("config0-hub:::github::lambda_s3")
+        self.stack.add_execgroup("config0-hub:::github::lambda_webhook")
 
         self.stack.init_execgroups()
         self.stack.init_substacks()
@@ -72,8 +70,8 @@ class Main(newSchedStack):
         except:
             cloud_tags = {}
 
-        cloud_tags["ci_environment"] = self.stack.ci_environment
-        cloud_tags["aws_default_region"] = self.stack.aws_default_region
+        cloud_tags = {"ci_environment": self.stack.ci_environment,
+                     "aws_default_region": self.stack.aws_default_region}
 
         return self.stack.b64_encode(cloud_tags)
 
@@ -85,10 +83,10 @@ class Main(newSchedStack):
 
         # this setting is for
         # processing the webhook
-        env_vars["DEBUG_LAMBDA"] = "true"
-        env_vars["BUILD_TTL"] = "60"
-        env_vars["DISABLE_BRANCH_CHECK"] = "false"
-        env_vars["DISABLE_EVENT_CHECK"] = "false"
+        env_vars = {"DEBUG_LAMBDA": "true",
+                    "BUILD_TTL": "60",
+                    "DISABLE_BRANCH_CHECK": "false",
+                    "DISABLE_EVENT_CHECK": "false"}
 
         webhook_hash = self.stack.b64_encode(env_vars)
 
@@ -110,12 +108,13 @@ class Main(newSchedStack):
                      "topic_name": topic_name,
                      "aws_default_region": self.stack.aws_default_region}
 
-        kwargs = {"arguments": arguments,
-                  "automation_phase": "infrastructure",
-                  "human_description": 'Create Codebuild SNS subscription for {}'.format(self.stack.ci_environment)}
+        human_description = "Create Codebuild SNS subscription for {}".format(self.stack.ci_environment)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
 
         return self.stack.sns_subscription.insert(display=True, 
-                                                  **kwargs)
+                                                  **inputargs)
 
     def run_apigw(self):
 
@@ -134,13 +133,14 @@ class Main(newSchedStack):
                      "lambda_name": lambda_name,
                      "aws_default_region": self.stack.aws_default_region}
 
-        kwargs = {"arguments": arguments}
-        kwargs["automation_phase"] = "infrastructure"
-        kwargs["human_description"] = 'Create API gateway {}'.format(
-            apigateway_name)
+        human_description= 'Create API gateway {}'.format(apigateway_name)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
+
 
         return self.stack.apigw.insert(display=True, 
-                                       **kwargs)
+                                       **inputargs)
 
     def run_s3(self):
 
@@ -166,13 +166,13 @@ class Main(newSchedStack):
                      "enable_lifecycle": "false",
                      "aws_default_region": self.stack.aws_default_region}
 
-        kwargs = {"arguments": arguments}
-        kwargs["automation_phase"] = "infrastructure"
-        kwargs["human_description"] = 'Create s3 bucket {}'.format(
-            s3_bucket)
+        human_description= "Create s3 bucket {}".format(s3_bucket)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
 
         self.stack.aws_s3_bucket.insert(display=True, 
-                                        **kwargs)
+                                        **inputargs)
 
         # temp shared bucket
         s3_bucket = "codebuild-shared-{}-{}-tmp".format(self.stack.ci_environment,
@@ -186,13 +186,13 @@ class Main(newSchedStack):
                      "enable_lifecycle": "true",
                      "aws_default_region": self.stack.aws_default_region}
 
-        kwargs = {"arguments": arguments}
-        kwargs["automation_phase"] = "infrastructure"
-        kwargs["human_description"] = 'Create s3 bucket {}'.format(
-            s3_bucket)
+        human_description= "Create s3 bucket {}".format(s3_bucket)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
 
         return self.stack.aws_s3_bucket.insert(display=True, 
-                                               **kwargs)
+                                               **inputargs)
 
     def run_dynamodb(self):
 
@@ -211,12 +211,12 @@ class Main(newSchedStack):
                          "cloud_tags_hash": cloud_tags_hash,
                          "aws_default_region": self.stack.aws_default_region}
 
-            kwargs = {"arguments": arguments}
-            kwargs["automation_phase"] = "infrastructure"
-            kwargs["human_description"] = 'Create dynamodb {}'.format(
-                dynamodb_name)
+            human_description= "Create dynamodb {}".format(dynamodb_name)
+            inputargs = {"arguments": arguments,
+                         "automation_phase": "infrastructure",
+                         "human_description": human_description}
 
-            results = self.stack.aws_dynamodb.insert(display=True, **kwargs)
+            results = self.stack.aws_dynamodb.insert(display=True, **inputargs)
 
         return results
 
@@ -443,18 +443,19 @@ class Main(newSchedStack):
         s3_key = "{}.zip".format(lambda_name)
 
         arguments = base_arguments.copy()
-        arguments["lambda_env_vars_hash"] = webhook_env_vars_hash   # this is special for the processing of the webhook
-        arguments["lambda_name"] = lambda_name
-        arguments["handler"] = handler
-        arguments["s3_key"] = s3_key
-        arguments["config0_lambda_execgroup_name"] = self.stack.lambda_webhook.name
+        arguments = {"lambda_env_vars_hash": webhook_env_vars_hash,   # this is special for the processing of the webhook
+                     "lambda_name": lambda_name,
+                     "handler": handler,
+                     "s3_key": s3_key,
+                     "config0_lambda_execgroup_name": self.stack.lambda_webhook.name}
 
-        kwargs = {"arguments": arguments,
-                  "automation_phase": "infrastructure",
-                  "human_description": 'Create lambda function {}'.format(lambda_name)}
+        human_description= "Create lambda function {}".format(lambda_name)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
 
         self.stack.py_lambda.insert(display=True, 
-                                    **kwargs)
+                                    **inputargs)
 
         lambda_params = { "trigger-codebuild":["app_codebuild.handler",
                                                self.stack.lambda_codebuild.name],
@@ -467,17 +468,18 @@ class Main(newSchedStack):
         for lambda_name, params in lambda_params.items():
 
             arguments = base_arguments.copy()
-            arguments["lambda_name"] = lambda_name
-            arguments["handler"] = params[0]
-            arguments["s3_key"] = "{}.zip".format(lambda_name)
-            arguments["config0_lambda_execgroup_name"] = params[1]
+            arguments = {"lambda_name": lambda_name,
+                        "handler": params[0],
+                        "s3_key": "{}.zip".format(lambda_name),
+                        "config0_lambda_execgroup_name": params[1]}
 
-            kwargs = {"arguments": arguments,
-                      "automation_phase": "infrastructure",
-                      "human_description": 'Create lambda function {}'.format(lambda_name)}
+            human_description= 'Create lambda function {}'.format(lambda_name)
+            inputargs = {"arguments": arguments,
+                         "automation_phase": "infrastructure",
+                         "human_description": human_description}
 
             self.stack.py_lambda.insert(display=True, 
-                                        **kwargs)
+                                        **inputargs)
 
         return 
 
