@@ -116,12 +116,12 @@ class Main(newSchedStack):
                                 types="str")
 
         # Add substack
-        self.stack.add_substack('config0-hub:::aws_s3_bucket')
-        self.stack.add_substack('config0-hub:::new_github_ssh_key')
-        self.stack.add_substack('config0-hub:::aws_dynamodb_item','dynamodb')
-        self.stack.add_substack('config0-hub:::aws_ssm_param')
-        self.stack.add_substack('config0-hub:::aws_codebuild')
-        self.stack.add_substack('config0-hub:::github_webhook')
+        self.stack.add_substack('config0-publish:::aws_s3_bucket')
+        self.stack.add_substack('config0-publish:::new_github_ssh_key')
+        self.stack.add_substack('config0-publish:::aws_dynamodb_item','dynamodb')
+        self.stack.add_substack('config0-publish:::aws_ssm_param')
+        self.stack.add_substack('config0-publish:::aws_codebuild')
+        self.stack.add_substack('config0-publish:::github_webhook')
 
         self.stack.init_substacks()
 
