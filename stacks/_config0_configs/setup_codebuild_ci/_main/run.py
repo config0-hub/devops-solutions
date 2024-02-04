@@ -509,7 +509,7 @@ class Main(newSchedStack):
         sched.automation_phase = "infrastructure"
         sched.human_description = "Create s3 buckets"
         # testtest456
-        #sched.conditions.retries = 1
+        sched.conditions.retries = 1
         sched.on_success = ["dynamodb"]
         # testtest333
         #sched.on_success = ["dynamodb","lambda"]
@@ -528,7 +528,7 @@ class Main(newSchedStack):
         sched.job = "lambda"
         sched.archive.timeout = 1800
         # testtest456
-        sched.conditions.retries = 1
+        #sched.conditions.retries = 1
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create lambda'
