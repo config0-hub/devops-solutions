@@ -425,12 +425,14 @@ class Main(newSchedStack):
         policy_template_hash = self._get_policy_template_hash()
         base_env_vars_hash, webhook_env_vars_hash = self._get_env_vars_lambda_hashes()
 
-        base_arguments = { "s3_bucket": s3_bucket,
-                           "runtime": self.stack.runtime,
-                           "policy_template_hash": policy_template_hash,
-                           "lambda_env_vars_hash": base_env_vars_hash,
-                           "cloud_tags_hash": cloud_tags_hash,
-                           "aws_default_region": self.stack.aws_default_region }
+        base_arguments = { 
+                "s3_bucket": s3_bucket,
+                "runtime": self.stack.runtime,
+                "policy_template_hash": policy_template_hash,
+                "lambda_env_vars_hash": base_env_vars_hash,
+                "cloud_tags_hash": cloud_tags_hash,
+                "aws_default_region": self.stack.aws_default_region
+                }
 
         if self.stack.lambda_layers:
             base_arguments["lambda_layers"] = self.stack.lambda_layers
@@ -443,11 +445,13 @@ class Main(newSchedStack):
         s3_key = "{}.zip".format(lambda_name)
 
         arguments = base_arguments.copy()
-        arguments = {"lambda_env_vars_hash": webhook_env_vars_hash,   # this is special for the processing of the webhook
-                     "lambda_name": lambda_name,
-                     "handler": handler,
-                     "s3_key": s3_key,
-                     "config0_lambda_execgroup_name": self.stack.lambda_webhook.name}
+        arguments.update({
+            "lambda_env_vars_hash": webhook_env_vars_hash,   # this is special for the processing of the webhook
+            "lambda_name": lambda_name,
+            "handler": handler,
+            "s3_key": s3_key,
+            "config0_lambda_execgroup_name": self.stack.lambda_webhook.name
+            )}
 
         human_description= "Create lambda function {}".format(lambda_name)
         inputargs = {"arguments": arguments,
@@ -468,10 +472,12 @@ class Main(newSchedStack):
         for lambda_name, params in lambda_params.items():
 
             arguments = base_arguments.copy()
-            arguments = {"lambda_name": lambda_name,
-                        "handler": params[0],
-                        "s3_key": "{}.zip".format(lambda_name),
-                        "config0_lambda_execgroup_name": params[1]}
+            arguments.update({
+                "lambda_name": lambda_name,
+                "handler": params[0],
+                "s3_key": "{}.zip".format(lambda_name),
+                "config0_lambda_execgroup_name": params[1]
+                })
 
             human_description= 'Create lambda function {}'.format(lambda_name)
             inputargs = {"arguments": arguments,
@@ -502,7 +508,8 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Create s3 buckets"
-        sched.conditions.retries = 1
+        # testtest456
+        #sched.conditions.retries = 1
         sched.on_success = ["dynamodb"]
         # testtest333
         #sched.on_success = ["dynamodb","lambda"]
@@ -520,8 +527,8 @@ class Main(newSchedStack):
         sched = self.new_schedule()
         sched.job = "lambda"
         sched.archive.timeout = 1800
-        # testtest333
-        #sched.conditions.retries = 1
+        # testtest456
+        sched.conditions.retries = 1
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create lambda'
