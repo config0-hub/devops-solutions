@@ -450,8 +450,7 @@ class Main(newSchedStack):
             "lambda_name": lambda_name,
             "handler": handler,
             "s3_key": s3_key,
-            "config0_lambda_execgroup_name": self.stack.lambda_webhook.name
-            )}
+            "config0_lambda_execgroup_name": self.stack.lambda_webhook.name})
 
         human_description= "Create lambda function {}".format(lambda_name)
         inputargs = {"arguments": arguments,
