@@ -315,6 +315,7 @@ class Main(newSchedStack):
         self.stack.verify_variables()
         self._eval_inputvars()
         self._set_ssm_keys()
+        self.stack.set_parallel()
 
         # add config0 token
         arguments = {"ssm_key": self.stack.ssm_callback_token,
@@ -571,10 +572,11 @@ class Main(newSchedStack):
         # using tmp bucket for logs
         self._set_codebuild_buckets()
 
-        arguments = {"s3_bucket": "{}-tmp".format(self._get_s3_bucket()),
-                     "s3_bucket_cache": self.s3_bucket_cache,
-                     "s3_bucket_output": self.s3_bucket_output,
-                     "aws_default_region": self.stack.aws_default_region}
+        arguments.update( {
+            "s3_bucket": "{}-tmp".format(self._get_s3_bucket()),
+            "s3_bucket_cache": self.s3_bucket_cache,
+            "s3_bucket_output": self.s3_bucket_output
+            })
 
         human_description = 'Create Codebuild project "{}"'.format(self.stack.codebuild_name)
         inputargs = {"arguments": arguments,
