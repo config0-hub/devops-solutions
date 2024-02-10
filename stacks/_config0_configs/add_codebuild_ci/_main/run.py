@@ -601,7 +601,6 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.conditions.retries = 1
         sched.automation_phase = "continuous_delivery"
         sched.human_description = "Setup Basic for Codebuild"
         sched.on_success = ["ssm"]
@@ -618,6 +617,8 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "codebuild"
+        # testtest456
+        #sched.conditions.retries = 1
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
         sched.automation_phase = "continuous_delivery"
