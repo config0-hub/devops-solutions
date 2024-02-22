@@ -593,9 +593,7 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Create s3 buckets"
-        sched.conditions.retries = 1
         sched.on_success = ["dynamodb"]
-        #sched.on_success = ["dynamodb","lambda"]
 
         self.add_schedule()
 
@@ -621,6 +619,7 @@ class Main(newSchedStack):
         sched.job = "stepf"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
+        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = "Create Step Function"
         sched.on_success = ["trigger_stepf"]
