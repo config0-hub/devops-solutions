@@ -43,11 +43,10 @@ class Main(newSchedStack):
         self.stack.add_substack("config0-publish:::aws_dynamodb")
         self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild","py_lambda")
         self.stack.add_substack("config0-publish:::apigw_lambda-integ","apigw")
-
-        self.stack.add_substack("config0-publish:::codebuild_complete_trigger",
-                                "sns_subscription")
+        self.stack.add_substack("config0-publish:::codebuild_step_func_ci")
 
         # this is lock versioning of execgroups
+        self.stack.add_execgroup("config0-publish:::github::lambda_trigger_stepfunc")
         self.stack.add_execgroup("config0-publish:::github::lambda_codebuild")
         self.stack.add_execgroup("config0-publish:::github::lambda_check_codebuild")
         self.stack.add_execgroup("config0-publish:::github::lambda_s3")
@@ -77,13 +76,12 @@ class Main(newSchedStack):
 
     def _get_env_vars_lambda_hashes(self):
 
-        env_vars = {"ENV": "dev"}
-
-        base_hash = self.stack.b64_encode(env_vars)
+        base_hash = self.stack.b64_encode({"ENV": "build"})
 
         # this setting is for
         # processing the webhook
-        env_vars = {"DEBUG_LAMBDA": "true",
+        env_vars = {"ENV": "build",
+                    "DEBUG_LAMBDA": "true",
                     "BUILD_TTL": "60",
                     "DISABLE_BRANCH_CHECK": "false",
                     "DISABLE_EVENT_CHECK": "false"}
@@ -91,30 +89,6 @@ class Main(newSchedStack):
         webhook_hash = self.stack.b64_encode(env_vars)
 
         return base_hash, webhook_hash
-
-    def run_sns_subscription(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-
-        lambda_name = "check-codebuild"
-        topic_name = "{}-codebuild-compelete-trigger".format(
-            self.stack.ci_environment)
-
-        cloud_tags_hash = self._set_cloud_tag_hash()
-
-        arguments = {"lambda_name": lambda_name,
-                     "cloud_tags_hash": cloud_tags_hash,
-                     "topic_name": topic_name,
-                     "aws_default_region": self.stack.aws_default_region}
-
-        human_description = "Create Codebuild SNS subscription for {}".format(self.stack.ci_environment)
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
-
-        return self.stack.sns_subscription.insert(display=True, 
-                                                  **inputargs)
 
     def run_apigw(self):
 
@@ -384,6 +358,24 @@ class Main(newSchedStack):
 
         return _statement
 
+    def _get_step_func_policy(self):
+        
+        _action = [
+            "states:StartExecution",
+            "states:StopExecution",
+            "states:DescribeExecution",
+            "states:ListExecutions",
+            "states:DescribeStateMachine",
+            "states:GetExecutionHistory"
+        ]
+
+        _statement = {"Action": _action,
+                      "Resource": "*",
+                      "Effect": "Allow"
+                      }
+
+        return _statement
+
     def _get_policy_template_hash(self):
 
         import json
@@ -407,6 +399,21 @@ class Main(newSchedStack):
 
         return self.stack.b64_encode(json.dumps(policy))
 
+    def _get_step_func_policy_template_hash(self):
+
+        import json
+
+        statements = []
+        statements.append(self._get_log_policy())
+        statements.extend(self._get_s3_policies())
+        statements.append(self._get_lambda_policy())
+        statements.append(self._get_step_func_policy())
+
+        policy = {"Version": "2012-10-17",
+                  "Statement": statements}
+
+        return self.stack.b64_encode(json.dumps(policy))
+
     def _get_s3_bucket(self):
 
         suffix_id = self._determine_suffix_id()
@@ -414,6 +421,83 @@ class Main(newSchedStack):
             self.stack.ci_environment, suffix_id)
 
         return s3_bucket
+
+    def _get_step_func_name(self):
+         return "{}-codebuild-stepfunc-ci".format(self.stack.ci_environment)
+
+    def _get_step_func_arn(self):
+
+        step_function_name = self._get_step_func_name()
+
+        _info = self.stack.get_resource(name=step_function_name,
+                                        resource_type="step_function",
+                                        must_be_one=True)[0]
+
+        return _info["arn"]
+
+    def run_step_function(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+        cloud_tags_hash = self._set_cloud_tag_hash()
+        step_function_name = self._get_step_func_name()
+
+        arguments = {
+            "step_function_name": step_function_name,
+            "cloud_tags_hash": cloud_tags_hash,
+            "aws_default_region": self.stack.aws_default_region
+        }
+
+        human_description = "Create step function {}".format(step_function_name)
+
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
+
+        self.stack.codebuild_step_func_ci.insert(display=True,
+                                                 **inputargs)
+
+        return
+
+    def run_trigger_stepfunc(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+        cloud_tags_hash = self._set_cloud_tag_hash()
+
+        s3_bucket = self._get_s3_bucket()
+        step_func_arn = self._get_step_func_arn()
+
+        arguments = {
+            "s3_bucket": s3_bucket,
+            "runtime": self.stack.runtime,
+            "policy_template_hash": self._get_step_func_policy_template_hash(),
+            "lambda_env_vars_hash": self.stack.b64_encode({"STATE_MACHINE_ARN":step_func_arn}),
+            "cloud_tags_hash": cloud_tags_hash,
+            "aws_default_region": self.stack.aws_default_region
+        }
+
+        if self.stack.lambda_layers:
+            arguments["lambda_layers"] = self.stack.lambda_layers
+
+        # lambda_name = "lambda_trigger_stepfunc"
+        lambda_name = "lambda_trigger_stepfunc"
+        handler = "app.handler"
+        s3_key = "{}.zip".format(lambda_name)
+
+        arguments.update({
+            "lambda_name": lambda_name,
+            "handler": handler,
+            "s3_key": s3_key,
+            "config0_lambda_execgroup_name": self.stack.lambda_trigger_stepfunc.name})
+
+        human_description= "Create lambda function {}".format(lambda_name)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
+
+        self.stack.py_lambda.insert(display=True,
+                                    **inputargs)
 
     def run_lambda(self):
 
@@ -425,7 +509,7 @@ class Main(newSchedStack):
         policy_template_hash = self._get_policy_template_hash()
         base_env_vars_hash, webhook_env_vars_hash = self._get_env_vars_lambda_hashes()
 
-        base_arguments = { 
+        base_arguments = {
                 "s3_bucket": s3_bucket,
                 "runtime": self.stack.runtime,
                 "policy_template_hash": policy_template_hash,
@@ -494,8 +578,9 @@ class Main(newSchedStack):
         self.add_job("s3")
         self.add_job("dynamodb")
         self.add_job("lambda")
+        self.add_job("step_function")
+        self.add_job("trigger_stepfunc")
         self.add_job("apigw")
-        self.add_job("sns_subscription")
 
         return self.finalize_jobs()
 
@@ -528,6 +613,24 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create lambda'
+        sched.on_success = ["step_function"]
+        self.add_schedule()
+
+        sched = self.new_schedule()
+        sched.job = "step_function"
+        sched.archive.timeout = 1800
+        sched.archive.timewait = 120
+        sched.automation_phase = "infrastructure"
+        sched.human_description = "Create Step Function"
+        sched.on_success = ["trigger_stepfunc"]
+        self.add_schedule()
+
+        sched = self.new_schedule()
+        sched.job = "trigger_stepfunc"
+        sched.archive.timeout = 1800
+        sched.archive.timewait = 120
+        sched.automation_phase = "infrastructure"
+        sched.human_description = 'Create Lambda Trigger Step function'
         sched.on_success = ["apigw"]
         self.add_schedule()
 
@@ -537,15 +640,6 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create apigateway'
-        sched.on_success = ["sns_subscription"]
-        self.add_schedule()
-
-        sched = self.new_schedule()
-        sched.job = "sns_subscription"
-        sched.archive.timeout = 1800
-        sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
-        sched.human_description = 'Create Codebuild Complete Trigger'
         self.add_schedule()
 
         return self.get_schedules()
