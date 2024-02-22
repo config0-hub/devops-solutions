@@ -100,7 +100,9 @@ class Main(newSchedStack):
         apigateway_name = "config0-codebuild-shared-{}".format(
             self.stack.ci_environment)
 
-        lambda_name = "process-webhook"
+        # will trigger the lambda function
+        # that will trigger the step function
+        lambda_name = "lambda_trigger_stepf"
 
         arguments = {"apigateway_name": apigateway_name,
                      "cloud_tags_hash": cloud_tags_hash,
@@ -112,8 +114,7 @@ class Main(newSchedStack):
                      "automation_phase": "infrastructure",
                      "human_description": human_description}
 
-
-        return self.stack.apigw.insert(display=True, 
+        return self.stack.apigw.insert(display=True,
                                        **inputargs)
 
     def run_s3(self):
