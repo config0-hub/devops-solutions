@@ -288,8 +288,19 @@ class Main(newSchedStack):
     def _eval_inputvars(self):
 
         docker_token = self.stack.inputvars.get("DOCKER_TOKEN")
+
+        if not docker_token:
+            docker_token = self.stack.inputvars.get("docker_token")
+
         slack_webhook_hash = self.stack.inputvars.get("SLACK_WEBHOOK_HASH")
+
+        if not slack_webhook_hash:
+            slack_webhook_hash = self.stack.inputvars.get("slack_webhook_hash")
+
         github_token = self.stack.inputvars.get("GITHUB_TOKEN")
+
+        if not github_token:
+            github_token = self.stack.inputvars.get("github_token")
 
         if docker_token:
             self.stack.set_variable("docker_token", 
