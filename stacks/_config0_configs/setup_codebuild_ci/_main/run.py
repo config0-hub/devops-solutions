@@ -44,6 +44,8 @@ class Main(newSchedStack):
         self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild","py_lambda")
         self.stack.add_substack("config0-publish:::apigw_lambda-integ","apigw")
         self.stack.add_substack("config0-publish:::codebuild_stepf_ci")
+        self.stack.add_substack("config0-publish:::codebuild_complete_trigger",
+                                "sns_subscription")
 
         # this is lock versioning of execgroups
         self.stack.add_execgroup("config0-publish:::github::lambda_trigger_stepf")
@@ -89,6 +91,30 @@ class Main(newSchedStack):
         webhook_hash = self.stack.b64_encode(env_vars)
 
         return base_hash, webhook_hash
+
+    def run_sns_subscription(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+
+        lambda_name = "check-codebuild"
+        topic_name = "{}-codebuild-compelete-trigger".format(
+            self.stack.ci_environment)
+
+        cloud_tags_hash = self._set_cloud_tag_hash()
+
+        arguments = {"lambda_name": lambda_name,
+                     "cloud_tags_hash": cloud_tags_hash,
+                     "topic_name": topic_name,
+                     "aws_default_region": self.stack.aws_default_region}
+
+        human_description = "Create Codebuild SNS subscription for {}".format(self.stack.ci_environment)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
+
+        return self.stack.sns_subscription.insert(display=True, 
+                                                  **inputargs)
 
     def run_apigw(self):
 
@@ -582,6 +608,7 @@ class Main(newSchedStack):
         self.add_job("stepf")
         self.add_job("trigger_stepf")
         self.add_job("apigw")
+        self.add_job("sns_subscription")
 
         return self.finalize_jobs()
 
@@ -593,6 +620,7 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Create s3 buckets"
+        sched.conditions.retries = 1
         sched.on_success = ["dynamodb"]
 
         self.add_schedule()
@@ -619,7 +647,6 @@ class Main(newSchedStack):
         sched.job = "stepf"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = "Create Step Function"
         sched.on_success = ["trigger_stepf"]
@@ -640,6 +667,15 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create apigateway'
+        sched.on_success = ["sns_subscription"]
+        self.add_schedule()
+
+        sched = self.new_schedule()
+        sched.job = "sns_subscription"
+        sched.archive.timeout = 1800
+        sched.archive.timewait = 120
+        sched.automation_phase = "infrastructure"
+        sched.human_description = 'Create Codebuild Complete Trigger'
         self.add_schedule()
 
         return self.get_schedules()
