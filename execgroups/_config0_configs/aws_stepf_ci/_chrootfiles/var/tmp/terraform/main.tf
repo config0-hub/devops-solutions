@@ -64,19 +64,19 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
 
   definition = <<EOF
   {
-    "Comment": "the state machine processes webhook from code repo, executes codebuild, and check results",
+    "Comment": "The state machine processes webhook from code repo, executes codebuild, and checks results",
     "StartAt": "ProcessWebhook",
     "States": {
       "ProcessWebhook": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.process_webhook}",
+        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:process-webhook",
         "Next": "ChkProcessWebhook"
       },
       "ChkProcessWebhook": {
         "Type": "Choice",
         "Choices": [
           {
-            "Variable": "$.lambdaResult.continue",
+            "Variable": "$.continue",
             "BooleanEquals": true,
             "Next": "PkgCodeToS3"
           }
@@ -85,14 +85,15 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "PkgCodeToS3": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.pkgcode_to_s3}",
-        "Next": "ChkPkgCodeToS3"
+        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:pkgcode-to-s3",
+        "Next": "ChkPkgCodeToS3",
+        "InputPath": "$.body"
       },
       "ChkPkgCodeToS3": {
         "Type": "Choice",
         "Choices": [
           {
-            "Variable": "$.lambdaResult.continue",
+            "Variable": "$.continue",
             "BooleanEquals": true,
             "Next": "TriggerCodebuild"
           }
@@ -101,60 +102,43 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "TriggerCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.trigger_codebuild}",
-        "Next": "ChkTriggerCodebuild"
+        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:trigger-codebuild",
+        "Next": "ChkTriggerCodebuild",
+        "InputPath": "$.body"
       },
       "ChkTriggerCodebuild": {
         "Type": "Choice",
         "Choices": [
           {
-            "Variable": "$.lambdaResult.continue",
+            "Variable": "$.continue",
             "BooleanEquals": true,
-            "Next": "WaitCodebuildDone"
+            "Next": "WaitCodebuildCheck"
           }
         ],
         "Default": "Done"
       },
-      "WaitCodebuildDone": {
-        "Type": "Choice",
-        "Choices": [
-          {
-            "Variable": "$.detail.build-status",
-            "StringEquals": "TIMED_OUT",
-            "Next": "CheckCodebuild"
-          },
-          {
-            "Variable": "$.detail.build-status",
-            "StringEquals": "CLIENT_ERROR",
-            "Next": "CheckCodebuild"
-          },
-          {
-            "Variable": "$.detail.build-status",
-            "StringEquals": "FAULT",
-            "Next": "CheckCodebuild"
-          },
-          {
-            "Variable": "$.detail.build-status",
-            "StringEquals": "STOPPED",
-            "Next": "CheckCodebuild"
-          },
-          {
-            "Variable": "$.detail.build-status",
-            "StringEquals": "FAILED",
-            "Next": "CheckCodebuild"
-          },
-          {
-            "Variable": "$.detail.build-status",
-            "StringEquals": "SUCCEEDED",
-            "Next": "CheckCodebuild"
-          }
-        ],
-        "Default": "Done"
+      "WaitCodebuildCheck": {
+        "Type": "Wait",
+        "Seconds": 30,
+        "Next": "CheckCodebuild",
+        "Comment": "Wait to Check CodeBuild completion"
       },
       "CheckCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.check_codebuild}",
-        "End": true
+        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:check-codebuild",
+        "Next": "ChkCheckCodebuild",
+        "InputPath": "$.body"
+      },
+      "ChkCheckCodebuild": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "Variable": "$.continue",
+            "BooleanEquals": true,
+            "Next": "CheckCodebuild"
+          }
+        ],
+        "Default": "Done"
       },
       "Done": {
         "Type": "Pass",
