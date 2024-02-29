@@ -115,6 +115,17 @@ class Main(newSchedStack):
                                 tags="tf_sensitive",
                                 types="str")
 
+        self.parse.add_optional(key="subnet_ids",
+                                default="null")
+
+        self.parse.add_optional(key="vpc_id",
+                                default="null",
+                                types="str")
+
+        self.parse.add_required(key="security_group_id",
+                                default="null",
+                                types="str")
+
         # Add substack
         self.stack.add_substack('config0-publish:::ecr_repo')
         self.stack.add_substack('config0-publish:::aws_s3_bucket')
@@ -589,6 +600,15 @@ class Main(newSchedStack):
 
         if self.stack.get_attr("cloud_tags_hash"):
             arguments["cloud_tags_hash"] = self.stack.cloud_tags_hash
+
+        if self.stack.get_attr("subnet_ids"):
+            arguments["subnet_ids"] = self.stack.subnet_ids
+
+        if self.stack.get_attr("vpc_id"):
+            arguments["vpc_id"] = self.stack.vpc_id
+
+        if self.stack.get_attr("security_group_id"):
+            arguments["security_group_id"] = self.stack.security_group_id
 
         # using tmp bucket for logs
         self._set_codebuild_buckets()
