@@ -69,7 +69,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
     "States": {
       "ProcessWebhook": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:process-webhook",
+        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:process-webhook",
         "Next": "ChkProcessWebhook"
       },
       "ChkProcessWebhook": {
@@ -85,7 +85,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "PkgCodeToS3": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:pkgcode-to-s3",
+        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:pkgcode-to-s3",
         "Next": "ChkPkgCodeToS3",
         "InputPath": "$.body"
       },
@@ -102,7 +102,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "TriggerCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:trigger-codebuild",
+        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:trigger-codebuild",
         "Next": "ChkTriggerCodebuild",
         "InputPath": "$.body"
       },
@@ -125,7 +125,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "CheckCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:547111537536:function:check-codebuild",
+        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:check-codebuild",
         "Next": "ChkCheckCodebuild",
         "InputPath": "$.body"
       },

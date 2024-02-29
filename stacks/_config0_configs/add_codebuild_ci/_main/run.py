@@ -116,6 +116,7 @@ class Main(newSchedStack):
                                 types="str")
 
         # Add substack
+        self.stack.add_substack('config0-publish:::ecr_repo')
         self.stack.add_substack('config0-publish:::aws_s3_bucket')
         self.stack.add_substack('config0-publish:::new_github_ssh_key')
         self.stack.add_substack('config0-publish:::aws_dynamodb_item','dynamodb')
@@ -210,14 +211,10 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self._eval_inputvars()
-
-        #tf_sensitive_vars = self.stack.get_tagged_vars(tag="tf_sensitive",
-        #                                               output="dict",
-        #                                               uppercase=True)
-
         self.stack.verify_variables()
         self.stack.set_parallel()
 
+        self._add_ecr_repo()
         self._sshdeploy()
         self._token()
         self._s3()
@@ -226,6 +223,20 @@ class Main(newSchedStack):
         self._dynamodb()
 
         return self._webhook()
+
+    def _add_ecr_repo(self):
+
+        arguments = {"name": self.ecr_repo_name,
+                     "docker_repo":self.ecr_repo_name,
+                     "aws_default_region": self.stack.aws_default_region}
+
+        human_description = 'Create ecr repo if it does not exist'
+
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "continuous_delivery",
+                     "human_description": human_description}
+
+        self.stack.ecr_repo.insert(display=True, **inputargs)
 
     def _s3(self):
 
@@ -241,7 +252,6 @@ class Main(newSchedStack):
                      "force_destroy": "true",
                      "enable_lifecycle": "true",
                      "aws_default_region": self.stack.aws_default_region}
-
 
         if self.stack.get_attr("cloud_tags_hash"):
             arguments["cloud_tags_hash"] = self.stack.cloud_tags_hash
@@ -614,7 +624,8 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "continuous_delivery"
         sched.human_description = "Setup Basic for Codebuild"
-        sched.conditions.retries = 1
+        # testtest456
+        #sched.conditions.retries = 1
         sched.on_success = ["ssm"]
         self.add_schedule()
 
@@ -632,6 +643,8 @@ class Main(newSchedStack):
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
         sched.automation_phase = "continuous_delivery"
+        # testtest456
+        sched.conditions.retries = 1
         sched.human_description = "Create Codebuild Project"
         self.add_schedule()
 
