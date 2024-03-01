@@ -220,30 +220,25 @@ class Main(newSchedStack):
 
     def run_setup(self):
 
-        # testtest456
-        self.stack.logger.debug("a1"*32)
         self.stack.init_variables()
-        self.stack.logger.debug("a2"*32)
         self._eval_inputvars()
-        self.stack.logger.debug("a3"*32)
         self.stack.verify_variables()
-        self.stack.logger.debug("a4"*32)
-        #self.stack.set_parallel()
-        self.stack.unset_parallel()
-        self.stack.logger.debug("a5"*32)
+        self.stack.set_parallel()
 
         self._add_ecr_repo()
-        self.stack.logger.debug("a6"*32)
         self._sshdeploy()
-        self.stack.logger.debug("a7"*32)
         self._token()
-        self.stack.logger.debug("a8"*32)
         self._s3()
-        self.stack.logger.debug("a9"*32)
-        self._dynamodb()
-        self.stack.logger.debug("a9b"*32)
 
         return self._webhook()
+
+    def run_dynamodb(self):
+
+        self.stack.init_variables()
+        self._eval_inputvars()
+        self.stack.verify_variables()
+
+        return self._dynamodb()
 
     def _add_ecr_repo(self):
 
@@ -640,6 +635,7 @@ class Main(newSchedStack):
 
         self.stack.unset_parallel()
         self.add_job("setup")
+        self.add_job("dynamodb")
         self.add_job("ssm")
         self.add_job("codebuild")
         # self.add_job("webhook")
@@ -655,6 +651,15 @@ class Main(newSchedStack):
         sched.automation_phase = "continuous_delivery"
         sched.human_description = "Setup Basic for Codebuild"
         sched.conditions.retries = 1
+        sched.on_success = ["dynamodb"]
+        self.add_schedule()
+
+        sched = self.new_schedule()
+        sched.job = "dynamodb"
+        sched.archive.timeout = 1800
+        sched.archive.timewait = 120
+        sched.automation_phase = "continuous_delivery"
+        sched.human_description = "Add configurations to DynamoDb"
         sched.on_success = ["ssm"]
         self.add_schedule()
 
