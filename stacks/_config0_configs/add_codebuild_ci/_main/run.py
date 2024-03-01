@@ -237,8 +237,8 @@ class Main(newSchedStack):
 
     def _add_ecr_repo(self):
 
-        arguments = {"name": self.ecr_repo_name,
-                     "docker_repo":self.ecr_repo_name,
+        arguments = {"name": self.stack.ecr_repo_name,
+                     "docker_repo":self.stack.ecr_repo_name,
                      "aws_default_region": self.stack.aws_default_region}
 
         human_description = 'Create ecr repo if it does not exist'
