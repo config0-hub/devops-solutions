@@ -220,18 +220,28 @@ class Main(newSchedStack):
 
     def run_setup(self):
 
+        # testtest456
+        self.stack.logger.debug("a1"*32)
         self.stack.init_variables()
+        self.stack.logger.debug("a2"*32)
         self._eval_inputvars()
+        self.stack.logger.debug("a3"*32)
         self.stack.verify_variables()
-        self.stack.set_parallel()
-
-        self._sshdeploy()
-        self._token()
-        self._s3()
-        self._add_ecr_repo()
+        self.stack.logger.debug("a4"*32)
+        #self.stack.set_parallel()
         self.stack.unset_parallel()
+        self.stack.logger.debug("a5"*32)
 
+        self._add_ecr_repo()
+        self.stack.logger.debug("a6"*32)
+        self._sshdeploy()
+        self.stack.logger.debug("a7"*32)
+        self._token()
+        self.stack.logger.debug("a8"*32)
+        self._s3()
+        self.stack.logger.debug("a9"*32)
         self._dynamodb()
+        self.stack.logger.debug("a9b"*32)
 
         return self._webhook()
 
