@@ -649,7 +649,7 @@ class Main(newSchedStack):
         sched.automation_phase = "continuous_delivery"
         sched.human_description = "Setup Basic for Codebuild"
         sched.conditions.retries = 1
-        sched.on_success = ["dynamodb"]
+        sched.on_success = ["connect_repo"]
         self.add_schedule()
 
         sched = self.new_schedule()
