@@ -653,7 +653,7 @@ class Main(newSchedStack):
         self.add_schedule()
 
         sched = self.new_schedule()
-        sched.job = "dynamodb"
+        sched.job = "connect_repo"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
         sched.automation_phase = "continuous_delivery"
