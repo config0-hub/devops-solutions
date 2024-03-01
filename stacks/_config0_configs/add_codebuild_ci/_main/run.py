@@ -225,10 +225,10 @@ class Main(newSchedStack):
         self.stack.verify_variables()
         self.stack.set_parallel()
 
-        self._add_ecr_repo()
         self._sshdeploy()
         self._token()
         self._s3()
+        self._add_ecr_repo()
         self.stack.unset_parallel()
 
         self._dynamodb()
