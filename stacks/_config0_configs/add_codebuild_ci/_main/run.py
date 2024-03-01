@@ -228,17 +228,15 @@ class Main(newSchedStack):
         self._add_ecr_repo()
         self._sshdeploy()
         self._token()
-        self._s3()
+        return self._s3()
 
-        return self._webhook()
-
-    def run_dynamodb(self):
+    def run_connect_repo(self):
 
         self.stack.init_variables()
         self._eval_inputvars()
         self.stack.verify_variables()
-
-        return self._dynamodb()
+        self._dynamodb()
+        return self._webhook()
 
     def _add_ecr_repo(self):
 
@@ -635,7 +633,7 @@ class Main(newSchedStack):
 
         self.stack.unset_parallel()
         self.add_job("setup")
-        self.add_job("dynamodb")
+        self.add_job("connect_repo")
         self.add_job("ssm")
         self.add_job("codebuild")
         # self.add_job("webhook")
