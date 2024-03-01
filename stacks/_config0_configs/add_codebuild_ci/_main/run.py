@@ -644,8 +644,7 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "continuous_delivery"
         sched.human_description = "Setup Basic for Codebuild"
-        # testtest456
-        #sched.conditions.retries = 1
+        sched.conditions.retries = 1
         sched.on_success = ["ssm"]
         self.add_schedule()
 
@@ -663,8 +662,6 @@ class Main(newSchedStack):
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
         sched.automation_phase = "continuous_delivery"
-        # testtest456
-        sched.conditions.retries = 1
         sched.human_description = "Create Codebuild Project"
         self.add_schedule()
 
