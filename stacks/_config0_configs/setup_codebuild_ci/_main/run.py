@@ -143,14 +143,23 @@ class Main(newSchedStack):
         return self.stack.apigw.insert(display=True,
                                        **inputargs)
 
-    def run_s3(self):
+    def run_setup(self):
 
         self.stack.init_variables()
         self.stack.verify_variables()
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        suffix_id = self._determine_suffix_id()
         self.stack.set_parallel()
+        self._s3(cloud_tags_hash)
+        self._dynamodb(cloud_tags_hash)
+
+        self.stack.unset_parallel()
+        self._lambda(cloud_tags_hash)
+        return self._stepf(cloud_tags_hash)
+
+    def _s3(self,cloud_tags_hash):
+
+        suffix_id = self._determine_suffix_id()
 
         if "_" in self.stack.ci_environment:
             msg = "Cannot use underscores (Only hyphens) in the ci_environment"
@@ -195,13 +204,7 @@ class Main(newSchedStack):
         return self.stack.aws_s3_bucket.insert(display=True, 
                                                **inputargs)
 
-    def run_dynamodb(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-        cloud_tags_hash = self._set_cloud_tag_hash()
-
-        self.stack.set_parallel()
+    def _dynamodb(self,cloud_tags_hash):
 
         for suffix in ["runs", "settings"]:
 
@@ -462,11 +465,8 @@ class Main(newSchedStack):
 
         return _info["arn"]
 
-    def run_stepf(self):
+    def _stepf(self,cloud_tags_hash):
 
-        self.stack.init_variables()
-        self.stack.verify_variables()
-        cloud_tags_hash = self._set_cloud_tag_hash()
         stepf_name = self._get_stepf_name()
 
         arguments = {
@@ -526,11 +526,7 @@ class Main(newSchedStack):
         self.stack.py_lambda.insert(display=True,
                                     **inputargs)
 
-    def run_lambda(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-        cloud_tags_hash = self._set_cloud_tag_hash()
+    def _lambda(self,cloud_tags_hash):
 
         s3_bucket = self._get_s3_bucket()
         policy_template_hash = self._get_policy_template_hash()
@@ -602,10 +598,7 @@ class Main(newSchedStack):
     def run(self):
 
         self.stack.unset_parallel()
-        self.add_job("s3")
-        self.add_job("dynamodb")
-        self.add_job("lambda")
-        self.add_job("stepf")
+        self.add_job("setup")
         self.add_job("trigger_stepf")
         self.add_job("apigw")
         self.add_job("sns_subscription")
@@ -615,40 +608,12 @@ class Main(newSchedStack):
     def schedule(self):
 
         sched = self.new_schedule()
-        sched.job = "s3"
+        sched.job = "setup"
         sched.archive.timeout = 1200
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
-        sched.human_description = "Create s3 buckets"
+        sched.human_description = "Setup s3/dynamodb/lambdas/stepf"
         sched.conditions.retries = 1
-        sched.on_success = ["dynamodb"]
-
-        self.add_schedule()
-
-        sched = self.new_schedule()
-        sched.job = "dynamodb"
-        sched.archive.timeout = 1800
-        sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
-        sched.human_description = 'Create dynamodb'
-        sched.on_success = ["lambda"]
-        self.add_schedule()
-
-        sched = self.new_schedule()
-        sched.job = "lambda"
-        sched.archive.timeout = 1800
-        sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
-        sched.human_description = 'Create lambda'
-        sched.on_success = ["stepf"]
-        self.add_schedule()
-
-        sched = self.new_schedule()
-        sched.job = "stepf"
-        sched.archive.timeout = 1800
-        sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
-        sched.human_description = "Create Step Function"
         sched.on_success = ["trigger_stepf"]
         self.add_schedule()
 
