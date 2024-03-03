@@ -150,22 +150,34 @@ class Main(newSchedStack):
         self.stack.verify_variables()
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        self.stack.set_parallel()
+        self.stack.unset_parallel()
         self._s3(cloud_tags_hash)
         self._dynamodb(cloud_tags_hash)
+        self._lambda(cloud_tags_hash)
+
+        return self._stepf(cloud_tags_hash)
+
+        # testtest456
+        #self.stack.unset_parallel()
+        #self.stack.set_parallel()
 
         # Wait s3 is setup to store lambda functions
-        self.stack.wait_all()
+        #self.stack.unset_parallel()
+        #self.stack.wait_all()
 
-        self._lambda(cloud_tags_hash)
+        #self.stack.set_parallel()
+        #self._lambda(cloud_tags_hash)
 
         # Wait until lambda functions are setup
         # before setting up setp functions
-        self.stack.wait_all()
+        #self.stack.unset_parallel()
+        #self.stack.wait_all()
 
         return self._stepf(cloud_tags_hash)
 
     def _s3(self,cloud_tags_hash):
+
+        self.stack.set_parallel()
 
         suffix_id = self._determine_suffix_id()
 
@@ -213,6 +225,8 @@ class Main(newSchedStack):
                                                **inputargs)
 
     def _dynamodb(self,cloud_tags_hash):
+
+        self.stack.set_parallel()
 
         for suffix in ["runs", "settings"]:
 
@@ -532,6 +546,8 @@ class Main(newSchedStack):
                                     **inputargs)
 
     def _lambda(self,cloud_tags_hash):
+
+        self.stack.set_parallel()
 
         s3_bucket = self._get_s3_bucket()
         policy_template_hash = self._get_policy_template_hash()
