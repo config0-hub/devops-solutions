@@ -151,6 +151,7 @@ class Main(newSchedStack):
         cloud_tags_hash = self._set_cloud_tag_hash()
 
         self.stack.unset_parallel()
+
         self._s3(cloud_tags_hash)
         self._dynamodb(cloud_tags_hash)
         self._lambda(cloud_tags_hash)
@@ -221,8 +222,10 @@ class Main(newSchedStack):
                      "automation_phase": "infrastructure",
                      "human_description": human_description}
 
-        return self.stack.aws_s3_bucket.insert(display=True, 
-                                               **inputargs)
+        self.stack.aws_s3_bucket.insert(display=True,
+                                         **inputargs)
+
+        self.stack.unset_parallel()
 
     def _dynamodb(self,cloud_tags_hash):
 
@@ -242,9 +245,9 @@ class Main(newSchedStack):
                          "automation_phase": "infrastructure",
                          "human_description": human_description}
 
-            results = self.stack.aws_dynamodb.insert(display=True, **inputargs)
+            self.stack.aws_dynamodb.insert(display=True, **inputargs)
 
-        return results
+        self.stack.unset_parallel()
 
     def _get_log_policy(self):
 
@@ -565,8 +568,6 @@ class Main(newSchedStack):
         if self.stack.lambda_layers:
             base_arguments["lambda_layers"] = self.stack.lambda_layers
 
-        self.stack.set_parallel()
-
         # lambda_name = "process-webhook"
         lambda_name = "process-webhook"
         handler = "app_webhook.handler"
@@ -614,7 +615,7 @@ class Main(newSchedStack):
             self.stack.py_lambda.insert(display=True, 
                                         **inputargs)
 
-        return 
+        self.stack.unset_parallel()
 
     def run(self):
 
