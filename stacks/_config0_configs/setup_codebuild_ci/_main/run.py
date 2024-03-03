@@ -150,12 +150,18 @@ class Main(newSchedStack):
         self.stack.verify_variables()
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        self.stack.unset_parallel()
-
+        self.stack.set_parallel()
         self._s3(cloud_tags_hash)
-        self._dynamodb(cloud_tags_hash)
-        self._lambda(cloud_tags_hash)
+        return self._dynamodb(cloud_tags_hash)
 
+    def run_lambda_stepf(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+        cloud_tags_hash = self._set_cloud_tag_hash()
+
+        self.stack.unset_parallel()
+        self._lambda(cloud_tags_hash)
         return self._stepf(cloud_tags_hash)
 
         # testtest456
@@ -177,8 +183,6 @@ class Main(newSchedStack):
         return self._stepf(cloud_tags_hash)
 
     def _s3(self,cloud_tags_hash):
-
-        self.stack.set_parallel()
 
         suffix_id = self._determine_suffix_id()
 
@@ -225,11 +229,7 @@ class Main(newSchedStack):
         self.stack.aws_s3_bucket.insert(display=True,
                                          **inputargs)
 
-        self.stack.unset_parallel()
-
     def _dynamodb(self,cloud_tags_hash):
-
-        self.stack.set_parallel()
 
         for suffix in ["runs", "settings"]:
 
@@ -246,8 +246,6 @@ class Main(newSchedStack):
                          "human_description": human_description}
 
             self.stack.aws_dynamodb.insert(display=True, **inputargs)
-
-        self.stack.unset_parallel()
 
     def _get_log_policy(self):
 
@@ -621,6 +619,7 @@ class Main(newSchedStack):
 
         self.stack.unset_parallel()
         self.add_job("setup")
+        self.add_job("lambda_stepf")
         self.add_job("trigger_stepf")
         self.add_job("apigw")
         self.add_job("sns_subscription")
@@ -631,11 +630,20 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "setup"
-        sched.archive.timeout = 2700
+        sched.archive.timeout = 1800
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
-        sched.human_description = "Setup s3/dynamodb/lambdas/stepf"
+        sched.human_description = "Setup s3 and dynamodb"
         sched.conditions.retries = 1
+        sched.on_success = ["lambda_stepf"]
+        self.add_schedule()
+
+        sched = self.new_schedule()
+        sched.job = "lambda_stepf"
+        sched.archive.timeout = 1800
+        sched.archive.timewait = 120
+        sched.automation_phase = "infrastructure"
+        sched.human_description = "Setup lambdas and stepf"
         sched.on_success = ["trigger_stepf"]
         self.add_schedule()
 
