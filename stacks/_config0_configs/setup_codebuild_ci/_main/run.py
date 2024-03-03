@@ -1,3 +1,4 @@
+
 class Main(newSchedStack):
 
     def __init__(self, stackargs):
@@ -153,8 +154,15 @@ class Main(newSchedStack):
         self._s3(cloud_tags_hash)
         self._dynamodb(cloud_tags_hash)
 
-        self.stack.unset_parallel()
+        # Wait s3 is setup to store lambda functions
+        self.stack.wait_all()
+
         self._lambda(cloud_tags_hash)
+
+        # Wait until lambda functions are setup
+        # before setting up setp functions
+        self.stack.wait_all()
+
         return self._stepf(cloud_tags_hash)
 
     def _s3(self,cloud_tags_hash):
@@ -408,8 +416,6 @@ class Main(newSchedStack):
 
     def _get_policy_template_hash(self):
 
-        import json
-
         statements = []
 
         _statement = {"Action": ["ssm:*"],
@@ -427,14 +433,12 @@ class Main(newSchedStack):
         policy = {"Version": "2012-10-17",
                   "Statement": statements}
 
-        return self.stack.b64_encode(json.dumps(policy))
+        return self.stack.b64_encode(policy,
+                                     json_dumps=True)
 
     def _get_stepf_policy_template_hash(self):
 
-        import json
-
-        statements = []
-        statements.append(self._get_log_policy())
+        statements = [self._get_log_policy()]
         statements.extend(self._get_s3_policies())
         statements.append(self._get_lambda_policy())
         statements.append(self._get_stepf_policy())
@@ -442,7 +446,8 @@ class Main(newSchedStack):
         policy = {"Version": "2012-10-17",
                   "Statement": statements}
 
-        return self.stack.b64_encode(json.dumps(policy))
+        return self.stack.b64_encode(policy,
+                                     json_dumps=True)
 
     def _get_s3_bucket(self):
 
@@ -609,7 +614,7 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "setup"
-        sched.archive.timeout = 1200
+        sched.archive.timeout = 1800
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup s3/dynamodb/lambdas/stepf"
@@ -619,7 +624,7 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "trigger_stepf"
-        sched.archive.timeout = 1800
+        sched.archive.timeout = 1200
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create Lambda Trigger Step function'
@@ -628,7 +633,7 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "apigw"
-        sched.archive.timeout = 1800
+        sched.archive.timeout = 1200
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create apigateway'
@@ -637,7 +642,7 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "sns_subscription"
-        sched.archive.timeout = 1800
+        sched.archive.timeout = 1200
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create Codebuild Complete Trigger'
