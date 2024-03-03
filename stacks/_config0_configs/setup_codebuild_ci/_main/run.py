@@ -631,7 +631,7 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "setup"
-        sched.archive.timeout = 1800
+        sched.archive.timeout = 2700
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup s3/dynamodb/lambdas/stepf"
