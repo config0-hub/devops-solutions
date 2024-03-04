@@ -178,12 +178,10 @@ class Main(newSchedStack):
         if not self.stack.get_attr("ecr_repo_name"):
             return
 
-        docker_repo = self.stack.check_resource(name=self.stack.ecr_repo_name,
-                                                resource_type="ecr_repo",
-                                                provider="aws",
-                                                must_exists=True)[0]
-
-        return docker_repo["repository_uri"]
+        return self.stack.get_resource(name=self.stack.ecr_repo_name,
+                                       resource_type="ecr_repo",
+                                       provider="aws",
+                                       must_exists=True)[0]["repository_uri"]
 
     def _set_codebuild_buckets(self):
 

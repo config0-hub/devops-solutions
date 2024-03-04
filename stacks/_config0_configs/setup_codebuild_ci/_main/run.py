@@ -164,24 +164,6 @@ class Main(newSchedStack):
         self._lambda(cloud_tags_hash)
         return self._stepf(cloud_tags_hash)
 
-        # testtest456
-        #self.stack.unset_parallel()
-        #self.stack.set_parallel()
-
-        # Wait s3 is setup to store lambda functions
-        #self.stack.unset_parallel()
-        #self.stack.wait_all()
-
-        #self.stack.set_parallel()
-        #self._lambda(cloud_tags_hash)
-
-        # Wait until lambda functions are setup
-        # before setting up setp functions
-        #self.stack.unset_parallel()
-        #self.stack.wait_all()
-
-        return self._stepf(cloud_tags_hash)
-
     def _s3(self,cloud_tags_hash):
 
         suffix_id = self._determine_suffix_id()
