@@ -21,8 +21,8 @@ def run(stackargs):
                              types="str")
 
     # Add execgroup
-    #stack.add_execgroup("config0-publish:::aws::codebuild_evntbrdg_sns_lambda",
-    #                    "tf_execgroup")
+    stack.add_execgroup("config0-publish:::aws::codebuild_evntbrdg_sns_lambda",
+                        "tf_execgroup")
 
     # Add substack
     stack.add_substack('config0-publish:::tf_executor')
@@ -30,7 +30,7 @@ def run(stackargs):
 
     # Initialize Variables in stack
     stack.init_variables()
-    #stack.init_execgroups()
+    stack.init_execgroups()
     stack.init_substacks()
     stack.init_shelloutconfigs()
 
@@ -55,5 +55,9 @@ def run(stackargs):
                              **tf.get())
 
     return stack.get_results()
+
+
+
+
 
 
