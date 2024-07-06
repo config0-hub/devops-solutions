@@ -26,13 +26,13 @@ def run(stackargs):
 
     # Add substack
     stack.add_substack('config0-publish:::tf_executor')
-    #stack.add_shelloutconfig('config0-publish:::mongodb::create_keys')
+    stack.add_shelloutconfig('config0-publish:::mongodb::create_keys')
 
     # Initialize Variables in stack
     stack.init_variables()
     stack.init_execgroups()
     stack.init_substacks()
-    #stack.init_shelloutconfigs()
+    stack.init_shelloutconfigs()
 
     tf = TFConstructor(stack=stack,
                        provider="aws",
@@ -55,6 +55,8 @@ def run(stackargs):
                              **tf.get())
 
     return stack.get_results()
+
+
 
 
 
