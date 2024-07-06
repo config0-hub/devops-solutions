@@ -1,7 +1,7 @@
 def default():
 
     task = {'method': 'shelloutconfig',
-            'metadata': {'env_vars': ["config0-publish:::docker::build"],
+            'metadata': {'env_vars': [],
                          'shelloutconfigs': ['config0-publish:::terraform::resource_wrapper']
                          }
             }
