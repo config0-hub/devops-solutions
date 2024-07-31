@@ -378,7 +378,7 @@ gitlab-runner restart
 
     def run(self):
     
-        self.stack.unset_parallel()
+        self.stack.unset_parallel(sched_init=True)()
         #self.add_job("sshkey")
         #self.add_job("s3")
         #self.add_job("iam")

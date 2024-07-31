@@ -72,8 +72,10 @@ class Main(newSchedStack):
         except:
             cloud_tags = {}
 
-        cloud_tags = {"ci_environment": self.stack.ci_environment,
-                     "aws_default_region": self.stack.aws_default_region}
+        cloud_tags.update({
+            "ci_environment": self.stack.ci_environment,
+            "aws_default_region": self.stack.aws_default_region
+        })
 
         return self.stack.b64_encode(cloud_tags)
 
@@ -83,86 +85,17 @@ class Main(newSchedStack):
 
         # this setting is for
         # processing the webhook
-        env_vars = {"ENV": "build",
-                    "DEBUG_LAMBDA": "true",
-                    "BUILD_TTL": "60",
-                    "DISABLE_BRANCH_CHECK": "false",
-                    "DISABLE_EVENT_CHECK": "false"}
+        env_vars = {
+            "ENV": "build",
+            "DEBUG_LAMBDA": "true",
+            "BUILD_TTL": "60",
+            "DISABLE_BRANCH_CHECK": "false",
+            "DISABLE_EVENT_CHECK": "false"
+        }
 
         webhook_hash = self.stack.b64_encode(env_vars)
 
         return base_hash, webhook_hash
-
-    def run_sns_subscription(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-
-        lambda_name = "check-codebuild"
-        topic_name = "{}-codebuild-compelete-trigger".format(
-            self.stack.ci_environment)
-
-        cloud_tags_hash = self._set_cloud_tag_hash()
-
-        arguments = {"lambda_name": lambda_name,
-                     "cloud_tags_hash": cloud_tags_hash,
-                     "topic_name": topic_name,
-                     "aws_default_region": self.stack.aws_default_region}
-
-        human_description = "Create Codebuild SNS subscription for {}".format(self.stack.ci_environment)
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
-
-        return self.stack.sns_subscription.insert(display=True, 
-                                                  **inputargs)
-
-    def run_apigw(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-
-        cloud_tags_hash = self._set_cloud_tag_hash()
-
-        apigateway_name = "config0-codebuild-shared-{}".format(
-            self.stack.ci_environment)
-
-        # will trigger the lambda function
-        # that will trigger the step function
-        lambda_name = "lambda_trigger_stepf"
-
-        arguments = {"apigateway_name": apigateway_name,
-                     "cloud_tags_hash": cloud_tags_hash,
-                     "lambda_name": lambda_name,
-                     "aws_default_region": self.stack.aws_default_region}
-
-        human_description= 'Create API gateway {}'.format(apigateway_name)
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
-
-        return self.stack.apigw.insert(display=True,
-                                       **inputargs)
-
-    def run_setup(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-        cloud_tags_hash = self._set_cloud_tag_hash()
-
-        self.stack.set_parallel()
-        self._s3(cloud_tags_hash)
-        return self._dynamodb(cloud_tags_hash)
-
-    def run_lambda_stepf(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-        cloud_tags_hash = self._set_cloud_tag_hash()
-
-        self.stack.unset_parallel()
-        self._lambda(cloud_tags_hash)
-        return self._stepf(cloud_tags_hash)
 
     def _s3(self,cloud_tags_hash):
 
@@ -176,17 +109,21 @@ class Main(newSchedStack):
         s3_bucket = "codebuild-shared-{}-{}".format(self.stack.ci_environment,
                                                     suffix_id)
 
-        arguments = {"bucket": s3_bucket,
-                     "acl": self.stack.bucket_acl,
-                     "cloud_tags_hash": cloud_tags_hash,
-                     "force_destroy": "true",
-                     "enable_lifecycle": "false",
-                     "aws_default_region": self.stack.aws_default_region}
+        arguments = {
+            "bucket": s3_bucket,
+            "acl": self.stack.bucket_acl,
+            "cloud_tags_hash": cloud_tags_hash,
+            "force_destroy": "true",
+            "enable_lifecycle": "false",
+            "aws_default_region": self.stack.aws_default_region
+        }
 
         human_description= "Create s3 bucket {}".format(s3_bucket)
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "infrastructure",
+            "human_description": human_description
+        }
 
         self.stack.aws_s3_bucket.insert(display=True, 
                                         **inputargs)
@@ -195,18 +132,22 @@ class Main(newSchedStack):
         s3_bucket = "codebuild-shared-{}-{}-tmp".format(self.stack.ci_environment,
                                                         suffix_id)
 
-        arguments = {"bucket": s3_bucket,
-                     "acl": self.stack.bucket_acl,
-                     "cloud_tags_hash": cloud_tags_hash,
-                     "expire_days": self.stack.bucket_expire_days,
-                     "force_destroy": "true",
-                     "enable_lifecycle": "true",
-                     "aws_default_region": self.stack.aws_default_region}
+        arguments = {
+            "bucket": s3_bucket,
+            "acl": self.stack.bucket_acl,
+            "cloud_tags_hash": cloud_tags_hash,
+            "expire_days": self.stack.bucket_expire_days,
+            "force_destroy": "true",
+            "enable_lifecycle": "true",
+            "aws_default_region": self.stack.aws_default_region
+        }
 
         human_description= "Create s3 bucket {}".format(s3_bucket)
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "infrastructure",
+            "human_description": human_description
+        }
 
         self.stack.aws_s3_bucket.insert(display=True,
                                          **inputargs)
@@ -218,14 +159,18 @@ class Main(newSchedStack):
             dynamodb_name = "codebuild-shared-{}-{}".format(self.stack.ci_environment,
                                                             suffix)
 
-            arguments = {"dynamodb_name": dynamodb_name,
-                         "cloud_tags_hash": cloud_tags_hash,
-                         "aws_default_region": self.stack.aws_default_region}
+            arguments = {
+                "dynamodb_name": dynamodb_name,
+                "cloud_tags_hash": cloud_tags_hash,
+                "aws_default_region": self.stack.aws_default_region
+            }
 
             human_description= "Create dynamodb {}".format(dynamodb_name)
-            inputargs = {"arguments": arguments,
-                         "automation_phase": "infrastructure",
-                         "human_description": human_description}
+            inputargs = {
+                "arguments": arguments,
+                "automation_phase": "infrastructure",
+                "human_description": human_description
+            }
 
             self.stack.aws_dynamodb.insert(display=True, **inputargs)
 
@@ -479,14 +424,119 @@ class Main(newSchedStack):
 
         human_description = "Create step function {}".format(stepf_name)
 
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "infrastructure",
+            "human_description": human_description
+        }
 
         self.stack.codebuild_stepf_ci.insert(display=True,
                                                  **inputargs)
 
         return
+
+    def _lambda(self,cloud_tags_hash):
+
+        self.stack.set_parallel()
+
+        s3_bucket = self._get_s3_bucket()
+        policy_template_hash = self._get_policy_template_hash()
+        base_env_vars_hash, webhook_env_vars_hash = self._get_env_vars_lambda_hashes()
+
+        base_arguments = {
+            "s3_bucket": s3_bucket,
+            "runtime": self.stack.runtime,
+            "policy_template_hash": policy_template_hash,
+            "lambda_env_vars_hash": base_env_vars_hash,
+            "cloud_tags_hash": cloud_tags_hash,
+            "aws_default_region": self.stack.aws_default_region
+        }
+
+        if self.stack.lambda_layers:
+            base_arguments["lambda_layers"] = self.stack.lambda_layers
+
+        # lambda_name = "process-webhook"
+        lambda_name = "process-webhook"
+        handler = "app_webhook.handler"
+        s3_key = "{}.zip".format(lambda_name)
+
+        arguments = base_arguments.copy()
+        arguments.update({
+            "lambda_env_vars_hash": webhook_env_vars_hash,   # this is special for the processing of the webhook
+            "lambda_name": lambda_name,
+            "handler": handler,
+            "s3_key": s3_key,
+            "config0_lambda_execgroup_name": self.stack.lambda_webhook.name})
+
+        human_description= "Create lambda function {}".format(lambda_name)
+        inputargs = {"arguments": arguments,
+                     "automation_phase": "infrastructure",
+                     "human_description": human_description}
+
+        self.stack.py_lambda.insert(display=True,
+                                    **inputargs)
+
+        lambda_params = { "trigger-codebuild":["app_codebuild.handler",
+                                               self.stack.lambda_codebuild.name],
+                          "pkgcode-to-s3":["app_s3.handler",
+                                           self.stack.lambda_s3.name],
+                          "check-codebuild":["app_check_build.handler",
+                                             self.stack.lambda_check_codebuild.name]
+                          }
+
+        for lambda_name, params in lambda_params.items():
+
+            arguments = base_arguments.copy()
+            arguments.update({
+                "lambda_name": lambda_name,
+                "handler": params[0],
+                "s3_key": "{}.zip".format(lambda_name),
+                "config0_lambda_execgroup_name": params[1]
+            })
+
+            human_description= 'Create lambda function {}'.format(lambda_name)
+            inputargs = {"arguments": arguments,
+                         "automation_phase": "infrastructure",
+                         "human_description": human_description}
+
+            self.stack.py_lambda.insert(display=True,
+                                        **inputargs)
+
+        self.stack.unset_parallel()
+
+    # job definitions are prefixed with run_
+    def run_setup(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+        cloud_tags_hash = self._set_cloud_tag_hash()
+
+        # set parallel
+        self.stack.set_parallel()
+
+        # create s3 buckets
+        self._s3(cloud_tags_hash)
+
+        # create dynamodb table
+        self._dynamodb(cloud_tags_hash)
+
+        return True
+
+    def run_lambda_stepf(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+        cloud_tags_hash = self._set_cloud_tag_hash()
+
+        self.stack.unset_parallel()
+
+        # create lambda functions
+        self._lambda(cloud_tags_hash)
+
+        # create step function after lambda funcs
+        self._stepf(cloud_tags_hash)
+
+        return True
 
     def run_trigger_stepf(self):
 
@@ -528,78 +578,64 @@ class Main(newSchedStack):
         self.stack.py_lambda.insert(display=True,
                                     **inputargs)
 
-    def _lambda(self,cloud_tags_hash):
+    def run_apigw(self):
 
-        self.stack.set_parallel()
+        self.stack.init_variables()
+        self.stack.verify_variables()
 
-        s3_bucket = self._get_s3_bucket()
-        policy_template_hash = self._get_policy_template_hash()
-        base_env_vars_hash, webhook_env_vars_hash = self._get_env_vars_lambda_hashes()
+        cloud_tags_hash = self._set_cloud_tag_hash()
 
-        base_arguments = {
-                "s3_bucket": s3_bucket,
-                "runtime": self.stack.runtime,
-                "policy_template_hash": policy_template_hash,
-                "lambda_env_vars_hash": base_env_vars_hash,
-                "cloud_tags_hash": cloud_tags_hash,
-                "aws_default_region": self.stack.aws_default_region
-                }
+        apigateway_name = "config0-codebuild-shared-{}".format(
+            self.stack.ci_environment)
 
-        if self.stack.lambda_layers:
-            base_arguments["lambda_layers"] = self.stack.lambda_layers
+        # will trigger the lambda function
+        # that will trigger the step function
+        lambda_name = "lambda_trigger_stepf"
 
-        # lambda_name = "process-webhook"
-        lambda_name = "process-webhook"
-        handler = "app_webhook.handler"
-        s3_key = "{}.zip".format(lambda_name)
-
-        arguments = base_arguments.copy()
-        arguments.update({
-            "lambda_env_vars_hash": webhook_env_vars_hash,   # this is special for the processing of the webhook
+        arguments = {
+            "apigateway_name": apigateway_name,
+            "cloud_tags_hash": cloud_tags_hash,
             "lambda_name": lambda_name,
-            "handler": handler,
-            "s3_key": s3_key,
-            "config0_lambda_execgroup_name": self.stack.lambda_webhook.name})
+            "aws_default_region": self.stack.aws_default_region
+        }
 
-        human_description= "Create lambda function {}".format(lambda_name)
+        human_description= 'Create API gateway {}'.format(apigateway_name)
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "infrastructure",
+            "human_description": human_description
+        }
+
+        return self.stack.apigw.insert(display=True,
+                                       **inputargs)
+
+    def run_sns_subscription(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+
+        lambda_name = "check-codebuild"
+        topic_name = "{}-codebuild-compelete-trigger".format(
+            self.stack.ci_environment)
+
+        cloud_tags_hash = self._set_cloud_tag_hash()
+
+        arguments = {"lambda_name": lambda_name,
+                     "cloud_tags_hash": cloud_tags_hash,
+                     "topic_name": topic_name,
+                     "aws_default_region": self.stack.aws_default_region}
+
+        human_description = "Create Codebuild SNS subscription for {}".format(self.stack.ci_environment)
         inputargs = {"arguments": arguments,
                      "automation_phase": "infrastructure",
                      "human_description": human_description}
 
-        self.stack.py_lambda.insert(display=True, 
-                                    **inputargs)
-
-        lambda_params = { "trigger-codebuild":["app_codebuild.handler",
-                                               self.stack.lambda_codebuild.name],
-                          "pkgcode-to-s3":["app_s3.handler",
-                                           self.stack.lambda_s3.name],
-                          "check-codebuild":["app_check_build.handler",
-                                              self.stack.lambda_check_codebuild.name]
-                          }
-        
-        for lambda_name, params in lambda_params.items():
-
-            arguments = base_arguments.copy()
-            arguments.update({
-                "lambda_name": lambda_name,
-                "handler": params[0],
-                "s3_key": "{}.zip".format(lambda_name),
-                "config0_lambda_execgroup_name": params[1]
-                })
-
-            human_description= 'Create lambda function {}'.format(lambda_name)
-            inputargs = {"arguments": arguments,
-                         "automation_phase": "infrastructure",
-                         "human_description": human_description}
-
-            self.stack.py_lambda.insert(display=True, 
-                                        **inputargs)
-
-        self.stack.unset_parallel()
+        return self.stack.sns_subscription.insert(display=True, 
+                                                  **inputargs)
 
     def run(self):
 
-        self.stack.unset_parallel()
+        self.stack.unset_parallel(sched_init=True)()
         self.add_job("setup")
         self.add_job("lambda_stepf")
         self.add_job("trigger_stepf")
