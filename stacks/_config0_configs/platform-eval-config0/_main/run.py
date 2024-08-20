@@ -118,47 +118,47 @@ def run(stackargs):
 
     vpc_info = deepcopy(_aws_base_network_values)
     vpc_info["name"] = "vpc_info"
-    vpc_info["matchParams"] = { "resource_type": "vpc" }
+    vpc_info["values"]["matchParams"] = { "resource_type": "vpc" }
 
     public_route_table = deepcopy(_aws_base_network_values)
     public_route_table["name"] = "public_route_table"
-    public_route_table["matchParams"] = { "resource_type": "route_table" }
-    public_route_table["matchKeys"] = { "public_route_table": True }
+    public_route_table["values"]["matchParams"] = { "resource_type": "route_table" }
+    public_route_table["values"]["matchKeys"] = { "public_route_table": True }
 
     private_route_table = deepcopy(_aws_base_network_values)
     private_route_table["name"] = "private_route_table"
-    private_route_table["matchParams"] = { "resource_type": "route_table" }
-    private_route_table["matchKeys"] = { "private_route_table": True }
+    private_route_table["values"]["matchParams"] = { "resource_type": "route_table" }
+    private_route_table["values"]["matchKeys"] = { "private_route_table": True }
 
     private_subnet_info = deepcopy(_aws_base_network_values)
     private_subnet_info["name"] = "private_subnet_info"
-    private_subnet_info["matchParams"] = { "resource_type": "subnet" }
-    private_subnet_info["matchKeys"] = { "name": "private" }
+    private_subnet_info["values"]["matchParams"] = { "resource_type": "subnet" }
+    private_subnet_info["values"]["matchKeys"] = { "name": "private" }
 
     public_subnet_info = deepcopy(_aws_base_network_values)
     public_subnet_info["name"] = "public_subnet_info"
-    public_subnet_info["matchParams"] = { "resource_type": "subnet" }
-    public_subnet_info["matchKeys"] = { "name": "public" }
+    public_subnet_info["values"]["matchParams"] = { "resource_type": "subnet" }
+    public_subnet_info["values"]["matchKeys"] = { "name": "public" }
 
     sg_database_info = deepcopy(_aws_base_network_values)
     sg_database_info["name"] = "sg_database_info"
-    sg_database_info["matchParams"] = {"resource_type": "security_group"}
-    sg_database_info["matchKeys"] = {"name": "database"}
+    sg_database_info["values"]["matchParams"] = {"resource_type": "security_group"}
+    sg_database_info["values"]["matchKeys"] = {"name": "database"}
 
     sg_bastion_info = deepcopy(_aws_base_network_values)
     sg_bastion_info["name"] = "sg_bastion_info"
-    sg_bastion_info["matchParams"] = {"resource_type": "security_group"}
-    sg_bastion_info["matchKeys"] = {"name": "bastion"}
+    sg_bastion_info["values"]["matchParams"] = {"resource_type": "security_group"}
+    sg_bastion_info["values"]["matchKeys"] = {"name": "bastion"}
 
     sg_web_info = deepcopy(_aws_base_network_values)
     sg_web_info["name"] = "sg_web_info"
-    sg_web_info["matchParams"] = {"resource_type": "security_group"}
-    sg_web_info["matchKeys"] = {"name": "web"}
+    sg_web_info["values"]["matchParams"] = {"resource_type": "security_group"}
+    sg_web_info["values"]["matchKeys"] = {"name": "web"}
 
     sg_api_info = deepcopy(_aws_base_network_values)
     sg_api_info["name"] = "sg_api_info"
-    sg_api_info["matchParams"] = {"resource_type": "security_group"}
-    sg_api_info["matchKeys"] = {"name": "api"}
+    sg_api_info["values"]["matchParams"] = {"resource_type": "security_group"}
+    sg_api_info["values"]["matchKeys"] = {"name": "api"}
 
     network_vars = {
         "name": "network_vars",
@@ -188,6 +188,10 @@ def run(stackargs):
         }
     }
 
+    #####################################################
+    # default stacks and associate variables,
+    # labels, and selectors
+    #####################################################
     # vpc/network_vars_set for vpc setting
     stack.add_substack('config0-publish:::aws_vpc_simple',
                        arguments=[cloud_tags],
