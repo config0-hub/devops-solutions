@@ -1,5 +1,7 @@
 def run(stackargs):
 
+    from copy import deepcopy
+
     '''
     this is platform versioning example 
     for the starting out guide
@@ -38,7 +40,7 @@ def run(stackargs):
         }
     }
 
-    # network related
+    # network related arguments
     network_vars_set_labels_hash = {
         "name":"network_vars_set_labels_hash",
         "values": {
@@ -47,6 +49,24 @@ def run(stackargs):
                 "region": aws_default_region,
                 "area": "network",
                 "provider": "aws"
+            })
+        }
+    }
+
+    network_vars_set_arguments_hash = {
+        "name":"network_vars_set_arguments_hash",
+        "values": {
+            "arguments_hash": stack.b64_encode({
+                "vpc_name": "selector:::vpc_info::name",
+                "vpc_id": "selector:::vpc_info::vpc_id",
+                "public_subnet_ids": "selector:::public_subnet_info::subnet_id:csv",
+                "private_subnet_ids": "selector:::private_subnet_info::subnet_id:csv",
+                "public_route_table_id": "selector:::public_route_table::route_table_id",
+                "private_route_table_id": "selector:::private_route_table::route_table_id",
+                "db_sg_id": "selector:::sg_database_info::sg_id",
+                "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
+                "web_sg_id": "selector:::sg_web_info::sg_id",
+                "api_sg_id": "selector:::sg_api_info::sg_id"
             })
         }
     }
@@ -80,9 +100,7 @@ def run(stackargs):
     #####################################################
     # vars set stack specific variable set
     # special selector base
-    aws_base_network = {
-        "name":"aws_base_network",
-        "base":True,   # this indicates this is a base for other selectors
+    _aws_base_network_values = {
         "values":{
             "matchKeys":{
                 "provider":"aws"
@@ -93,6 +111,54 @@ def run(stackargs):
             },
         }
     }
+
+    aws_base_network = deepcopy(_aws_base_network_values)
+    aws_base_network["name"] = "aws_base_network"
+    aws_base_network["base"] = True
+
+    vpc_info = deepcopy(_aws_base_network_values)
+    vpc_info["name"] = "vpc_info"
+    vpc_info["matchParams"] = { "resource_type": "vpc" }
+
+    public_route_table = deepcopy(_aws_base_network_values)
+    public_route_table["name"] = "public_route_table"
+    public_route_table["matchParams"] = { "resource_type": "route_table" }
+    public_route_table["matchKeys"] = { "public_route_table": True }
+
+    private_route_table = deepcopy(_aws_base_network_values)
+    private_route_table["name"] = "private_route_table"
+    private_route_table["matchParams"] = { "resource_type": "route_table" }
+    private_route_table["matchKeys"] = { "private_route_table": True }
+
+    private_subnet_info = deepcopy(_aws_base_network_values)
+    private_subnet_info["name"] = "private_subnet_info"
+    private_subnet_info["matchParams"] = { "resource_type": "subnet" }
+    private_subnet_info["matchKeys"] = { "name": "private" }
+
+    public_subnet_info = deepcopy(_aws_base_network_values)
+    public_subnet_info["name"] = "public_subnet_info"
+    public_subnet_info["matchParams"] = { "resource_type": "subnet" }
+    public_subnet_info["matchKeys"] = { "name": "public" }
+
+    sg_database_info = deepcopy(_aws_base_network_values)
+    sg_database_info["name"] = "sg_database_info"
+    sg_database_info["matchParams"] = {"resource_type": "security_group"}
+    sg_database_info["matchKeys"] = {"name": "database"}
+
+    sg_bastion_info = deepcopy(_aws_base_network_values)
+    sg_bastion_info["name"] = "sg_bastion_info"
+    sg_bastion_info["matchParams"] = {"resource_type": "security_group"}
+    sg_bastion_info["matchKeys"] = {"name": "bastion"}
+
+    sg_web_info = deepcopy(_aws_base_network_values)
+    sg_web_info["name"] = "sg_web_info"
+    sg_web_info["matchParams"] = {"resource_type": "security_group"}
+    sg_web_info["matchKeys"] = {"name": "web"}
+
+    sg_api_info = deepcopy(_aws_base_network_values)
+    sg_api_info["name"] = "sg_api_info"
+    sg_api_info["matchParams"] = {"resource_type": "security_group"}
+    sg_api_info["matchKeys"] = {"name": "api"}
 
     network_vars = {
         "name": "network_vars",
@@ -134,14 +200,24 @@ def run(stackargs):
     stack.add_substack('config0-publish:::network_vars_set',
                        arguments=[
                            cloud_tags,
-                           network_vars_set_labels_hash
+                           network_vars_set_labels_hash,
+                           network_vars_set_arguments_hash
                        ],
                        labels=[
                            general,
                            aws_cloud
                        ],
                        selectors=[
-                           aws_base_network
+                           aws_base_network,
+                           vpc_info,
+                           public_route_table,
+                           private_route_table,
+                           public_subnet_info,
+                           private_subnet_info,
+                           sg_bastion_info,
+                           sg_database_info,
+                           sg_web_info,
+                           sg_api_info
                        ])
 
     # ci with aws codebuild
