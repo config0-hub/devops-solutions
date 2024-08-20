@@ -12,21 +12,27 @@ def run(stackargs):
     # as a platform stack/configuration
     stack.set_platform()
 
+    #####################################################
+    # specific vars for platform
+    #####################################################
     aws_default_region = "eu-west-1"
     billing_tag = "eval-config0-2024"
 
-    general_labels = {
+    _global_labels = {
         "environment": "dev",
         "purpose": "eval-config0"
     }
 
+    #####################################################
+    # stack arguments
+    #####################################################
     # cloud_tags arguments are passed
     # as b64 string as cloud_tags_hash
     cloud_tags = {
         "name":"cloud_tags",
         "values": {
             "cloud_tags_hash": stack.b64_encode({
-                **general_labels,
+                **_global_labels,
                 "billing":billing_tag
             })
         }
@@ -37,7 +43,7 @@ def run(stackargs):
         "name":"network_vars_set_labels_hash",
         "values": {
             "labels_hash": stack.b64_encode({
-                **general_labels,
+                **_global_labels,
                 "region": aws_default_region,
                 "area": "network",
                 "provider": "aws"
@@ -45,10 +51,12 @@ def run(stackargs):
         }
     }
 
-    # labels for resources that are added
+    #####################################################
+    # stack labels
+    #####################################################
     general = {
         "name":"general",
-        "values":general_labels
+        "values":_global_labels
     }
 
     aws_cloud = {
@@ -67,8 +75,10 @@ def run(stackargs):
         }
     }
 
-    # vars set stack specific
-    # variable set
+    #####################################################
+    # stack selectors
+    #####################################################
+    # vars set stack specific variable set
     # special selector base
     aws_base_network = {
         "name":"aws_base_network",
@@ -78,7 +88,7 @@ def run(stackargs):
                 "provider":"aws"
             },
             "matchLabels": {
-                **general_labels,
+                **_global_labels,
                 "area": "network"
             },
         }
@@ -88,9 +98,9 @@ def run(stackargs):
         "name": "network_vars",
         "values": {
             "matchLabels": {
-                **general_labels,
-                "area": "network",
+                **_global_labels,
                 "region":aws_default_region,
+                "area": "network",
                 "provider":"aws"
             },
         }
@@ -100,7 +110,7 @@ def run(stackargs):
         "name": "eks_info",
         "values": {
             "matchLabels": {
-                **general_labels
+                **_global_labels
             },
             "matchKeys": {
                 "provider":"aws",
@@ -233,7 +243,9 @@ def run(stackargs):
     # drift detection of resources
     stack.add_substack('config0-publish:::check_drift_resources',
                        arguments=[cloud_tags],
-                       labels=[general])
+                       labels=[
+                           general
+                       ])
 
     stack.init_substacks()
 
