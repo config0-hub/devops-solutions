@@ -169,6 +169,9 @@ def run(stackargs):
                 "area": "network",
                 "provider":"aws"
             },
+            "matchParams": {
+                "resource_type": "vars_set"
+            }
         }
     }
 
