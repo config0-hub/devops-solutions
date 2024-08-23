@@ -192,9 +192,10 @@ def run(stackargs):
     }
 
     #####################################################
-    # default stacks and associate variables,
-    # labels, and selectors
+    # stacks allowed
     #####################################################
+
+    # Individual IaCs
     # vpc/network_vars_set for vpc setting
     stack.add_substack('config0-publish:::aws_vpc_simple',
                        arguments=[cloud_tags],
@@ -329,6 +330,8 @@ def run(stackargs):
                        labels=[
                            general
                        ])
+
+    # developer solutions
 
     stack.init_substacks()
 

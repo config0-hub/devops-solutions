@@ -1,0 +1,10 @@
+desc: This is a demo stack
+release: 0.0.1
+categories: 
+   - demo
+tags:
+   - demo
+   - infrastructure
+   - aws
+   - cloud
+   - public_cloud
