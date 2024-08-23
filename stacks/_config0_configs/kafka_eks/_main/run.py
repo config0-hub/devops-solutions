@@ -139,7 +139,7 @@ class Main(newSchedStack):
 
         # add substack
         self.stack.add_substack("config0-publish:::empty_stack")
-        self.stack.add_substack("config0-publish:::kafka")
+        self.stack.add_substack("config0-publish:::kafka_on_ec2")
         self.stack.add_substack("config0-publish:::aws_eks")
 
         self.stack.init_substacks()
@@ -188,8 +188,8 @@ class Main(newSchedStack):
             "human_description": f'create kafka_cluster "{self.stack.kafka_cluster}"'
         }
 
-        return self.stack.kafka.insert(display=True,
-                                       **inputargs)
+        return self.stack.kafka_on_ec2.insert(display=True,
+                                              **inputargs)
 
     def _eks(self):
 

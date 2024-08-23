@@ -129,7 +129,7 @@ def run(stackargs):
                              default="null")
 
     # add substack
-    stack.add_substack("config0-publish:::mongodb")
+    stack.add_substack("config0-publish:::mongodb_replica_on_ec2")
     stack.add_substack("config0-publish:::aws_eks")
 
     # initialize
@@ -179,8 +179,8 @@ def run(stackargs):
         "human_description": f'create mongodb_cluster "{stack.mongodb_cluster}"'
     }
 
-    stack.mongodb.insert(display=True,
-                         **inputargs)
+    stack.mongodb_replica_on_ec2.insert(display=True,
+                                        **inputargs)
 
     # eks
     if not stack.get_attr("eks_cluster"):
