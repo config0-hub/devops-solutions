@@ -71,6 +71,30 @@ def run(stackargs):
         }
     }
 
+    env_sql_arguments = {
+        "name":"env_sql_arguments",
+        "values": {
+            "db_engine": "MySQL",
+            "db_engine_version": "5.7.44",
+            "vpc_id": "selector:::network_vars::vpc_id",
+            "vpc_name": "selector:::vpc_info::vpc_name",
+            "private_route_table_id": "selector:::private_route_table::route_table_id",
+            "public_subnet_ids": "selector:::network_vars::public_subnet_ids:csv",
+            "private_subnet_ids": "selector:::network_vars::private_subnet_ids:csv",
+            "db_sg_id": "selector:::network_vars::db_sg_id",
+            "eks_cluster_sg_id": "selector:::network_vars::bastion_sg_id",
+            "eks_node_role_arn": "selector:::eks_info::node_role_arn"
+        }
+    }
+
+
+
+
+
+
+
+
+
     #####################################################
     # stack labels
     #####################################################
@@ -332,6 +356,30 @@ def run(stackargs):
                        ])
 
     # developer solutions
+    stack.add_substack('config0-publish:::env_sql',
+                       arguments=[
+                           cloud_tags,
+                           env_sql_arguments,
+                           network_vars_set_labels_hash,
+                           network_vars_set_arguments_hash
+                       ],
+                       labels=[
+                           general
+                       ],
+                       selectors=[
+                           network_vars,
+                           eks_info,
+                           aws_base_network,
+                           vpc_info,
+                           public_route_table,
+                           private_route_table,
+                           public_subnet_info,
+                           private_subnet_info,
+                           sg_bastion_info,
+                           sg_database_info,
+                           sg_web_info,
+                           sg_api_info
+                       ])
 
     stack.init_substacks()
 
