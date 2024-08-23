@@ -71,29 +71,58 @@ def run(stackargs):
         }
     }
 
+    _env_network_values = {
+        "vpc_id": "selector:::network_vars::vpc_id",
+        "vpc_name": "selector:::vpc_info::vpc_name",
+        "private_route_table_id": "selector:::private_route_table::route_table_id",
+        "public_subnet_ids": "selector:::network_vars::public_subnet_ids:csv",
+        "private_subnet_ids": "selector:::network_vars::private_subnet_ids:csv",
+        "db_sg_id": "selector:::network_vars::db_sg_id",
+        "eks_cluster_sg_id": "selector:::network_vars::bastion_sg_id",
+        "eks_node_role_arn": "selector:::eks_info::node_role_arn"
+    }
+
+    # env sql
     env_sql_arguments = {
         "name":"env_sql_arguments",
         "values": {
             "db_engine": "MySQL",
-            "db_engine_version": "5.7.44",
-            "vpc_id": "selector:::network_vars::vpc_id",
-            "vpc_name": "selector:::vpc_info::vpc_name",
-            "private_route_table_id": "selector:::private_route_table::route_table_id",
-            "public_subnet_ids": "selector:::network_vars::public_subnet_ids:csv",
-            "private_subnet_ids": "selector:::network_vars::private_subnet_ids:csv",
-            "db_sg_id": "selector:::network_vars::db_sg_id",
-            "eks_cluster_sg_id": "selector:::network_vars::bastion_sg_id",
-            "eks_node_role_arn": "selector:::eks_info::node_role_arn"
+            "db_engine_version": "5.7.44"
         }
     }
 
+    env_sql_arguments["values"].update(_env_network_values)
 
+    # env nosql
+    env_nosql_arguments = {
+        "name":"env_nosql_arguments",
+        "values": {
+            "mongodb_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
+            "mongodb_ami_owner": "099720109477",
+            "bastion_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*",
+            "bastion_ami_owner": "099720109477",
+            "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
+            "bastion_subnet_ids": "selector:::public_subnet_info::subnet_id:csv"
+        }
+    }
 
+    env_nosql_arguments["values"].update(_env_network_values)
 
+    # env streaming
+    env_streaming_arguments = {
+        "name":"env_streaming_arguments",
+        "values": {
+            "bastion_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*",
+            "bastion_ami_owner": "099720109477",
+            "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
+            "bastion_subnet_ids": "selector:::public_subnet_info::subnet_id:csv",
+            "kafka_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
+            "kafka_ami_owner": "099720109477",
+            "kafka_instance_type": "t3.micro"
+        }
+    }
 
-
-
-
+    env_streaming_arguments["values"].update(_env_network_values)
 
     #####################################################
     # stack labels
@@ -360,6 +389,57 @@ def run(stackargs):
                        arguments=[
                            cloud_tags,
                            env_sql_arguments,
+                           network_vars_set_labels_hash,
+                           network_vars_set_arguments_hash
+                       ],
+                       labels=[
+                           general
+                       ],
+                       selectors=[
+                           network_vars,
+                           eks_info,
+                           aws_base_network,
+                           vpc_info,
+                           public_route_table,
+                           private_route_table,
+                           public_subnet_info,
+                           private_subnet_info,
+                           sg_bastion_info,
+                           sg_database_info,
+                           sg_web_info,
+                           sg_api_info
+                       ])
+
+
+    stack.add_substack('config0-publish:::env_nosql',
+                       arguments=[
+                           cloud_tags,
+                           env_nosql_arguments,
+                           network_vars_set_labels_hash,
+                           network_vars_set_arguments_hash
+                       ],
+                       labels=[
+                           general
+                       ],
+                       selectors=[
+                           network_vars,
+                           eks_info,
+                           aws_base_network,
+                           vpc_info,
+                           public_route_table,
+                           private_route_table,
+                           public_subnet_info,
+                           private_subnet_info,
+                           sg_bastion_info,
+                           sg_database_info,
+                           sg_web_info,
+                           sg_api_info
+                       ])
+
+    stack.add_substack('config0-publish:::env_streaming',
+                       arguments=[
+                           cloud_tags,
+                           env_streaming_arguments,
                            network_vars_set_labels_hash,
                            network_vars_set_arguments_hash
                        ],
