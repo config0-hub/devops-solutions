@@ -40,34 +40,61 @@ def run(stackargs):
         }
     }
 
+    # network vars single run
+
+    _network_vars_labels_hash = stack.b64_encode({
+        **_global_labels,
+        "region": aws_default_region,
+        "area": "network",
+        "provider": "aws"
+    })
+
+    _network_vars_arguments_hash = stack.b64_encode({
+        "vpc_name": "selector:::vpc_info::name",
+        "vpc_id": "selector:::vpc_info::vpc_id",
+        "public_subnet_ids": "selector:::public_subnet_info::subnet_id:csv",
+        "private_subnet_ids": "selector:::private_subnet_info::subnet_id:csv",
+        "public_route_table_id": "selector:::public_route_table::route_table_id",
+        "private_route_table_id": "selector:::private_route_table::route_table_id",
+        "db_sg_id": "selector:::sg_database_info::sg_id",
+        "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
+        "web_sg_id": "selector:::sg_web_info::sg_id",
+        "api_sg_id": "selector:::sg_api_info::sg_id"
+    })
+
     # network related arguments
     network_vars_set_labels_hash = {
         "name":"network_vars_set_labels_hash",
         "values": {
-            "labels_hash": stack.b64_encode({
-                **_global_labels,
-                "region": aws_default_region,
-                "area": "network",
-                "provider": "aws"
-            })
+            "labels_hash": _network_vars_labels_hash
         }
     }
 
     network_vars_set_arguments_hash = {
         "name":"network_vars_set_arguments_hash",
         "values": {
-            "arguments_hash": stack.b64_encode({
-                "vpc_name": "selector:::vpc_info::name",
-                "vpc_id": "selector:::vpc_info::vpc_id",
-                "public_subnet_ids": "selector:::public_subnet_info::subnet_id:csv",
-                "private_subnet_ids": "selector:::private_subnet_info::subnet_id:csv",
-                "public_route_table_id": "selector:::public_route_table::route_table_id",
-                "private_route_table_id": "selector:::private_route_table::route_table_id",
-                "db_sg_id": "selector:::sg_database_info::sg_id",
-                "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
-                "web_sg_id": "selector:::sg_web_info::sg_id",
-                "api_sg_id": "selector:::sg_api_info::sg_id"
-            })
+            "arguments_hash": _network_vars_arguments_hash
+        }
+    }
+
+    # env related arguments
+
+    # the below is the same as above the variable is not
+    # labels_hash or arguments_hash, but rather
+    # netvars_set_arguments_hash
+    # netvars_set_labels_hash
+
+    netvars_set_labels_hash = {
+        "name":"netvars_set_labels_hash",
+        "values": {
+            "netvars_set_labels_hash": _network_vars_labels_hash
+        }
+    }
+
+    netvars_set_arguments_hash = {
+        "name":"netvars_set_arguments_hash",
+        "values": {
+            "netvars_set_arguments_hash": _network_vars_arguments_hash
         }
     }
 
@@ -389,8 +416,8 @@ def run(stackargs):
                        arguments=[
                            cloud_tags,
                            env_sql_arguments,
-                           network_vars_set_labels_hash,
-                           network_vars_set_arguments_hash
+                           netvars_set_arguments_hash,
+                           netvars_set_labels_hash
                        ],
                        labels=[
                            general
@@ -415,8 +442,8 @@ def run(stackargs):
                        arguments=[
                            cloud_tags,
                            env_nosql_arguments,
-                           network_vars_set_labels_hash,
-                           network_vars_set_arguments_hash
+                           netvars_set_arguments_hash,
+                           netvars_set_labels_hash
                        ],
                        labels=[
                            general
@@ -440,8 +467,8 @@ def run(stackargs):
                        arguments=[
                            cloud_tags,
                            env_streaming_arguments,
-                           network_vars_set_labels_hash,
-                           network_vars_set_arguments_hash
+                           netvars_set_arguments_hash,
+                           netvars_set_labels_hash
                        ],
                        labels=[
                            general
