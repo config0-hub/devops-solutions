@@ -25,12 +25,16 @@ def run(stackargs):
     # with value randomly created
     _global_labels = {
         "environment": "dev",
-        "purpose": "eval-config0",
-        "_config0_autogen": {
-            "name":"unique_id",
-            "value": "_random"
-        }
+        "purpose": "eval-config0"
     }
+    #_global_labels = {
+    #    "environment": "dev",
+    #    "purpose": "eval-config0",
+    #    "_config0_autogen": {
+    #        "name":"unique_id",
+    #        "value": "_random"
+    #    }
+    #}
 
     #####################################################
     # stack arguments
