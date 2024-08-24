@@ -20,9 +20,16 @@ def run(stackargs):
     aws_default_region = "eu-west-1"
     billing_tag = "eval-config0-2024"
 
+    # _config_autogen informs config0 platform
+    # to create an additional label "unique_id"
+    # with value randomly created
     _global_labels = {
         "environment": "dev",
-        "purpose": "eval-config0"
+        "purpose": "eval-config0",
+        "_config0_autogen": {
+            "name":"unique_id",
+            "value": "_random"
+        }
     }
 
     #####################################################
@@ -41,7 +48,6 @@ def run(stackargs):
     }
 
     # network vars single run
-
     _network_vars_labels_hash = stack.b64_encode({
         **_global_labels,
         "region": aws_default_region,
@@ -186,9 +192,8 @@ def run(stackargs):
                 "provider":"aws"
             },
             "matchLabels": {
-                **_global_labels,
-                "area": "network"
-            },
+                **_global_labels
+            }
         }
     }
 
@@ -246,7 +251,6 @@ def run(stackargs):
             "matchLabels": {
                 **_global_labels,
                 "region":aws_default_region,
-                "area": "network",
                 "provider":"aws"
             },
             "matchParams": {
