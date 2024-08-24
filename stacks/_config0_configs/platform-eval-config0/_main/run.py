@@ -190,11 +190,19 @@ def run(stackargs):
     #####################################################
     # vars set stack specific variable set
     # special selector base
+    #_aws_base_network_values = {
+    #    "values":{
+    #        "matchKeys":{
+    #            "provider":"aws"
+    #        },
+    #        "matchLabels": {
+    #            **_global_labels
+    #        }
+    #    }
+    #}
+
     _aws_base_network_values = {
         "values":{
-            "matchKeys":{
-                "provider":"aws"
-            },
             "matchLabels": {
                 **_global_labels
             }
@@ -253,9 +261,7 @@ def run(stackargs):
         "name": "network_vars",
         "values": {
             "matchLabels": {
-                **_global_labels,
-                "region":aws_default_region,
-                "provider":"aws"
+                **_global_labels
             },
             "matchParams": {
                 "resource_type": "vars_set"
@@ -270,7 +276,6 @@ def run(stackargs):
                 **_global_labels
             },
             "matchKeys": {
-                "provider":"aws",
                 "region":aws_default_region
             },
             "matchParams": {
