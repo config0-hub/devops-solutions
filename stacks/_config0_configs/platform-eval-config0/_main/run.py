@@ -15,26 +15,22 @@ def run(stackargs):
     stack.set_platform()
 
     #####################################################
+    # special global_labels used in platform
+    #####################################################
+    # config_autogen informs config0 platform
+    # to create an additional label "unique_id"
+    # with value random
+    global_labels = {
+        "environment": "dev",
+        "purpose": "eval-config0",
+        "config0_autogen:::unique_id": "_random"
+    }
+
+    #####################################################
     # specific vars for platform
     #####################################################
     aws_default_region = "eu-west-1"
     billing_tag = "eval-config0-2024"
-
-    # _config_autogen informs config0 platform
-    # to create an additional label "unique_id"
-    # with value randomly created
-    _global_labels = {
-        "environment": "dev",
-        "purpose": "eval-config0"
-    }
-    #_global_labels = {
-    #    "environment": "dev",
-    #    "purpose": "eval-config0",
-    #    "_config0_autogen": {
-    #        "name":"unique_id",
-    #        "value": "_random"
-    #    }
-    #}
 
     #####################################################
     # stack arguments
@@ -45,7 +41,7 @@ def run(stackargs):
         "name":"cloud_tags",
         "values": {
             "cloud_tags_hash": stack.b64_encode({
-                **_global_labels,
+                **global_labels,
                 "billing":billing_tag
             })
         }
@@ -53,7 +49,7 @@ def run(stackargs):
 
     # network vars single run
     _network_vars_labels_hash = stack.b64_encode({
-        **_global_labels,
+        **global_labels,
         "region": aws_default_region,
         "area": "network",
         "provider": "aws"
@@ -166,7 +162,7 @@ def run(stackargs):
     #####################################################
     general = {
         "name":"general",
-        "values":_global_labels
+        "values":global_labels
     }
 
     aws_cloud = {
@@ -185,26 +181,10 @@ def run(stackargs):
         }
     }
 
-    #####################################################
-    # stack selectors
-    #####################################################
-    # vars set stack specific variable set
-    # special selector base
-    #_aws_base_network_values = {
-    #    "values":{
-    #        "matchKeys":{
-    #            "provider":"aws"
-    #        },
-    #        "matchLabels": {
-    #            **_global_labels
-    #        }
-    #    }
-    #}
-
     _aws_base_network_values = {
         "values":{
             "matchLabels": {
-                **_global_labels
+                **global_labels
             }
         }
     }
@@ -261,7 +241,7 @@ def run(stackargs):
         "name": "network_vars",
         "values": {
             "matchLabels": {
-                **_global_labels
+                **global_labels
             },
             "matchParams": {
                 "resource_type": "vars_set"
@@ -273,7 +253,7 @@ def run(stackargs):
         "name": "eks_info",
         "values": {
             "matchLabels": {
-                **_global_labels
+                **global_labels
             },
             "matchKeys": {
                 "region":aws_default_region
@@ -291,7 +271,9 @@ def run(stackargs):
     # Individual IaCs
     # vpc/network_vars_set for vpc setting
     stack.add_substack('config0-publish:::aws_vpc_simple',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -323,14 +305,18 @@ def run(stackargs):
 
     # ci with aws codebuild
     stack.add_substack('config0-publish:::setup_codebuild_ci',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
                        ])
 
     stack.add_substack('config0-publish:::add_codebuild_ci',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -340,7 +326,9 @@ def run(stackargs):
                        ])
 
     stack.add_substack('config0-publish:::aws_nat_inst_vpc',  # nat instance (instead of nat gw)
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -350,7 +338,9 @@ def run(stackargs):
                        ])
 
     stack.add_substack('config0-publish:::aws_nat_vpc',  # aws nat gateway saas
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -361,7 +351,9 @@ def run(stackargs):
 
     # aws stateful stacks
     stack.add_substack('config0-publish:::aws_rds',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -371,7 +363,9 @@ def run(stackargs):
                        ])
 
     stack.add_substack('config0-publish:::mongodb_replica_on_ec2',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -381,7 +375,9 @@ def run(stackargs):
                        ])
 
     stack.add_substack('config0-publish:::kafka_on_ec2',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -392,7 +388,9 @@ def run(stackargs):
 
     # aws kubernetes
     stack.add_substack('config0-publish:::aws_eks',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            aws_cloud
@@ -404,14 +402,18 @@ def run(stackargs):
 
     # digital ocean
     stack.add_substack("config0-publish:::jenkins_on_do",
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            do_cloud
                        ])
 
     stack.add_substack("config0-publish:::doks",
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general,
                            do_cloud
@@ -419,7 +421,9 @@ def run(stackargs):
 
     # drift detection of resources
     stack.add_substack('config0-publish:::check_drift_resources',
-                       arguments=[cloud_tags],
+                       arguments=[
+                           cloud_tags
+                       ],
                        labels=[
                            general
                        ])
