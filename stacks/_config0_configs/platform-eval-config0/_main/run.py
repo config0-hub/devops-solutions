@@ -15,21 +15,16 @@ def run(stackargs):
     stack.set_platform()
 
     #####################################################
-    # special global_labels used in platform
-    #####################################################
-    # config_autogen informs config0 platform
-    # to create an additional label "unique_id"
-    # with value random
-    global_labels = {
-        "environment": "dev",
-        "purpose": "eval-config0",
-        "config0_autogen:::unique_id": "_random"
-    }
-
-    #####################################################
     # specific vars for platform
     #####################################################
     aws_default_region = "eu-west-1"
+
+    global_labels = {
+        "environment": "dev",
+        "purpose": "eval-config0",
+        "config0_autogen:::insert::unique_id": True  # special keyword config0-autogen
+    }
+
     billing_tag = "eval-config0-2024"
 
     #####################################################
