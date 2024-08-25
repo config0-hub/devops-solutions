@@ -54,7 +54,7 @@ def run(stackargs):
     _at_launch = {
         "labels": {
             "fields": {
-                "_": {
+                "*": {
                     "insert": "*"
                 }
             }
