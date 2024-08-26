@@ -243,9 +243,10 @@ def run(stackargs):
         "arguments": arguments,
         "automation_phase": "infrastructure",
         "human_description": f'create kafka/eks cluster "{stack.eks_cluster}"'
+        "timeout":4800
     }
 
     stack.kafka_eks.insert(display=True,
-                             **inputargs)
+                           **inputargs)
 
     return stack.get_results()
