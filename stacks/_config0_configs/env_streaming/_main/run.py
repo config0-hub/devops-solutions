@@ -182,7 +182,8 @@ def run(stackargs):
     inputargs = {
         "arguments": arguments,
         "automation_phase": "infrastructure",
-        "human_description": f'create 3tier env {stack.eks_cluster}"'
+        "human_description": f'create 3tier env {stack.eks_cluster}"',
+        "timeout":7200
     }
 
     stack.network.insert(display=True,
