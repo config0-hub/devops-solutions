@@ -182,8 +182,7 @@ def run(stackargs):
     inputargs = {
         "arguments": arguments,
         "automation_phase": "infrastructure",
-        "human_description": f'create 3tier env {stack.eks_cluster}"',
-        "timeout":7200
+        "human_description": f'create 3tier env {stack.eks_cluster}"'
     }
 
     stack.network.insert(display=True,
@@ -243,8 +242,7 @@ def run(stackargs):
     inputargs = {
         "arguments": arguments,
         "automation_phase": "infrastructure",
-        "human_description": f'create kafka/eks cluster "{stack.eks_cluster}"',
-        "timeout":7200
+        "human_description": f'create kafka/eks cluster "{stack.eks_cluster}"'
     }
 
     stack.kafka_eks.insert(display=True,
