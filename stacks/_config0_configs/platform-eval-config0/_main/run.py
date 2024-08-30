@@ -107,8 +107,9 @@ def run(stackargs):
         }
     }
 
-    # env related arguments
-
+    ###########################################################
+    # developer solutions/environment related arguments
+    ###########################################################
     # the below is the same as above the variable is not
     # labels_hash or arguments_hash, but rather
     # netvars_set_arguments_hash
@@ -486,39 +487,51 @@ def run(stackargs):
 
     # developer solutions
     network_vars_env = deepcopy(network_vars)
+    network_vars_env["name"] = "network_vars_env"
     network_vars_env["at_launch"] = _at_launch
 
     eks_info_env = deepcopy(eks_info)
+    eks_info_env["name"] = "eks_info_env"
     eks_info_env["at_launch"] = _at_launch
 
     aws_base_network_env = deepcopy(aws_base_network)
+    aws_base_network_env["name"] = "aws_base_network_env"
     aws_base_network_env["at_launch"] = _at_launch
 
     vpc_info_env = deepcopy(vpc_info)
+    vpc_info_env["name"] = "vpc_info_env"
     vpc_info_env["at_launch"] = _at_launch
 
     public_route_table_env = deepcopy(public_route_table)
+    public_route_table_env["name"] = "public_route_table_env"
     public_route_table_env["at_launch"] = _at_launch
 
     private_route_table_env = deepcopy(private_route_table)
+    private_route_table_env["name"] = "private_route_table_env"
     private_route_table_env["at_launch"] = _at_launch
 
     public_subnet_info_env = deepcopy(public_subnet_info)
+    public_subnet_info_env["name"] = "public_subnet_info_env"
     public_subnet_info_env["at_launch"] = _at_launch
 
     private_subnet_info_env = deepcopy(private_subnet_info)
+    private_subnet_info_env["name"] = "private_subnet_info_env"
     private_subnet_info_env["at_launch"] = _at_launch
 
     sg_bastion_info_env = deepcopy(sg_bastion_info)
+    sg_bastion_info_env["name"] = "sg_bastion_info_env"
     sg_bastion_info_env["at_launch"] = _at_launch
 
     sg_database_info_env = deepcopy(sg_database_info)
+    sg_database_info_env["name"] = "sg_database_info_env"
     sg_database_info_env["at_launch"] = _at_launch
 
     sg_web_info_env = deepcopy(sg_web_info)
+    sg_web_info_env["name"] = "sg_web_info_env"
     sg_web_info_env["at_launch"] = _at_launch
 
     sg_api_info_env = deepcopy(sg_api_info)
+    sg_api_info_env["name"] = "sg_api_info_env"
     sg_api_info_env["at_launch"] = _at_launch
 
     env_selectors = [
