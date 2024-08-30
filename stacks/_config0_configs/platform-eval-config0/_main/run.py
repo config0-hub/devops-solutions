@@ -51,16 +51,6 @@ def run(stackargs):
         "api_sg_id": "selector:::sg_api_info::sg_id"
     }
 
-    _at_launch = {
-        "labels": {
-            "fields": {
-                "_": {
-                    "insert": "*"
-                }
-            }
-        }
-    }
-
     cloud_tags_hash = {
         "name":"cloud_tags_hash",
         "values": {
@@ -198,12 +188,6 @@ def run(stackargs):
     general = {
         "name":"general",
         "values":global_labels
-    }
-
-    at_launch = {
-        "name":"at_launch",
-        "values":{},
-        "at_launch": _at_launch
     }
 
     aws_cloud = {
@@ -485,68 +469,19 @@ def run(stackargs):
                            general
                        ])
 
-    # developer solutions
-    network_vars_env = deepcopy(network_vars)
-    network_vars_env["name"] = "network_vars_env"
-    network_vars_env["at_launch"] = _at_launch
-
-    eks_info_env = deepcopy(eks_info)
-    eks_info_env["name"] = "eks_info_env"
-    eks_info_env["at_launch"] = _at_launch
-
-    aws_base_network_env = deepcopy(aws_base_network)
-    aws_base_network_env["name"] = "aws_base_network_env"
-    aws_base_network_env["at_launch"] = _at_launch
-
-    vpc_info_env = deepcopy(vpc_info)
-    vpc_info_env["name"] = "vpc_info_env"
-    vpc_info_env["at_launch"] = _at_launch
-
-    public_route_table_env = deepcopy(public_route_table)
-    public_route_table_env["name"] = "public_route_table_env"
-    public_route_table_env["at_launch"] = _at_launch
-
-    private_route_table_env = deepcopy(private_route_table)
-    private_route_table_env["name"] = "private_route_table_env"
-    private_route_table_env["at_launch"] = _at_launch
-
-    public_subnet_info_env = deepcopy(public_subnet_info)
-    public_subnet_info_env["name"] = "public_subnet_info_env"
-    public_subnet_info_env["at_launch"] = _at_launch
-
-    private_subnet_info_env = deepcopy(private_subnet_info)
-    private_subnet_info_env["name"] = "private_subnet_info_env"
-    private_subnet_info_env["at_launch"] = _at_launch
-
-    sg_bastion_info_env = deepcopy(sg_bastion_info)
-    sg_bastion_info_env["name"] = "sg_bastion_info_env"
-    sg_bastion_info_env["at_launch"] = _at_launch
-
-    sg_database_info_env = deepcopy(sg_database_info)
-    sg_database_info_env["name"] = "sg_database_info_env"
-    sg_database_info_env["at_launch"] = _at_launch
-
-    sg_web_info_env = deepcopy(sg_web_info)
-    sg_web_info_env["name"] = "sg_web_info_env"
-    sg_web_info_env["at_launch"] = _at_launch
-
-    sg_api_info_env = deepcopy(sg_api_info)
-    sg_api_info_env["name"] = "sg_api_info_env"
-    sg_api_info_env["at_launch"] = _at_launch
-
     env_selectors = [
-        network_vars_env,
-        eks_info_env,
-        aws_base_network_env,
-        vpc_info_env,
-        public_route_table_env,
-        private_route_table_env,
-        public_subnet_info_env,
-        private_subnet_info_env,
-        sg_bastion_info_env,
-        sg_database_info_env,
-        sg_web_info_env,
-        sg_api_info_env
+        network_vars,
+        eks_info,
+        aws_base_network,
+        vpc_info,
+        public_route_table,
+        private_route_table,
+        public_subnet_info,
+        private_subnet_info,
+        sg_bastion_info,
+        sg_database_info,
+        sg_web_info,
+        sg_api_info
     ]
 
     stack.add_substack('config0-publish:::env_sql',
@@ -557,10 +492,10 @@ def run(stackargs):
                            netvars_set_labels_hash
                        ],
                        labels=[
-                           at_launch,
                            general
                        ],
-                       selectors=env_selectors)
+                       selectors=env_selectors,
+                       at_launch=["labels","selectors"])
 
     stack.add_substack('config0-publish:::env_nosql',
                        arguments=[
@@ -570,10 +505,10 @@ def run(stackargs):
                            netvars_set_labels_hash
                        ],
                        labels=[
-                           at_launch,
                            general
                        ],
-                       selectors=env_selectors)
+                       selectors=env_selectors,
+                       at_launch=["labels","selectors"])
 
     stack.add_substack('config0-publish:::env_streaming',
                        arguments=[
@@ -583,10 +518,10 @@ def run(stackargs):
                            netvars_set_labels_hash
                        ],
                        labels=[
-                           at_launch,
                            general
                        ],
-                       selectors=env_selectors)
+                       selectors=env_selectors,
+                       at_launch=["labels","selectors"])
 
     stack.init_substacks()
 
