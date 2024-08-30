@@ -100,21 +100,6 @@ class Main(newSchedStack):
                                 types="int",
                                 default="1")
 
-        self.parse.add_optional(key="docker_token",
-                                default="null",
-                                tags="tf_sensitive",
-                                types="str")
-
-        self.parse.add_optional(key="slack_webhook_hash",
-                                default="null",
-                                tags="tf_sensitive",
-                                types="str")
-
-        self.parse.add_optional(key="github_token",
-                                default="null",
-                                tags="tf_sensitive",
-                                types="str")
-
         self.parse.add_optional(key="subnet_ids",
                                 default="null")
 
@@ -307,40 +292,33 @@ class Main(newSchedStack):
         return self.stack.new_github_ssh_key.insert(display=True,
                                                     **inputargs)
 
+    def _set_github_token(self):
+    
+        if self.stack.inputvars.get("github_token"):
+            self.stack.set_variable("github_token",
+                               self.stack.inputvars["github_token"],
+                               tags="tf_sensitive",
+                               types="str")
+        elif self.stack.inputvars.get("github_token_hash"):
+            self.stack.set_variable("github_token",
+                               self.stack.b64_encode(stack.inputvars["github_token_hash"]),
+                               tags="tf_sensitive",
+                               types="str")
+    
     def _eval_inputvars(self):
 
-        docker_token = self.stack.inputvars.get("DOCKER_TOKEN")
+        self._set_github_token()
 
-        if not docker_token:
-            docker_token = self.stack.inputvars.get("docker_token")
+        self.stack.set_variable("docker_token", 
+                                self.stack.inputvars.get("docker_token"),
+                                tags="tf_sensitive",
+                                types="str")
 
-        slack_webhook_hash = self.stack.inputvars.get("SLACK_WEBHOOK_HASH")
+        self.stack.set_variable("slack_webhook_hash", 
+                                self.stack.inputvars.get("slack_webhook_hash"),
+                                tags="tf_sensitive",
+                                types="str")
 
-        if not slack_webhook_hash:
-            slack_webhook_hash = self.stack.inputvars.get("slack_webhook_hash")
-
-        github_token = self.stack.inputvars.get("GITHUB_TOKEN")
-
-        if not github_token:
-            github_token = self.stack.inputvars.get("github_token")
-
-        if docker_token:
-            self.stack.set_variable("docker_token", 
-                                    docker_token,
-                                    tags="tf_sensitive",
-                                    types="str")
-
-        if github_token:
-            self.stack.set_variable("github_token", 
-                                    github_token,
-                                    tags="tf_sensitive",
-                                    types="str")
-
-        if slack_webhook_hash:
-            self.stack.set_variable("slack_webhook_hash", 
-                                    slack_webhook_hash,
-                                    tags="tf_sensitive",
-                                    types="str")
 
     def run_ssm(self):
 
