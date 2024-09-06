@@ -13,7 +13,7 @@ terraform_type = os.environ["TERRAFORM_TYPE"]
 resource_type = os.environ["RESOURCE_TYPE"]
 provider = os.environ["PROVIDER"]
 
-tf_exec_state_file = os.environ.get("TF_EXEC_STATE_FILE","terraform.tfstate")
+tf_statefile = os.environ.get("TF_STATEFILE","terraform.tfstate")
 tf_exec_include_raw = os.environ.get("TF_EXEC_INCLUDE_RAW")
 tf_exec_resource_keys = os.environ.get("TF_EXEC_RESOURCE_KEYS")
 
@@ -23,12 +23,12 @@ resource_values_hash = os.environ.get("RESOURCE_VALUES_HASH")
 resource_labels_hash = os.environ.get("RESOURCE_LABELS_HASH")
 
 # read output file
-with open(tf_exec_state_file) as json_file:
+with open(tf_statefile) as json_file:
     data = json.load(json_file)
 
 if not data:
     print("ERROR - there is no data from {}".format(os.path.join(os.getcwd(),
-                                                    tf_exec_state_file)))
+                                                    tf_statefile)))
     exit(9)
 
 values = { "terraform_type":terraform_type,
@@ -68,7 +68,7 @@ for k,v in data.get("outputs").items():
 # include raw with fresh read
 if tf_exec_include_raw:
 
-    with open(tf_exec_state_file) as json_file:
+    with open(tf_statefile) as json_file:
         raw = json.load(json_file)
 
     values["raw"] = {"terraform":b64_encode(raw)}

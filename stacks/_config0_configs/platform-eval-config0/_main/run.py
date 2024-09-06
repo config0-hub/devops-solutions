@@ -71,7 +71,6 @@ def run(stackargs):
         }
     }
 
-
     # network related arguments
     network_vars_set_labels_hash = {
         "name":"network_vars_set_labels_hash",
@@ -318,7 +317,8 @@ def run(stackargs):
                        labels=[
                            general,
                            aws_cloud
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     # related to mostly vpc
     stack.add_substack('config0-publish:::network_vars_set',
@@ -352,7 +352,8 @@ def run(stackargs):
                        labels=[
                            general,
                            aws_cloud
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     stack.add_substack('config0-publish:::add_codebuild_ci',
                        arguments=[
@@ -364,7 +365,8 @@ def run(stackargs):
                        ],
                        selectors=[
                            network_vars
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     stack.add_substack('config0-publish:::aws_nat_inst_vpc',  # nat instance (instead of nat gw)
                        arguments=[
@@ -376,7 +378,8 @@ def run(stackargs):
                        ],
                        selectors=[
                            network_vars
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     stack.add_substack('config0-publish:::aws_nat_vpc',  # aws nat gateway saas
                        arguments=[
@@ -388,7 +391,8 @@ def run(stackargs):
                        ],
                        selectors=[
                            network_vars
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     # aws stateful stacks
     stack.add_substack('config0-publish:::aws_rds',
@@ -401,7 +405,8 @@ def run(stackargs):
                        ],
                        selectors=[
                            network_vars
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     stack.add_substack('config0-publish:::mongodb_replica_on_ec2',
                        arguments=[
@@ -413,7 +418,8 @@ def run(stackargs):
                        ],
                        selectors=[
                            network_vars
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     stack.add_substack('config0-publish:::kafka_on_ec2',
                        arguments=[
@@ -425,7 +431,8 @@ def run(stackargs):
                        ],
                        selectors=[
                            network_vars
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     # aws kubernetes
     stack.add_substack('config0-publish:::aws_eks',
@@ -439,7 +446,8 @@ def run(stackargs):
                        selectors=[
                            network_vars,
                            eks_info
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     # digital ocean
     stack.add_substack("config0-publish:::jenkins_on_do",
@@ -449,7 +457,8 @@ def run(stackargs):
                        labels=[
                            general,
                            do_cloud
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     stack.add_substack("config0-publish:::doks",
                        arguments=[
@@ -458,7 +467,8 @@ def run(stackargs):
                        labels=[
                            general,
                            do_cloud
-                       ])
+                       ],
+                       inputvars=["infracost"])
 
     # drift detection of resources
     stack.add_substack('config0-publish:::check_drift_resources',
@@ -495,6 +505,7 @@ def run(stackargs):
                            general
                        ],
                        selectors=env_selectors,
+                       inputvars=["infracost"],
                        at_launch=["labels","selectors"])
 
     stack.add_substack('config0-publish:::env_nosql',
@@ -508,6 +519,7 @@ def run(stackargs):
                            general
                        ],
                        selectors=env_selectors,
+                       inputvars=["infracost"],
                        at_launch=["labels","selectors"])
 
     stack.add_substack('config0-publish:::env_streaming',
@@ -520,6 +532,7 @@ def run(stackargs):
                        labels=[
                            general
                        ],
+                       inputvars=["infracost"],
                        selectors=env_selectors,
                        at_launch=["labels","selectors"])
 

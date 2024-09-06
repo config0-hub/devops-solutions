@@ -88,9 +88,7 @@ class Main(newSchedStack):
         env_vars = {
             "ENV": "build",
             "DEBUG_LAMBDA": "true",
-            "BUILD_TTL": "60",
-            "DISABLE_BRANCH_CHECK": "false",
-            "DISABLE_EVENT_CHECK": "false"
+            "BUILD_TTL": "60"
         }
 
         webhook_hash = self.stack.b64_encode(env_vars)
@@ -106,8 +104,8 @@ class Main(newSchedStack):
             raise Exception(msg)
 
         # perm shared bucket
-        s3_bucket = "codebuild-shared-{}-{}".format(self.stack.ci_environment,
-                                                    suffix_id)
+        s3_bucket = "ci-shared-{}-{}".format(self.stack.ci_environment,
+                                              suffix_id)
 
         arguments = {
             "bucket": s3_bucket,
@@ -129,8 +127,8 @@ class Main(newSchedStack):
                                         **inputargs)
 
         # temp shared bucket
-        s3_bucket = "codebuild-shared-{}-{}-tmp".format(self.stack.ci_environment,
-                                                        suffix_id)
+        s3_bucket = "ci-shared-{}-{}-tmp".format(self.stack.ci_environment,
+                                                 suffix_id)
 
         arguments = {
             "bucket": s3_bucket,
@@ -154,10 +152,12 @@ class Main(newSchedStack):
 
     def _dynamodb(self,cloud_tags_hash):
 
-        for suffix in ["runs", "settings"]:
+        dynamodb_names = [
+            "codebuild-ci-runs",
+            "codebuild-ci-settings"
+        ]
 
-            dynamodb_name = "codebuild-shared-{}-{}".format(self.stack.ci_environment,
-                                                            suffix)
+        for dynamodb_name in dynamodb_names:
 
             arguments = {
                 "dynamodb_name": dynamodb_name,

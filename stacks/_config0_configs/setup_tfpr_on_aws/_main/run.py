@@ -102,9 +102,7 @@ class Main(newSchedStack):
         env_vars = {
             "ENV": "build",
             "DEBUG_LAMBDA": "true",
-            "BUILD_TTL": "60",
-            "DISABLE_BRANCH_CHECK": "false",
-            "DISABLE_EVENT_CHECK": "false"
+            "BUILD_TTL": "60"
         }
 
         webhook_hash = self.stack.b64_encode(env_vars)
@@ -168,10 +166,12 @@ class Main(newSchedStack):
 
     def _dynamodb(self,cloud_tags_hash):
 
-        for suffix in ["runs", "settings"]:
+        dynamodb_names = [
+            "tfpr-runs",
+            "tfpr-settings"
+        ]
 
-            dynamodb_name = "tfpr-shared-{}-{}".format(self.stack.tfpr_environment,
-                                                            suffix)
+        for dynamodb_name in dynamodb_names:
 
             arguments = {
                 "dynamodb_name": dynamodb_name,
