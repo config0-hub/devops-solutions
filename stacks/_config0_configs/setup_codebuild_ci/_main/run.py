@@ -50,11 +50,7 @@ class Main(newSchedStack):
 
         # this is lock versioning of execgroups
         self.stack.add_execgroup("config0-publish:::github::lambda_trigger_stepf")
-        self.stack.add_execgroup("config0-publish:::github::lambda_codebuild")
-        self.stack.add_execgroup("config0-publish:::github::lambda_check_codebuild")
-        self.stack.add_execgroup("config0-publish:::github::lambda_s3")
-        self.stack.add_execgroup("config0-publish:::github::lambda_webhook")
-
+        self.stack.add_execgroup("config0-publish:::github::lambda_codebuild_ci")
         self.stack.init_execgroups()
         self.stack.init_substacks()
 
@@ -466,7 +462,7 @@ class Main(newSchedStack):
             "lambda_name": lambda_name,
             "handler": handler,
             "s3_key": s3_key,
-            "config0_lambda_execgroup_name": self.stack.lambda_webhook.name})
+            "config0_lambda_execgroup_name": self.stack.lambda_codebuild_ci.name})
 
         human_description= "Create lambda function {}".format(lambda_name)
         inputargs = {"arguments": arguments,
@@ -477,11 +473,11 @@ class Main(newSchedStack):
                                     **inputargs)
 
         lambda_params = { "trigger-codebuild":["app_codebuild.handler",
-                                               self.stack.lambda_codebuild.name],
+                                               self.stack.lambda_codebuild_ci.name],
                           "pkgcode-to-s3":["app_s3.handler",
-                                           self.stack.lambda_s3.name],
+                                           self.stack.lambda_codebuild_ci.name],
                           "check-codebuild":["app_check_build.handler",
-                                             self.stack.lambda_check_codebuild.name]
+                                             self.stack.lambda_codebuild_ci.name]
                           }
 
         for lambda_name, params in lambda_params.items():
