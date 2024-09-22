@@ -133,7 +133,7 @@ class Main(newSchedStack):
 
         import os
 
-        apigateway_name = "config0-codebuild-shared-{}".format(
+        apigateway_name = "ci-shared-{}".format(
             self.stack.ci_environment)
 
         _lookup = {"must_be_one": True,
@@ -379,7 +379,7 @@ class Main(newSchedStack):
     def _get_s3_bucket(self):
 
         suffix_id = self._determine_suffix_id()
-        return "codebuild-shared-{}-{}".format(self.stack.ci_environment, suffix_id)
+        return "ci-shared-{}-{}".format(self.stack.ci_environment, suffix_id)
 
     def _set_docker_items(self, item):
 
@@ -536,7 +536,7 @@ class Main(newSchedStack):
 
     def _dynamodb(self):
 
-        table_name = "codebuild-shared-{}-{}".format(
+        table_name = "ci-shared-{}-{}".format(
             self.stack.ci_environment, "settings")
         item_hash = self._get_dynamodb_item()
 

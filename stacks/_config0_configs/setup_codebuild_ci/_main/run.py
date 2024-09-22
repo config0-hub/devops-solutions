@@ -190,10 +190,10 @@ class Main(newSchedStack):
 
     def _get_dynamodb_policy(self):
 
-        dynamodb_name_runs = "codebuild-shared-{}-{}".format(
+        dynamodb_name_runs = "ci-shared-{}-{}".format(
             self.stack.ci_environment, "runs")
 
-        dynamodb_name_settings = "codebuild-shared-{}-{}".format(
+        dynamodb_name_settings = "ci-shared-{}-{}".format(
             self.stack.ci_environment, "settings")
 
         arn_dynamodb_name_runs = "arn:aws:dynamodb:{}:".format(
@@ -394,7 +394,7 @@ class Main(newSchedStack):
     def _get_s3_bucket(self):
 
         suffix_id = self._determine_suffix_id()
-        s3_bucket = "codebuild-shared-{}-{}".format(
+        s3_bucket = "ci-shared-{}-{}".format(
             self.stack.ci_environment, suffix_id)
 
         return s3_bucket
@@ -585,7 +585,7 @@ class Main(newSchedStack):
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        apigateway_name = "config0-codebuild-shared-{}".format(
+        apigateway_name = "ci-shared-{}".format(
             self.stack.ci_environment)
 
         # will trigger the lambda function
