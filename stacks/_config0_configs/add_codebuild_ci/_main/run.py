@@ -133,8 +133,7 @@ class Main(newSchedStack):
 
         import os
 
-        apigateway_name = "ci-shared-{}".format(
-            self.stack.ci_environment)
+        apigateway_name =f"ci-shared-{self.stack.ci_environment}"
 
         _lookup = {"must_be_one": True,
                    "resource_type": "apigateway_restapi_lambda",
@@ -147,7 +146,7 @@ class Main(newSchedStack):
 
     def _get_ssh_private_key(self):
 
-        key_name = "{}-codebuild-deploy-key".format(self.stack.codebuild_name)
+        key_name =f"{self.stack.codebuild_name}-codebuild-deploy-key"
 
         _lookup = {"must_be_one": True,
                    "resource_type": "ssh_key_pair",
@@ -172,19 +171,15 @@ class Main(newSchedStack):
 
         suffix_id = self._determine_suffix_id()
 
-        self.s3_bucket_cache = "{}-codebuild-{}-cache".format(self.stack.codebuild_name,
-                                                              suffix_id)
-
-        self.s3_bucket_output = "{}-codebuild-{}-output".format(self.stack.codebuild_name,
-                                                                suffix_id)
+        self.s3_bucket_cache =f"{self.stack.codebuild_name}-codebuild-{suffix_id}-cache"
+        self.s3_bucket_output =f"{self.stack.codebuild_name}-codebuild-{suffix_id}-output"
 
     def _webhook(self):
 
         self.stack.init_variables()
         self.stack.verify_variables()
 
-        _name = "config0-codebuild-{}-{}".format(self.stack.ci_environment,
-                                            self.stack.codebuild_name)
+        _name =f"config0-codebuild-{self.stack.ci_environment}-{self.stack.codebuild_name}"
 
         _url = self._get_api_url()
 
@@ -379,7 +374,7 @@ class Main(newSchedStack):
     def _get_s3_bucket(self):
 
         suffix_id = self._determine_suffix_id()
-        return "ci-shared-{}-{}".format(self.stack.ci_environment, suffix_id)
+        return f"ci-shared-{self.stack.ci_environment}-{suffix_id}"
 
     def _set_docker_items(self, item):
 
@@ -392,7 +387,8 @@ class Main(newSchedStack):
 
         if self.stack.get_attr("ecr_repository_uri"):
             item["ecr_repository_uri"] = {
-                "S": str(self.stack.ecr_repository_uri)}
+                "S": str(self.stack.ecr_repository_uri)
+            }
             ecr_uri = self.stack.ecr_repository_uri
         elif self.stack.get_attr("ecr_repo_name"):
             # ecr is primary and should be set
@@ -536,8 +532,7 @@ class Main(newSchedStack):
 
     def _dynamodb(self):
 
-        table_name = "ci-shared-{}-{}".format(
-            self.stack.ci_environment, "settings")
+        table_name =f"ci-shared-settings"
         item_hash = self._get_dynamodb_item()
 
         arguments = {"table_name": table_name,
