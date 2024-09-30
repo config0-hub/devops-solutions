@@ -584,10 +584,12 @@ class Main(newSchedStack):
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        arguments = {"lambda_name": lambda_name,
-                     "cloud_tags_hash": cloud_tags_hash,
-                     "topic_name": topic_name,
-                     "aws_default_region": self.stack.aws_default_region}
+        arguments = {
+            "lambda_name": lambda_name,
+            "cloud_tags_hash": cloud_tags_hash,
+            "topic_name": topic_name,
+            "aws_default_region": self.stack.aws_default_region
+        }
 
         human_description = f"Create Codebuild SNS subscription for iac-ci"
         inputargs = {"arguments": arguments,
