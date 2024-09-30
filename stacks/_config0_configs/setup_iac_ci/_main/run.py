@@ -11,13 +11,13 @@ class Main(newSchedStack):
         ########################################################################################
         # testtest456 # insert from resource cmd or something?
         ########################################################################################
-        self.parse.add_required(key="tmp_bucket",
+        self.parse.add_optional(key="tmp_bucket",
                                 default="null")
 
-        self.parse.add_required(key="lambda_bucket",
+        self.parse.add_optional(key="lambda_bucket",
                                 default="null")
 
-        self.parse.add_required(key="remote_stateful_bucket",
+        self.parse.add_optional(key="remote_stateful_bucket",
                                 default="null")
         ########################################################################################
 
