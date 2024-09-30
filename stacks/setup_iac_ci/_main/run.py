@@ -1,3 +1,5 @@
+from xml.dom.pulldom import default_bufsize
+
 
 class Main(newSchedStack):
 
@@ -9,9 +11,14 @@ class Main(newSchedStack):
         ########################################################################################
         # testtest456 # insert from resource cmd or something?
         ########################################################################################
-        self.parse.add_required(key="tmp_bucket")
-        self.parse.add_required(key="lambda_bucket")
-        self.parse.add_required(key="remote_stateful_bucket")
+        self.parse.add_required(key="tmp_bucket",
+                                default="null")
+
+        self.parse.add_required(key="lambda_bucket",
+                                default="null")
+
+        self.parse.add_required(key="remote_stateful_bucket",
+                                default="null")
         ########################################################################################
 
         self.parse.add_optional(key="aws_default_region",
@@ -449,11 +456,25 @@ class Main(newSchedStack):
 
         self.stack.unset_parallel()
 
-    # job definitions are prefixed with run_
+    def _init_buckets(self):
+
+        if not self.lambda_bucket:
+            self.stack.set_variable("lambda_bucket",
+                                    self.stack.bucket_names["lambda"])
+
+        if not self.tmp_bucket:
+            self.stack.set_variable("remote_stateful_bucket",
+                                    self.stack.bucket_names["stateful"])
+
+        if not self.tmp_bucket:
+            self.stack.set_variable("tmp_bucket",
+                                    self.stack.bucket_names["tmp"])
+
     def run_setup(self):
 
         self.stack.init_variables()
         self.stack.verify_variables()
+        self._init_buckets()
 
         # create dynamodb table
         self._dynamodb(self._set_cloud_tag_hash())
@@ -464,6 +485,8 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
+        self._init_buckets()
+
         cloud_tags_hash = self._set_cloud_tag_hash()
 
         self.stack.unset_parallel()
@@ -480,6 +503,8 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
+        self._init_buckets()
+
         cloud_tags_hash = self._set_cloud_tag_hash()
 
         stepf_arn = self._get_stepf_arn()
@@ -521,6 +546,7 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
+        self._init_buckets()
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -550,6 +576,7 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
+        self._init_buckets()
 
         lambda_name = "iac-ci-check-codebuild"
         topic_name = f"iac-ci-codebuild-compelete-trigger"
