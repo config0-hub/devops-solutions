@@ -113,11 +113,10 @@ class Main(newSchedStack):
                 "aws_default_region": self.stack.aws_default_region
             }
 
-            human_description = f"Create dynamodb {dynamodb_name}"
             inputargs = {
                 "arguments": arguments,
                 "automation_phase": "infrastructure",
-                "human_description": human_description
+                "human_description": f"Create dynamodb {dynamodb_name}"
             }
 
             self.stack.aws_dynamodb.insert(display=True,
@@ -371,12 +370,11 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region
         }
 
-        human_description = f"Create step function {stepf_name}"
 
         inputargs = {
             "arguments": arguments,
             "automation_phase": "infrastructure",
-            "human_description": human_description
+            "human_description": f"Create step function {stepf_name}"
         }
 
         self.stack.iac_ci_stepf.insert(display=True,
@@ -418,12 +416,11 @@ class Main(newSchedStack):
             "config0_lambda_execgroup_name": self.stack.lambda_iac_ci.name
         })
 
-        human_description= f"Create lambda function {lambda_name}"
 
         inputargs = {
             "arguments": arguments,
             "automation_phase": "infrastructure",
-            "human_description": human_description
+            "human_description": f"Create lambda function {lambda_name}"
         }
 
         self.stack.py_lambda.insert(display=True,
@@ -447,10 +444,11 @@ class Main(newSchedStack):
                 "handler": handler
             })
 
-            human_description = f'Create lambda function {lambda_name}'
-            inputargs = {"arguments": arguments,
-                         "automation_phase": "infrastructure",
-                         "human_description": human_description}
+            inputargs = {
+                "arguments": arguments,
+                "automation_phase": "infrastructure",
+                "human_description": f'Create lambda function {lambda_name}'
+            }
 
             self.stack.py_lambda.insert(display=True,
                                         **inputargs)
@@ -531,12 +529,14 @@ class Main(newSchedStack):
         arguments.update({
             "lambda_name": lambda_name,
             "handler": handler,
-            "config0_lambda_execgroup_name": self.stack.lambda_trigger_stepf.name})
+            "config0_lambda_execgroup_name": self.stack.lambda_trigger_stepf.name
+        })
 
-        human_description = f"Create lambda function {lambda_name}"
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "infrastructure",
+            "human_description": f"Create lambda function {lambda_name}"
+        }
 
         self.stack.py_lambda.insert(display=True,
                                     **inputargs)
@@ -561,11 +561,10 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region
         }
 
-        human_description = f'Create API gateway {apigateway_name}'
         inputargs = {
             "arguments": arguments,
             "automation_phase": "infrastructure",
-            "human_description": human_description
+            "human_description": f'Create API gateway {apigateway_name}'
         }
 
         return self.stack.apigw.insert(display=True,
@@ -589,10 +588,11 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region
         }
 
-        human_description = f"Create Codebuild SNS subscription for iac-ci"
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "infrastructure",
+            "human_description": "Codebuild SNS subscription iac-ci"
+        }
 
         return self.stack.sns_subscription.insert(display=True, 
                                                   **inputargs)
