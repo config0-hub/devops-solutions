@@ -28,10 +28,6 @@ class Main(newSchedStack):
                                 types="str",
                                 default="python3.9")
 
-        self.parse.add_optional(key="lambda_layers",
-                                types="str",
-                                default="arn:aws:lambda:eu-west-1:553035198032:layer:git-lambda2:8")
-
         ########################################################################################
         # testtest456 - need to implement the two here
         ########################################################################################
@@ -391,11 +387,9 @@ class Main(newSchedStack):
             "policy_template_hash": policy_template_hash,
             "lambda_env_vars_hash": base_env_vars_hash,
             "cloud_tags_hash": cloud_tags_hash,
-            "aws_default_region": self.stack.aws_default_region
+            "aws_default_region": self.stack.aws_default_region,
+            "lambda_layers": self.stack.lambda_layers
         }
-
-        if self.stack.lambda_layers:
-            base_arguments["lambda_layers"] = self.stack.lambda_layers
 
         ###########################################################################
         # create the first function with py_lambda
@@ -471,6 +465,9 @@ class Main(newSchedStack):
         self.stack.set_variable("aws_default_region",
                                 "us-east-1")
 
+        self.stack.set_variable("lambda_layers",
+                                "arn:aws:lambda:us-east-1:553035198032:layer:git-lambda2:8")
+
     def run_setup(self):
 
         self.stack.init_variables()
@@ -518,11 +515,9 @@ class Main(newSchedStack):
                 "STATE_MACHINE_ARN":stepf_arn
             }),
             "cloud_tags_hash": cloud_tags_hash,
-            "aws_default_region": self.stack.aws_default_region
+            "aws_default_region": self.stack.aws_default_region,
+            "lambda_layers":self.stack.lambda_layers
         }
-
-        if self.stack.lambda_layers:
-            arguments["lambda_layers"] = self.stack.lambda_layers
 
         # lambda_name = "lambda_trigger_stepf"
         lambda_name = "lambda_trigger_stepf"
