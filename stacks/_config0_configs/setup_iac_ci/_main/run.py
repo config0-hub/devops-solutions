@@ -379,7 +379,7 @@ class Main(newSchedStack):
             "human_description": human_description
         }
 
-        self.stack.codebuild_stepf_ci.insert(display=True,
+        self.stack.iac_ci_stepf.insert(display=True,
                                                  **inputargs)
 
         return
