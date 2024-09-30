@@ -451,7 +451,7 @@ class Main(newSchedStack):
 
         self.stack.unset_parallel()
 
-    def _init_buckets(self):
+    def _init_common(self):
 
         if not self.stack.lambda_bucket:
             self.stack.set_variable("lambda_bucket",
@@ -465,17 +465,17 @@ class Main(newSchedStack):
             self.stack.set_variable("tmp_bucket",
                                     self.stack.bucket_names["tmp"])
 
-    def run_setup(self):
-
-        self.stack.init_variables()
-        self.stack.verify_variables()
-
         # we need to hardwire to us-east-1 since
         # the existing config0 workers ("config0-iac")
         # are by default deployed to us-east-1
         self.stack.set_variable("aws_default_region",
                                 "us-east-1")
-        self._init_buckets()
+
+    def run_setup(self):
+
+        self.stack.init_variables()
+        self.stack.verify_variables()
+        self._init_common()
 
         # create dynamodb table
         self._dynamodb(self._set_cloud_tag_hash())
@@ -486,7 +486,7 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
-        self._init_buckets()
+        self._init_common()
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -504,7 +504,7 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
-        self._init_buckets()
+        self._init_common()
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -547,7 +547,7 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
-        self._init_buckets()
+        self._init_common()
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -576,7 +576,7 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
-        self._init_buckets()
+        self._init_common()
 
         lambda_name = "iac-ci-check-codebuild"
         topic_name = f"iac-ci-codebuild-compelete-trigger"
@@ -616,7 +616,6 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup dynamodb"
         sched.on_success = ["lambda_stepf"]
@@ -626,6 +625,7 @@ class Main(newSchedStack):
         sched.job = "lambda_stepf"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
+        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup lambdas and stepf"
         sched.on_success = ["trigger_stepf"]
