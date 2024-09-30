@@ -51,8 +51,8 @@ class Main(newSchedStack):
         ########################################################################################
 
         self.stack.add_substack("config0-publish:::aws_dynamodb")
-        self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild","py_lambda")
         self.stack.add_substack("config0-publish:::apigw_lambda-integ","apigw")
+        self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild","py_lambda")
 
         #########################################################################
         # update
