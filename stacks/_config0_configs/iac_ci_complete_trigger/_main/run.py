@@ -7,7 +7,11 @@ def run(stackargs):
     stack = newStack(stackargs)
 
     # Add default variables
-    stack.parse.add_required(key="step_function_name",
+    stack.parse.add_required(key="topic_name",
+                             tags="tfvar",
+                             types="str")
+    
+    stack.parse.add_required(key="lambda_name",
                              tags="tfvar",
                              types="str")
 
@@ -17,7 +21,7 @@ def run(stackargs):
                              types="str")
 
     # Add execgroup
-    stack.add_execgroup("config0-publish:::devops-solutions::codebuild_ci_stepf",
+    stack.add_execgroup("config0-publish:::aws::codebuild_evntbrdg_sns_lambda",
                         "tf_execgroup")
 
     # Add substack
@@ -31,17 +35,18 @@ def run(stackargs):
     tf = TFConstructor(stack=stack,
                        provider="aws",
                        execgroup_name=stack.tf_execgroup.name,
-                       resource_name=stack.step_function_name,
-                       resource_type="step_function",
-                       terraform_type="aws_sfn_state_machine")
+                       resource_name=stack.topic_name,
+                       resource_type="sns_topic_subscription",
+                       terraform_type="aws_sns_topic_subscription")
 
     tf.include(keys=["id",
-                     "role_arn",
-                     "arn"])
+                     "arn",
+                     "topic_arn",
+                     "endpoint"])
 
     tf.output(keys=["id",
-                    "role_arn",
-                    "arn"])
+                    "topic_arn",
+                    "endpoint"])
 
     # finalize the tf_executor
     stack.tf_executor.insert(display=True,

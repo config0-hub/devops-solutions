@@ -133,7 +133,7 @@ class Main(newSchedStack):
 
         import os
 
-        apigateway_name =f"ci-shared-{self.stack.ci_environment}"
+        apigateway_name = f"ci-shared-{self.stack.ci_environment}"
 
         _lookup = {"must_be_one": True,
                    "resource_type": "apigateway_restapi_lambda",
@@ -146,7 +146,7 @@ class Main(newSchedStack):
 
     def _get_ssh_private_key(self):
 
-        key_name =f"{self.stack.codebuild_name}-codebuild-deploy-key"
+        key_name = f"{self.stack.codebuild_name}-codebuild-deploy-key"
 
         _lookup = {"must_be_one": True,
                    "resource_type": "ssh_key_pair",
@@ -171,15 +171,15 @@ class Main(newSchedStack):
 
         suffix_id = self._determine_suffix_id()
 
-        self.s3_bucket_cache =f"{self.stack.codebuild_name}-codebuild-{suffix_id}-cache"
-        self.s3_bucket_output =f"{self.stack.codebuild_name}-codebuild-{suffix_id}-output"
+        self.s3_bucket_cache = f"{self.stack.codebuild_name}-codebuild-{suffix_id}-cache"
+        self.s3_bucket_output = f"{self.stack.codebuild_name}-codebuild-{suffix_id}-output"
 
     def _webhook(self):
 
         self.stack.init_variables()
         self.stack.verify_variables()
 
-        _name =f"config0-codebuild-{self.stack.ci_environment}-{self.stack.codebuild_name}"
+        _name = f"config0-codebuild-{self.stack.ci_environment}-{self.stack.codebuild_name}"
 
         _url = self._get_api_url()
 
@@ -532,7 +532,7 @@ class Main(newSchedStack):
 
     def _dynamodb(self):
 
-        table_name =f"ci-shared-settings"
+        table_name = f"ci-shared-settings"
         item_hash = self._get_dynamodb_item()
 
         arguments = {"table_name": table_name,

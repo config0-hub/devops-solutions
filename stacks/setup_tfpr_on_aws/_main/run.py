@@ -6,15 +6,13 @@ class Main(newSchedStack):
         newSchedStack.__init__(self, stackargs)
 
         # Add default variables
-        self.parse.add_required(key="tfpr_environment")
-
-        # this is required to make the buckets unique
-        self.parse.add_optional(key="suffix_id",
-                                types="str")
-
-        self.parse.add_optional(key="suffix_length",
-                                types="int",
-                                default="4")
+        ########################################################################################
+        # testtest456 # insert from resource cmd or something?
+        ########################################################################################
+        self.parse.add_required(key="tmp_bucket")
+        self.parse.add_required(key="lambda_bucket")
+        self.parse.add_required(key="remote_stateful_bucket")
+        ########################################################################################
 
         self.parse.add_optional(key="aws_default_region",
                                 types="str",
@@ -22,14 +20,6 @@ class Main(newSchedStack):
 
         self.parse.add_optional(key="cloud_tags_hash",
                                 types="str")
-
-        self.parse.add_optional(key="bucket_acl",
-                                types="str",
-                                default="private")
-
-        self.parse.add_optional(key="bucket_expire_days",
-                                types="int",
-                                default="7")
 
         self.parse.add_optional(key="runtime",
                                 types="str",
@@ -39,6 +29,9 @@ class Main(newSchedStack):
                                 types="str",
                                 default="arn:aws:lambda:eu-west-1:553035198032:layer:git-lambda2:8")
 
+        ########################################################################################
+        # testtest456 - need to implement the two here
+        ########################################################################################
         # these should already exists to execute terraform/shell scripts
         # with the right roles and permissions
         self.parse.add_optional(key="codebuild_tf_project_name",
@@ -48,36 +41,25 @@ class Main(newSchedStack):
         self.parse.add_optional(key="lambda_tf_project_name",
                                 types="str",
                                 default="config0-iac")
+        ########################################################################################
 
-
-
-        # Add substack
-        self.stack.add_substack("config0-publish:::aws_s3_bucket")
         self.stack.add_substack("config0-publish:::aws_dynamodb")
         self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild","py_lambda")
-        self.stack.add_substack("config0-publish:::aws-lambda")
         self.stack.add_substack("config0-publish:::apigw_lambda-integ","apigw")
 
         #########################################################################
         # update
         #########################################################################
-        self.stack.add_substack("config0-publish:::tfpr_stepf_ci")
-        self.stack.add_substack("config0-publish:::tfpr_complete_trigger",
+        self.stack.add_substack("config0-publish:::iac_ci_stepf")
+        self.stack.add_substack("config0-publish:::iac_ci_complete_trigger",
                                 "sns_subscription")
 
         # this is lock versioning of execgroups
-        self.stack.add_execgroup("config0-publish:::github::lambda_tfpr")
+        self.stack.add_execgroup("config0-publish:::devops-solutions::iac_ci")
         #########################################################################
 
         self.stack.init_execgroups()
         self.stack.init_substacks()
-
-    def _determine_suffix_id(self):
-
-        if self.stack.get_attr("suffix_id"):
-            return str(self.stack.suffix_id).lower()
-
-        return self.stack.b64_encode(self.stack.tfpr_environment)[0:int(self.stack.suffix_length)].lower()
 
     def _set_cloud_tag_hash(self):
 
@@ -87,7 +69,7 @@ class Main(newSchedStack):
             cloud_tags = {}
 
         cloud_tags.update({
-            "tfpr_environment": self.stack.tfpr_environment,
+            "environment": "iac-ci",
             "aws_default_region": self.stack.aws_default_region
         })
 
@@ -109,66 +91,11 @@ class Main(newSchedStack):
 
         return base_hash, webhook_hash
 
-    def _s3(self,cloud_tags_hash):
-
-        suffix_id = self._determine_suffix_id()
-
-        if "_" in self.stack.tfpr_environment:
-            msg = "Cannot use underscores (Only hyphens) in the tfpr_environment"
-            raise Exception(msg)
-
-        # perm shared bucket
-        s3_bucket = "tfpr-shared-{}-{}".format(self.stack.tfpr_environment,
-                                                    suffix_id)
-
-        arguments = {
-            "bucket": s3_bucket,
-            "acl": self.stack.bucket_acl,
-            "cloud_tags_hash": cloud_tags_hash,
-            "force_destroy": "true",
-            "enable_lifecycle": "false",
-            "aws_default_region": self.stack.aws_default_region
-        }
-
-        human_description= "Create s3 bucket {}".format(s3_bucket)
-        inputargs = {
-            "arguments": arguments,
-            "automation_phase": "infrastructure",
-            "human_description": human_description
-        }
-
-        self.stack.aws_s3_bucket.insert(display=True, 
-                                        **inputargs)
-
-        # temp shared bucket
-        s3_bucket = "tfpr-shared-{}-{}-tmp".format(self.stack.tfpr_environment,
-                                                        suffix_id)
-
-        arguments = {
-            "bucket": s3_bucket,
-            "acl": self.stack.bucket_acl,
-            "cloud_tags_hash": cloud_tags_hash,
-            "expire_days": self.stack.bucket_expire_days,
-            "force_destroy": "true",
-            "enable_lifecycle": "true",
-            "aws_default_region": self.stack.aws_default_region
-        }
-
-        human_description= "Create s3 bucket {}".format(s3_bucket)
-        inputargs = {
-            "arguments": arguments,
-            "automation_phase": "infrastructure",
-            "human_description": human_description
-        }
-
-        self.stack.aws_s3_bucket.insert(display=True,
-                                         **inputargs)
-
     def _dynamodb(self,cloud_tags_hash):
 
         dynamodb_names = [
-            "tfpr-runs",
-            "tfpr-settings"
+            "iac_ci-runs",
+            "iac_ci-settings"
         ]
 
         for dynamodb_name in dynamodb_names:
@@ -179,14 +106,15 @@ class Main(newSchedStack):
                 "aws_default_region": self.stack.aws_default_region
             }
 
-            human_description= "Create dynamodb {}".format(dynamodb_name)
+            human_description = f"Create dynamodb {dynamodb_name}"
             inputargs = {
                 "arguments": arguments,
                 "automation_phase": "infrastructure",
                 "human_description": human_description
             }
 
-            self.stack.aws_dynamodb.insert(display=True, **inputargs)
+            self.stack.aws_dynamodb.insert(display=True,
+                                           **inputargs)
 
     def _get_log_policy(self):
 
@@ -204,17 +132,11 @@ class Main(newSchedStack):
 
     def _get_dynamodb_policy(self):
 
-        dynamodb_name_runs = "tfpr-shared-{}-{}".format(
-            self.stack.tfpr_environment, "runs")
+        dynamodb_name_runs = "iac_ci-shared-runs"
+        dynamodb_name_settings = "iac_ci-shared-settings"
 
-        dynamodb_name_settings = "tfpr-shared-{}-{}".format(
-            self.stack.tfpr_environment, "settings")
-
-        arn_dynamodb_name_runs = "arn:aws:dynamodb:{}:".format(
-            self.stack.aws_default_region) + '${aws_account_id}:table/' + dynamodb_name_runs
-
-        arn_dynamodb_name_settings = "arn:aws:dynamodb:{}:".format(
-            self.stack.aws_default_region) + '${aws_account_id}:table/' + dynamodb_name_settings
+        arn_dynamodb_name_runs = f"arn:aws:dynamodb:{self.stack.aws_default_region}:" + '${aws_account_id}:table/' + dynamodb_name_runs
+        arn_dynamodb_name_settings = f"arn:aws:dynamodb:{self.stack.aws_default_region}:" + '${aws_account_id}:table/' + dynamodb_name_settings
 
         _statement = {
             "Effect": "Allow",
@@ -240,19 +162,21 @@ class Main(newSchedStack):
                        "dynamodb:ListStreams",
                        "dynamodb:PartiQLDelete"
                        ],
-            "Resource": [ arn_dynamodb_name_runs, 
-                          arn_dynamodb_name_settings ]
+            "Resource": [
+                arn_dynamodb_name_runs,
+                arn_dynamodb_name_settings
+            ]
         }
 
         return _statement
 
     def _get_s3_policies(self):
 
-        statements = []
-        s3_bucket = self._get_s3_bucket()
+        arn_s3_bucket = f"arn:aws:s3:::{self.stack.tmp_bucket}"
+        arn_s3_bucket_lambda = f"arn:aws:s3:::{self.stack.lambda_bucket}"
+        arn_s3_bucket_tmp = f"arn:aws:s3:::{self.stack.remote_stateful_bucket}-tmp"
 
-        arn_s3_bucket = "arn:aws:s3:::{}".format(s3_bucket)
-        arn_s3_bucket_tmp = "arn:aws:s3:::{}-tmp".format(s3_bucket)
+        statements = []
 
         _statement = {
             "Effect": "Allow",
@@ -262,10 +186,14 @@ class Main(newSchedStack):
                 "s3:PutObject",
                 "s3:DeleteObject"
             ],
-            "Resource": [arn_s3_bucket,
-                         arn_s3_bucket_tmp,
-                         "{}/*".format(arn_s3_bucket),
-                         "{}/*".format(arn_s3_bucket_tmp)]
+            "Resource": [
+                arn_s3_bucket,
+                arn_s3_bucket_lambda,
+                arn_s3_bucket_tmp,
+                f"{arn_s3_bucket}/*",
+                f"{arn_s3_bucket_lambda}/*",
+                f"{arn_s3_bucket_tmp}/*"
+            ]
         }
 
         statements.append(_statement)
@@ -285,34 +213,36 @@ class Main(newSchedStack):
 
     def _get_lambda_policy(self):
 
-        _action = ["lambda:TagResource",
-                   "lambda:GetFunctionConfiguration",
-                   "lambda:ListProvisionedConcurrencyConfigs",
-                   "lambda:GetProvisionedConcurrencyConfig",
-                   "lambda:ListLayerVersions",
-                   "lambda:ListLayers",
-                   "lambda:ListCodeSigningConfigs",
-                   "lambda:GetAlias",
-                   "lambda:ListFunctions",
-                   "lambda:GetEventSourceMapping",
-                   "lambda:InvokeFunction",
-                   "lambda:ListAliases",
-                   "lambda:GetFunctionCodeSigningConfig",
-                   "lambda:ListFunctionEventInvokeConfigs",
-                   "lambda:ListFunctionsByCodeSigningConfig",
-                   "lambda:GetFunctionConcurrency",
-                   "lambda:ListEventSourceMappings",
-                   "lambda:ListVersionsByFunction",
-                   "lambda:GetLayerVersion",
-                   "lambda:InvokeAsync",
-                   "lambda:GetAccountSettings",
-                   "lambda:GetLayerVersionPolicy",
-                   "lambda:UntagResource",
-                   "lambda:ListTags",
-                   "lambda:GetFunction",
-                   "lambda:GetFunctionEventInvokeConfig",
-                   "lambda:GetCodeSigningConfig",
-                   "lambda:GetPolicy"]
+        _action = [
+            "lambda:TagResource",
+            "lambda:GetFunctionConfiguration",
+            "lambda:ListProvisionedConcurrencyConfigs",
+            "lambda:GetProvisionedConcurrencyConfig",
+            "lambda:ListLayerVersions",
+            "lambda:ListLayers",
+            "lambda:ListCodeSigningConfigs",
+            "lambda:GetAlias",
+            "lambda:ListFunctions",
+            "lambda:GetEventSourceMapping",
+            "lambda:InvokeFunction",
+            "lambda:ListAliases",
+            "lambda:GetFunctionCodeSigningConfig",
+            "lambda:ListFunctionEventInvokeConfigs",
+            "lambda:ListFunctionsByCodeSigningConfig",
+            "lambda:GetFunctionConcurrency",
+            "lambda:ListEventSourceMappings",
+            "lambda:ListVersionsByFunction",
+            "lambda:GetLayerVersion",
+            "lambda:InvokeAsync",
+            "lambda:GetAccountSettings",
+            "lambda:GetLayerVersionPolicy",
+            "lambda:UntagResource",
+            "lambda:ListTags",
+            "lambda:GetFunction",
+            "lambda:GetFunctionEventInvokeConfig",
+            "lambda:GetCodeSigningConfig",
+            "lambda:GetPolicy"
+        ]
 
         _statement = {"Action": _action,
                       "Resource": "*",
@@ -323,27 +253,29 @@ class Main(newSchedStack):
 
     def _get_codebuild_policy(self):
 
-        _action = ["codebuild:ListReportsForReportGroup",
-                   "codebuild:ListBuildsForProject",
-                   "codebuild:BatchGetBuilds",
-                   "codebuild:StopBuildBatch",
-                   "codebuild:ListReports",
-                   "codebuild:DeleteBuildBatch",
-                   "codebuild:BatchGetReports",
-                   "codebuild:ListCuratedEnvironmentImages",
-                   "codebuild:ListBuildBatches",
-                   "codebuild:ListBuilds",
-                   "codebuild:BatchDeleteBuilds",
-                   "codebuild:StartBuild",
-                   "codebuild:BatchGetBuildBatches",
-                   "codebuild:GetResourcePolicy",
-                   "codebuild:StopBuild",
-                   "codebuild:RetryBuild",
-                   "codebuild:ImportSourceCredentials",
-                   "codebuild:BatchGetReportGroups",
-                   "codebuild:BatchGetProjects",
-                   "codebuild:RetryBuildBatch",
-                   "codebuild:StartBuildBatch"]
+        _action = [
+            "codebuild:ListReportsForReportGroup",
+            "codebuild:ListBuildsForProject",
+            "codebuild:BatchGetBuilds",
+            "codebuild:StopBuildBatch",
+            "codebuild:ListReports",
+            "codebuild:DeleteBuildBatch",
+            "codebuild:BatchGetReports",
+            "codebuild:ListCuratedEnvironmentImages",
+            "codebuild:ListBuildBatches",
+            "codebuild:ListBuilds",
+            "codebuild:BatchDeleteBuilds",
+            "codebuild:StartBuild",
+            "codebuild:BatchGetBuildBatches",
+            "codebuild:GetResourcePolicy",
+            "codebuild:StopBuild",
+            "codebuild:RetryBuild",
+            "codebuild:ImportSourceCredentials",
+            "codebuild:BatchGetReportGroups",
+            "codebuild:BatchGetProjects",
+            "codebuild:RetryBuildBatch",
+            "codebuild:StartBuildBatch"
+        ]
 
         _statement = {"Action": _action,
                       "Resource": "*",
@@ -383,6 +315,9 @@ class Main(newSchedStack):
         statements.append(self._get_log_policy())
         statements.append(self._get_dynamodb_policy())
         statements.extend(self._get_s3_policies())
+
+        # testtest456
+        # need to update
         statements.append(self._get_lambda_policy())
         statements.append(self._get_codebuild_policy())
 
@@ -405,16 +340,8 @@ class Main(newSchedStack):
         return self.stack.b64_encode(policy,
                                      json_dumps=True)
 
-    def _get_s3_bucket(self):
-
-        suffix_id = self._determine_suffix_id()
-        s3_bucket = "tfpr-shared-{}-{}".format(
-            self.stack.tfpr_environment, suffix_id)
-
-        return s3_bucket
-
     def _get_stepf_name(self):
-         return "{}-tfpr-stepf-ci".format(self.stack.tfpr_environment)
+         return f"iac_ci-stepf-ci"
 
     def _get_stepf_arn(self):
 
@@ -436,7 +363,7 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region
         }
 
-        human_description = "Create step function {}".format(stepf_name)
+        human_description = f"Create step function {stepf_name}"
 
         inputargs = {
             "arguments": arguments,
@@ -453,12 +380,11 @@ class Main(newSchedStack):
 
         self.stack.unset_parallel()
 
-        s3_bucket = self._get_s3_bucket()
         policy_template_hash = self._get_policy_template_hash()
         base_env_vars_hash, webhook_env_vars_hash = self._get_env_vars_lambda_hashes()
 
         base_arguments = {
-            "s3_bucket": s3_bucket,
+            "s3_bucket": self.lambda_bucket,
             "runtime": self.stack.runtime,
             "policy_template_hash": policy_template_hash,
             "lambda_env_vars_hash": base_env_vars_hash,
@@ -472,9 +398,9 @@ class Main(newSchedStack):
         ###########################################################################
         # create the first function with py_lambda
         ###########################################################################
-        lambda_name = "process-webhook"
+        lambda_name = "iac-ci-process-webhook"
         handler = "app_webhook.handler"
-        s3_key = "lambda_tfpr.zip"
+        s3_key = "lambda_iac_ci.zip"
 
         arguments = base_arguments.copy()
 
@@ -483,9 +409,9 @@ class Main(newSchedStack):
             "lambda_name": lambda_name,
             "handler": handler,
             "s3_key": s3_key,
-            "config0_lambda_execgroup_name": self.stack.lambda_tfpr.name})
+            "config0_lambda_execgroup_name": self.stack.lambda_iac_ci.name})
 
-        human_description= "Create lambda function {}".format(lambda_name)
+        human_description= f"Create lambda function {lambda_name}"
         inputargs = {"arguments": arguments,
                      "automation_phase": "infrastructure",
                      "human_description": human_description}
@@ -497,35 +423,28 @@ class Main(newSchedStack):
         self.stack.set_parallel()
 
         lambda_params = { 
-                "trigger-codebuild":[
-                    "app_codebuild.handler",
-                    self.stack.lambda_codebuild.name
-                    ],
-                "pkgcode-to-s3":[
-                    "app_s3.handler",
-                    self.stack.lambda_s3.name
-                    ],
-                "check-codebuild":[
-                    "app_check_build.handler",
-                    self.stack.lambda_check_codebuild.name
-                    ]
-                }
+                "iac-ci-trigger-codebuild":"app_codebuild.handler",
+                "iac-ci-pkgcode-to-s3":"app_s3.handler",
+                "iac-ci-check-codebuild":"app_check_build.handler",
+                "iac-ci-trigger-lambda":"app_lambda.handler",
+                "iac-ci-update-pr":"app_pr.handler"
+        }
 
-        for lambda_name, params in lambda_params.items():
+        for lambda_name, handler in lambda_params.items():
 
             arguments = base_arguments.copy()
             arguments.update({
                 "lambda_name": lambda_name,
-                "handler": params[0],
+                "handler": handler,
                 "s3_key": s3_key
             })
 
-            human_description= 'Create lambda function {}'.format(lambda_name)
+            human_description = f'Create lambda function {lambda_name}'
             inputargs = {"arguments": arguments,
                          "automation_phase": "infrastructure",
                          "human_description": human_description}
 
-            self.stack.aws_lambda.insert(display=True,
+            self.stack.py_lambda.insert(display=True,
                                         **inputargs)
 
         self.stack.unset_parallel()
@@ -535,16 +454,9 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
-        cloud_tags_hash = self._set_cloud_tag_hash()
-
-        # set parallel
-        self.stack.set_parallel()
-
-        # create s3 buckets
-        self._s3(cloud_tags_hash)
 
         # create dynamodb table
-        self._dynamodb(cloud_tags_hash)
+        self._dynamodb(self._set_cloud_tag_hash())
 
         return True
 
@@ -570,14 +482,15 @@ class Main(newSchedStack):
         self.stack.verify_variables()
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        s3_bucket = self._get_s3_bucket()
         stepf_arn = self._get_stepf_arn()
 
         arguments = {
-            "s3_bucket": s3_bucket,
+            "s3_bucket": self.lambda_bucket,
             "runtime": self.stack.runtime,
             "policy_template_hash": self._get_stepf_policy_template_hash(),
-            "lambda_env_vars_hash": self.stack.b64_encode({"STATE_MACHINE_ARN":stepf_arn}),
+            "lambda_env_vars_hash": self.stack.b64_encode({
+                "STATE_MACHINE_ARN":stepf_arn
+            }),
             "cloud_tags_hash": cloud_tags_hash,
             "aws_default_region": self.stack.aws_default_region
         }
@@ -588,7 +501,7 @@ class Main(newSchedStack):
         # lambda_name = "lambda_trigger_stepf"
         lambda_name = "lambda_trigger_stepf"
         handler = "app.handler"
-        s3_key = "{}.zip".format(lambda_name)
+        s3_key = f"{lambda_name}.zip"
 
         arguments.update({
             "lambda_name": lambda_name,
@@ -596,7 +509,7 @@ class Main(newSchedStack):
             "s3_key": s3_key,
             "config0_lambda_execgroup_name": self.stack.lambda_trigger_stepf.name})
 
-        human_description= "Create lambda function {}".format(lambda_name)
+        human_description = f"Create lambda function {lambda_name}"
         inputargs = {"arguments": arguments,
                      "automation_phase": "infrastructure",
                      "human_description": human_description}
@@ -611,11 +524,9 @@ class Main(newSchedStack):
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        apigateway_name = "config0-tfpr-shared-{}".format(
-            self.stack.tfpr_environment)
+        apigateway_name ="iac_ci"
 
-        # will trigger the lambda function
-        # that will trigger the step function
+        # trigger the lambda function
         lambda_name = "lambda_trigger_stepf"
 
         arguments = {
@@ -625,7 +536,7 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region
         }
 
-        human_description= 'Create API gateway {}'.format(apigateway_name)
+        human_description = f'Create API gateway {apigateway_name}'
         inputargs = {
             "arguments": arguments,
             "automation_phase": "infrastructure",
@@ -640,9 +551,8 @@ class Main(newSchedStack):
         self.stack.init_variables()
         self.stack.verify_variables()
 
-        lambda_name = "check-codebuild"
-        topic_name = "{}-codebuild-compelete-trigger".format(
-            self.stack.tfpr_environment)
+        lambda_name = "iac-ci-check-codebuild"
+        topic_name = f"iac-ci-codebuild-compelete-trigger"
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -651,7 +561,7 @@ class Main(newSchedStack):
                      "topic_name": topic_name,
                      "aws_default_region": self.stack.aws_default_region}
 
-        human_description = "Create Codebuild SNS subscription for {}".format(self.stack.tfpr_environment)
+        human_description = f"Create Codebuild SNS subscription for iac-ci"
         inputargs = {"arguments": arguments,
                      "automation_phase": "infrastructure",
                      "human_description": human_description}

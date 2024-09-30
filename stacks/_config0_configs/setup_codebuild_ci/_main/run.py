@@ -102,7 +102,7 @@ class Main(newSchedStack):
             raise Exception(msg)
 
         # perm shared bucket
-        s3_bucket =f"ci-shared-{self.stack.ci_environment}-{suffix_id}"
+        s3_bucket = f"ci-shared-{self.stack.ci_environment}-{suffix_id}"
 
         arguments = {
             "bucket": s3_bucket,
@@ -124,7 +124,7 @@ class Main(newSchedStack):
                                         **inputargs)
 
         # temp shared bucket
-        s3_bucket =f"ci-shared-{self.stack.ci_environment}-{suffix_id}-tmp"
+        s3_bucket = f"ci-shared-{self.stack.ci_environment}-{suffix_id}-tmp"
 
         arguments = {
             "bucket": s3_bucket,
@@ -186,10 +186,10 @@ class Main(newSchedStack):
 
     def _get_dynamodb_policy(self):
 
-        dynamodb_name_runs =f"ci-shared-runs"
-        dynamodb_name_settings =f"ci-shared-settings"
-        arn_dynamodb_name_runs =f"arn:aws:dynamodb:{self.stack.aws_default_region}:" + '${aws_account_id}:table/' + dynamodb_name_runs
-        arn_dynamodb_name_settings =f"arn:aws:dynamodb:{self.stack.aws_default_region}:" + '${aws_account_id}:table/' + dynamodb_name_settings
+        dynamodb_name_runs = f"ci-shared-runs"
+        dynamodb_name_settings = f"ci-shared-settings"
+        arn_dynamodb_name_runs = f"arn:aws:dynamodb:{self.stack.aws_default_region}:" + '${aws_account_id}:table/' + dynamodb_name_runs
+        arn_dynamodb_name_settings = f"arn:aws:dynamodb:{self.stack.aws_default_region}:" + '${aws_account_id}:table/' + dynamodb_name_settings
 
         _statement = {
             "Effect": "Allow",
@@ -383,7 +383,7 @@ class Main(newSchedStack):
     def _get_s3_bucket(self):
 
         suffix_id = self._determine_suffix_id()
-        s3_bucket =f"ci-shared-{self.stack.ci_environment}-{suffix_id}"
+        s3_bucket = f"ci-shared-{self.stack.ci_environment}-{suffix_id}"
 
         return s3_bucket
 
@@ -574,7 +574,7 @@ class Main(newSchedStack):
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 
-        apigateway_name =f"ci-shared-{self.stack.ci_environment}"
+        apigateway_name = f"ci-shared-{self.stack.ci_environment}"
 
         # will trigger the lambda function
         # that will trigger the step function
@@ -603,7 +603,7 @@ class Main(newSchedStack):
         self.stack.verify_variables()
 
         lambda_name = "check-codebuild"
-        topic_name =f"{self.stack.ci_environment}-codebuild-compelete-trigger"
+        topic_name = f"{self.stack.ci_environment}-codebuild-compelete-trigger"
 
         cloud_tags_hash = self._set_cloud_tag_hash()
 

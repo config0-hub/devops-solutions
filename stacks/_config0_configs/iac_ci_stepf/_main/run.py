@@ -17,7 +17,7 @@ def run(stackargs):
                              types="str")
 
     # Add execgroup
-    stack.add_execgroup("config0-publish:::devops-solutions::codebuild_ci_stepf",
+    stack.add_execgroup("config0-publish:::devops-solutions::iac_ci_stepf",
                         "tf_execgroup")
 
     # Add substack
