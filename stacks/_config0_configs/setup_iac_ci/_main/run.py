@@ -408,7 +408,6 @@ class Main(newSchedStack):
         ###########################################################################
         lambda_name = "iac-ci-process-webhook"
         handler = "app_webhook.handler"
-        s3_key = "lambda_iac_ci.zip"
 
         arguments = base_arguments.copy()
 
@@ -416,13 +415,16 @@ class Main(newSchedStack):
             "lambda_env_vars_hash": webhook_env_vars_hash,   # this is special for the processing of the webhook
             "lambda_name": lambda_name,
             "handler": handler,
-            "s3_key": s3_key,
-            "config0_lambda_execgroup_name": self.stack.lambda_iac_ci.name})
+            "config0_lambda_execgroup_name": self.stack.lambda_iac_ci.name
+        })
 
         human_description= f"Create lambda function {lambda_name}"
-        inputargs = {"arguments": arguments,
-                     "automation_phase": "infrastructure",
-                     "human_description": human_description}
+
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "infrastructure",
+            "human_description": human_description
+        }
 
         self.stack.py_lambda.insert(display=True,
                                     **inputargs)
@@ -439,12 +441,10 @@ class Main(newSchedStack):
         }
 
         for lambda_name, handler in lambda_params.items():
-
             arguments = base_arguments.copy()
             arguments.update({
                 "lambda_name": lambda_name,
-                "handler": handler,
-                "s3_key": s3_key
+                "handler": handler
             })
 
             human_description = f'Create lambda function {lambda_name}'
@@ -527,12 +527,10 @@ class Main(newSchedStack):
         # lambda_name = "lambda_trigger_stepf"
         lambda_name = "lambda_trigger_stepf"
         handler = "app.handler"
-        s3_key = f"{lambda_name}.zip"
 
         arguments.update({
             "lambda_name": lambda_name,
             "handler": handler,
-            "s3_key": s3_key,
             "config0_lambda_execgroup_name": self.stack.lambda_trigger_stepf.name})
 
         human_description = f"Create lambda function {lambda_name}"
