@@ -392,7 +392,7 @@ class Main(newSchedStack):
         base_env_vars_hash, webhook_env_vars_hash = self._get_env_vars_lambda_hashes()
 
         base_arguments = {
-            "s3_bucket": self.lambda_bucket,
+            "s3_bucket": self.stack.lambda_bucket,
             "runtime": self.stack.runtime,
             "policy_template_hash": policy_template_hash,
             "lambda_env_vars_hash": base_env_vars_hash,
@@ -459,15 +459,15 @@ class Main(newSchedStack):
 
     def _init_buckets(self):
 
-        if not self.lambda_bucket:
+        if not self.stack.lambda_bucket:
             self.stack.set_variable("lambda_bucket",
                                     self.stack.bucket_names["lambda"])
 
-        if not self.tmp_bucket:
+        if not self.stack.remote_stateful_bucket:
             self.stack.set_variable("remote_stateful_bucket",
                                     self.stack.bucket_names["stateful"])
 
-        if not self.tmp_bucket:
+        if not self.stack.tmp_bucket:
             self.stack.set_variable("tmp_bucket",
                                     self.stack.bucket_names["tmp"])
 
@@ -511,7 +511,7 @@ class Main(newSchedStack):
         stepf_arn = self._get_stepf_arn()
 
         arguments = {
-            "s3_bucket": self.lambda_bucket,
+            "s3_bucket": self.stack.lambda_bucket,
             "runtime": self.stack.runtime,
             "policy_template_hash": self._get_stepf_policy_template_hash(),
             "lambda_env_vars_hash": self.stack.b64_encode({
