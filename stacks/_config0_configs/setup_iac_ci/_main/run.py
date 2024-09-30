@@ -618,7 +618,6 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup dynamodb"
-        sched.conditions.retries = 1
         sched.on_success = ["lambda_stepf"]
         self.add_schedule()
 
