@@ -21,10 +21,6 @@ class Main(newSchedStack):
                                 default="null")
         ########################################################################################
 
-        self.parse.add_optional(key="aws_default_region",
-                                types="str",
-                                default="eu-west-1")
-
         self.parse.add_optional(key="cloud_tags_hash",
                                 types="str")
 
@@ -473,6 +469,12 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
+
+        # we need to hardwire to us-east-1 since
+        # the existing config0 workers ("config0-iac")
+        # are by default deployed to us-east-1
+        self.stack.set_variable("aws_default_region",
+                                "us-east-1")
         self._init_buckets()
 
         # create dynamodb table
@@ -614,6 +616,7 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
+        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup dynamodb"
         sched.on_success = ["lambda_stepf"]
@@ -625,7 +628,6 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup lambdas and stepf"
-        sched.conditions.retries = 1
         sched.on_success = ["trigger_stepf"]
         self.add_schedule()
 
