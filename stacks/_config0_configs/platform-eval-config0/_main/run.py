@@ -344,6 +344,17 @@ def run(stackargs):
                            sg_api_info
                        ])
 
+    # iac-ci with aws
+    stack.add_substack('config0-publish:::setup_iac_ci',
+                       arguments=[
+                           cloud_tags_hash
+                       ],
+                       labels=[
+                           general,
+                           aws_cloud
+                       ],
+                       inputvars=["infracost"])
+
     # ci with aws codebuild
     stack.add_substack('config0-publish:::setup_codebuild_ci',
                        arguments=[
