@@ -62,7 +62,7 @@ class Main(newSchedStack):
                                 "sns_subscription")
 
         # this is lock versioning of execgroups
-        self.stack.add_execgroup("config0-publish:::devops-solutions::iac_ci")
+        self.stack.add_execgroup("config0-publish:::devops-solutions::iac_ci","lambda_iac_ci")
         #########################################################################
 
         self.stack.init_execgroups()
@@ -628,6 +628,7 @@ class Main(newSchedStack):
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup lambdas and stepf"
+        sched.conditions.retries = 1
         sched.on_success = ["trigger_stepf"]
         self.add_schedule()
 
