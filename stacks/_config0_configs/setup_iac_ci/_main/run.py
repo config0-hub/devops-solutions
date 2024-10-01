@@ -54,6 +54,7 @@ class Main(newSchedStack):
                                 "sns_subscription")
 
         # this is lock versioning of execgroups
+        self.stack.add_execgroup("config0-publish:::github::lambda_trigger_stepf")
         self.stack.add_execgroup("config0-publish:::devops-solutions::iac_ci","lambda_iac_ci")
         #########################################################################
 
@@ -621,7 +622,6 @@ class Main(newSchedStack):
         sched.job = "lambda_stepf"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup lambdas and stepf"
         sched.on_success = ["trigger_stepf"]
@@ -631,6 +631,7 @@ class Main(newSchedStack):
         sched.job = "trigger_stepf"
         sched.archive.timeout = 1200
         sched.archive.timewait = 120
+        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create Lambda Trigger Step function'
         sched.on_success = ["apigw"]
