@@ -77,7 +77,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
     "States": {
       "ProcessWebhook": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:iac-ci-webhook",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-webhook",
         "Next": "ChkProcessWebhook"
       },
       "ChkProcessWebhook": {
@@ -93,11 +93,28 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "PkgCodeToS3": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:iac-ci-pkgcode-to-s3",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-pkgcode-to-s3",
         "Next": "ChkPkgCodeToS3",
         "InputPath": "$.body"
       },
       "ChkPkgCodeToS3": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "Variable": "$.continue",
+            "BooleanEquals": true,
+            "Next": "TriggerLambda"
+          }
+        ],
+        "Default": "Done"
+      },
+      "TriggerLambda": {
+        "Type": "Task",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-trigger-lambda",
+        "Next": "ChkTriggerLambda",
+        "InputPath": "$.body"
+      },
+      "ChkTriggerLambda": {
         "Type": "Choice",
         "Choices": [
           {
@@ -108,9 +125,10 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
         ],
         "Default": "Done"
       },
-      "TriggerLambda": {
+      "TriggerCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:iac-ci-trigger-lambda",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-trigger-codebuild",
+        "Next": "ChkTriggerCodebuild",
         "InputPath": "$.body"
       },
       "ChkTriggerCodebuild": {
@@ -132,7 +150,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "CheckCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:eu-west-1:${data.aws_caller_identity.current.account_id}:function:iac-ci-check-codebuild",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-check-codebuild",
         "Next": "ChkCheckCodebuild",
         "InputPath": "$.body"
       },
