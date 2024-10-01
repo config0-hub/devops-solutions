@@ -388,7 +388,8 @@ class Main(newSchedStack):
             "lambda_env_vars_hash": base_env_vars_hash,
             "cloud_tags_hash": cloud_tags_hash,
             "aws_default_region": self.stack.aws_default_region,
-            "lambda_layers": self.stack.lambda_layers
+            "lambda_layers": self.stack.lambda_layers,
+            "config0_lambda_execgroup_name": self.stack.lambda_iac_ci.name
         }
 
         ###########################################################################
@@ -402,8 +403,7 @@ class Main(newSchedStack):
         arguments.update({
             "lambda_env_vars_hash": webhook_env_vars_hash,   # this is special for the processing of the webhook
             "lambda_name": lambda_name,
-            "handler": handler,
-            "config0_lambda_execgroup_name": self.stack.lambda_iac_ci.name
+            "handler": handler
         })
 
 
