@@ -376,7 +376,8 @@ class Main(newSchedStack):
 
     def _lambda(self,cloud_tags_hash):
 
-        self.stack.unset_parallel()
+        #self.stack.unset_parallel()
+        self.stack.set_parallel()
 
         policy_template_hash = self._get_policy_template_hash()
         base_env_vars_hash, webhook_env_vars_hash = self._get_env_vars_lambda_hashes()
@@ -417,9 +418,9 @@ class Main(newSchedStack):
                                     **inputargs)
 
         # call tf lambda now the lambda function has been uploaded
-        self.stack.set_parallel()
+        #self.stack.set_parallel()
 
-        lambda_params = { 
+        lambda_params = {
                 "iac-ci-trigger-codebuild":"app_codebuild.handler",
                 "iac-ci-pkgcode-to-s3":"app_s3.handler",
                 "iac-ci-check-codebuild":"app_check_build.handler",
