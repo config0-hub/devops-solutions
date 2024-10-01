@@ -613,6 +613,7 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
+        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup dynamodb"
         sched.on_success = ["lambda_stepf"]
@@ -631,7 +632,6 @@ class Main(newSchedStack):
         sched.job = "trigger_stepf"
         sched.archive.timeout = 1200
         sched.archive.timewait = 120
-        sched.conditions.retries = 1
         sched.automation_phase = "infrastructure"
         sched.human_description = 'Create Lambda Trigger Step function'
         sched.on_success = ["apigw"]
