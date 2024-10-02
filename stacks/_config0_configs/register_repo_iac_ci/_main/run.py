@@ -198,7 +198,9 @@ class Main(newSchedStack):
 
         item = {
             "_id": {"S": str(self.stack.trigger_id)},
-            "git_repo": {"S": str(self.stack.iac_ci_repo)},
+            "app_name": {"S": str(self.stack.app_name)},
+            "repo_name": {"S": str(self.stack.iac_ci_repo)},
+            "iac_ci_repo": {"S": str(self.stack.iac_ci_repo)},
             "trigger_id": {"S": str(self.stack.trigger_id)},
             "secret": {"S": str(self.stack.secret)},
             "saas_env": {"S": str(self.stack.saas_env)},
