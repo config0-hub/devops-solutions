@@ -276,6 +276,9 @@ class Main(newSchedStack):
 
     def _add_ssm_callback_token(self):
 
+        self.stack.set_variable("ssm_callback_token",
+                                f"/{self.stack.app_name}/config0/callback_token")
+
         # add config0 token
         arguments = {
             "ssm_key": self.stack.ssm_callback_token,

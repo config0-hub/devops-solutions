@@ -4,8 +4,7 @@ class Main(newSchedStack):
 
         newSchedStack.__init__(self, stackargs)
 
-        # Add default variables
-        self.parse.add_required(key="git_repo",
+        self.parse.add_required(key="iac_ci_repo",
                                 types="str")
 
         self.parse.add_required(key="branch",
