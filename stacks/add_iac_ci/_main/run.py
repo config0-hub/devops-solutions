@@ -14,9 +14,6 @@ class Main(newSchedStack):
                                 types="str",
                                 default="null")
 
-        #stack.set_variable("iac_ci_folder",
-        #                   f'{stack.project_name}/{stack.stateful_id}')
-
         # Add substack
         self.stack.add_substack('config0-publish:::aws_codebuild')
 
