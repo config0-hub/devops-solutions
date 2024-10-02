@@ -62,6 +62,9 @@ class Main(newSchedStack):
 
         _secret = self.stack.get_hash(f'{self.stack.tmp_bucket}.{self.stack.lambda_bucket}.{self.stack.remote_stateful_bucket}')
 
+        self.stack.set_variable("trigger_id",
+                                self.stack.get_hash(f'{_secret}.{self.stack.app_name}'))
+
         self.stack.set_variable("secret",_secret)
         self.stack.set_variable("dynamodb_name_runs",f"{self.stack.app_name}-runs")
         self.stack.set_variable("dynamodb_name_settings",f"{self.stack.app_name}-settings")
@@ -369,8 +372,6 @@ class Main(newSchedStack):
         self.stack.init_variables()
         self.stack.verify_variables()
         self._init_common()
-        self.stack.set_variable("trigger_id",
-                                self.stack.random_id())
         self.stack.set_parallel()
 
         self._add_iac_ci_to_db()
