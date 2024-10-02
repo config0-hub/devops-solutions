@@ -200,7 +200,7 @@ class Main(newSchedStack):
             "trigger_id": {"S": str(self.stack.trigger_id)},
             "secret": {"S": str(self.stack.secret)},
             "saas_env": {"S": str(self.stack.saas_env)},
-            "run_title": {"S": str(self.stack.run_title)},
+            "run_title": {"S": str(self.stack.app_name)},
             "user_endpoint": {"S": str(self.stack.get_user_endpt())},
             "ssm_callback_token": {"S": str(self.stack.ssm_callback_token)},
             "ssm_ssh_key": {"S": str(self.stack.ssm_ssh_key)},
