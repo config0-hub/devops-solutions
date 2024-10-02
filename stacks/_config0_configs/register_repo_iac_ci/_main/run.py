@@ -84,7 +84,7 @@ class Main(newSchedStack):
             raise Exception("cannot set up iac ci - token missing")
 
         self.stack.set_variable("ssm_iac_ci_github_token",
-                                f"/{self.stack.app_name}/config0/iac_ci_github_token")
+                                f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/iac_ci_github_token")
 
     def _set_slack_webhook(self):
 
@@ -94,7 +94,7 @@ class Main(newSchedStack):
 
         if self.stack.get_attr("slack_webhook_hash"):
             self.stack.set_variable("ssm_slack_webhook_hash",
-                                    f"/{self.stack.app_name}/config0/slack_webhook_hash")
+                                    f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/slack_webhook_hash")
         else:
             self.stack.set_variable("ssm_slack_webhook_hash",None)
 
@@ -109,7 +109,7 @@ class Main(newSchedStack):
 
         if self.stack.get_attr("infracost_api_key"):
             self.stack.set_variable("ssm_infracost_api_key",
-                                    f"/{self.stack.app_name}/config0/infracost_api_key")
+                                    f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/infracost_api_key")
         else:
             self.stack.set_variable("ssm_infracost_api_key",None)
 
@@ -280,7 +280,7 @@ class Main(newSchedStack):
     def _add_ssm_callback_token(self):
 
         self.stack.set_variable("ssm_callback_token",
-                                f"/{self.stack.app_name}/config0/callback_token")
+                                f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/callback_token")
 
         # add config0 token
         arguments = {
@@ -298,7 +298,7 @@ class Main(newSchedStack):
     def _add_ssm_ssh_key(self):
 
         self.stack.set_variable("ssm_ssh_key",
-                                f"/{self.stack.app_name}/config0/sshkeys/private")
+                                f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/sshkeys/private")
 
         # add ssh key
         arguments = {
