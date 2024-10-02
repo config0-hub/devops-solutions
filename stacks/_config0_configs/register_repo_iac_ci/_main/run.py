@@ -46,17 +46,14 @@ class Main(newSchedStack):
 
     def _set_buckets(self):
 
-        if not self.stack.lambda_bucket:
-            self.stack.set_variable("lambda_bucket",
-                                    self.stack.bucket_names["lambda"])
+        self.stack.set_variable("lambda_bucket",
+                                self.stack.bucket_names["lambda"])
 
-        if not self.stack.remote_stateful_bucket:
-            self.stack.set_variable("remote_stateful_bucket",
-                                    self.stack.bucket_names["stateful"])
+        self.stack.set_variable("remote_stateful_bucket",
+                                self.stack.bucket_names["stateful"])
 
-        if not self.stack.tmp_bucket:
-            self.stack.set_variable("tmp_bucket",
-                                    self.stack.bucket_names["tmp"])
+        self.stack.set_variable("tmp_bucket",
+                                self.stack.bucket_names["tmp"])
 
     def _set_misc(self):
 
@@ -120,13 +117,12 @@ class Main(newSchedStack):
 
         import os
 
-        apigateway_name = self.stack.app_name
-
         _lookup = {
             "must_be_one": True,
             "resource_type": "apigateway_restapi_lambda",
             "provider": "aws",
-            "name": apigateway_name}
+            "name": self.stack.app_name
+        }
 
         results = self.stack.get_resource(**_lookup)[0]
 
@@ -195,7 +191,6 @@ class Main(newSchedStack):
         self._add_ssm_iac_ci_github_token()
         self._add_ssm_slack()
         self._add_ssm_infracost()
-        #self._add_ssm_github_token()
 
     def _get_dynamodb_item(self):
 
@@ -383,7 +378,6 @@ class Main(newSchedStack):
 
         self._add_iac_ci_to_db()
         self._ssm()
-        self._webhook()
         return self._dynamodb_item()
 
     def run_setup(self):
@@ -393,6 +387,7 @@ class Main(newSchedStack):
         self._init_common()
         self.stack.set_parallel()
 
+        self._webhook()
         self._sshdeploy()
         return self._token()
 

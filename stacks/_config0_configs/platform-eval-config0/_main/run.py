@@ -355,6 +355,26 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
+    stack.add_substack('config0-publish:::register_repo_iac_ci',
+                       arguments=[
+                           cloud_tags_hash
+                       ],
+                       labels=[
+                           general,
+                           aws_cloud
+                       ],
+                       inputvars=["infracost"])
+
+    stack.add_substack('config0-publish:::add_iac_ci',
+                       arguments=[
+                           cloud_tags_hash
+                       ],
+                       labels=[
+                           general,
+                           aws_cloud
+                       ],
+                       inputvars=["infracost"])
+
     # ci with aws codebuild
     stack.add_substack('config0-publish:::setup_codebuild_ci',
                        arguments=[
