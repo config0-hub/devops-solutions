@@ -8,9 +8,6 @@ class Main(newSchedStack):
                                 types="str",
                                 default="iac-ci-config0")
 
-        self.parse.add_required(key="repo_name",
-                                types="str")
-
         self.stack.add_substack('config0-publish:::github_webhook')
         self.stack.add_substack('config0-publish:::aws_dynamodb_item','dynamodb_item')
         self.stack.add_substack('config0-publish:::aws_ssm_param')

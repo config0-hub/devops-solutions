@@ -5,70 +5,18 @@ class Main(newSchedStack):
         newSchedStack.__init__(self, stackargs)
 
         # Add default variables
-        self.parse.add_required(key="codebuild_name",
-                                types="str")
-
         self.parse.add_required(key="git_repo",
                                 types="str")
 
-        self.parse.add_required(key="git_url",
+        self.parse.add_required(key="branch",
                                 types="str")
 
-        self.parse.add_required(key="project_id",
-                                types="str")
-
-        self.parse.add_optional(key="slack_channel",
-                                types="str")
-
-        self.parse.add_optional(key="trigger_id",
+        self.parse.add_optional(key="iac_ci_folder",
                                 types="str",
-                                default="_random")
-
-        self.parse.add_optional(key="privileged_mode",
-                                types="bool",
-                                default="true")
-
-        self.parse.add_optional(key="image_type",
-                                types="str",
-                                default="LINUX_CONTAINER")
-
-        self.parse.add_optional(key="build_image",
-                                types="str",
-                                default="aws/codebuild/standard:5.0")
-
-        self.parse.add_optional(key="build_timeout",
-                                types="int",
-                                default="444")
-
-        self.parse.add_optional(key="compute_type",
-                                types="str",
-                                default="BUILD_GENERAL1_SMALL")
-
-        self.parse.add_optional(key="aws_default_region",
-                                types="str",
-                                default="us-west-1")
-
-        self.parse.add_optional(key="cloud_tags_hash",
-                                types="str")
-
-        self.parse.add_optional(key="bucket_acl",
-                                types="str",
-                                default="private")
-
-        self.parse.add_optional(key="bucket_expire_days",
-                                types="int",
-                                default="1")
-
-        self.parse.add_optional(key="subnet_ids",
                                 default="null")
 
-        self.parse.add_optional(key="vpc_id",
-                                default="null",
-                                types="str")
-
-        self.parse.add_required(key="security_group_id",
-                                default="null",
-                                types="str")
+        #stack.set_variable("iac_ci_folder",
+        #                   f'{stack.project_name}/{stack.stateful_id}')
 
         # Add substack
         self.stack.add_substack('config0-publish:::aws_codebuild')
