@@ -25,6 +25,25 @@ class Main(newSchedStack):
 
         self.stack.init_substacks()
 
+    def _set_registered_repo_info(self):
+
+        _lookup = {
+            "must_be_one": True,
+            "resource_type": "iac_ci",
+            "provider": "user_input",
+            "iac_ci_repo": self.stack.iac_ci_repo}
+
+        resource = self.stack.get_resource(**_lookup)[0]
+
+        self.stack.set_variable("trigger_id",
+                                str(resource["trigger_id"]))
+
+        self.stack.set_variable("app_name",
+                                str(resource["app_name"]))
+
+        self.stack.set_variable("dynamodb_name_runs",f"{self.stack.app_name}-runs")
+        self.stack.set_variable("dynamodb_name_settings",f"{self.stack.app_name}-settings")
+
     def _get_dynamodb_item(self):
 
         _id = self.stack.get_hash(f'iac_ci.{self.stack.trigger_id}.{self.stack.branch}')
@@ -36,7 +55,8 @@ class Main(newSchedStack):
             "cluster": {"S": str(self.stack.cluster)},
             "project": {"S": str(self.stack.cluster)},
             "run_title": {"S": f'{str(self.stack.cluster)}-iac-ci'},
-            "source_method": {"S": str(self.stack.source_method)}
+            "source_method": {"S": str(self.stack.source_method)},
+            "type": {"S": "iac_setting"}
         }
 
         if self.stack.get_attr("schedule_id"):
@@ -50,13 +70,31 @@ class Main(newSchedStack):
 
         return self.stack.b64_encode(item)
 
+    def _dynamodb_item(self):
+
+        arguments = {
+            "table_name": self.stack.dynamodb_name_settings,
+            "hash_key": "_id",
+            "item_hash": self._get_dynamodb_item()
+        }
+
+        inputargs = {
+            "arguments": arguments,
+            "automation_phase": "continuous_delivery",
+            "human_description": f'Add setting item for iac ci {self.stack.cluster}-iac-ci'
+        }
+
+        return self.stack.dynamodb_item.insert(display=True,
+                                               **inputargs)
+
+
     def run_setup(self):
 
         self.stack.init_variables()
         self.stack.verify_variables()
-        self.stack.set_parallel()
+        self._set_registered_repo_info()
 
-        return self._token()
+        return self._dynamodb_item()
 
     def run(self):
 
@@ -69,38 +107,11 @@ class Main(newSchedStack):
 
         sched = self.new_schedule()
         sched.job = "setup"
-        sched.archive.timeout = 1800
+        sched.archive.timeout = 900
         sched.archive.timewait = 120
         sched.automation_phase = "continuous_delivery"
-        sched.human_description = "Setup Basic for Codebuild"
+        sched.human_description = "Setup IAC CI for existing IAC"
         sched.conditions.retries = 1
-        sched.on_success = ["connect_repo"]
-        self.add_schedule()
-
-        sched = self.new_schedule()
-        sched.job = "connect_repo"
-        sched.archive.timeout = 1800
-        sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
-        sched.human_description = "Add configurations to DynamoDb"
-        sched.on_success = ["ssm"]
-        self.add_schedule()
-
-        sched = self.new_schedule()
-        sched.job = "ssm"
-        sched.archive.timeout = 1800
-        sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
-        sched.human_description = "Upload deploy key to ssm"
-        sched.on_success = ["codebuild"]
-        self.add_schedule()
-
-        sched = self.new_schedule()
-        sched.job = "codebuild"
-        sched.archive.timeout = 1800
-        sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
-        sched.human_description = "Create Codebuild Project"
         self.add_schedule()
 
         return self.get_schedules()

@@ -164,8 +164,10 @@ class Main(newSchedStack):
             "name": self.stack.app_name
             }
 
-        return self.stack.get_resource(decrypt=True,
-                                       **_lookup)[0]["private_key"]
+        resource = self.stack.get_resource(decrypt=True,
+                                           **_lookup)[0]
+    
+        return self.stack.b64_encode(resource["private_key"])
 
     def _sshdeploy(self):
 
@@ -204,7 +206,8 @@ class Main(newSchedStack):
             "user_endpoint": {"S": str(self.stack.get_user_endpt())},
             "ssm_callback_token": {"S": str(self.stack.ssm_callback_token)},
             "ssm_ssh_key": {"S": str(self.stack.ssm_ssh_key)},
-            "ssm_iac_ci_github_token": {"S": str(self.stack.ssm_iac_ci_github_token)}
+            "ssm_iac_ci_github_token": {"S": str(self.stack.ssm_iac_ci_github_token)},
+            "type": {"S": "registered_repo"}
         }
 
         # additional optional credentials
@@ -337,7 +340,7 @@ class Main(newSchedStack):
         inputargs = {
             "arguments": arguments,
             "automation_phase": "continuous_delivery",
-            "human_description": f'Add setting item for iac ci {self.stack.app_name}'
+            "human_description": f'Add register repo for iac ci {self.stack.app_name}'
         }
 
         return self.stack.dynamodb_item.insert(display=True,
@@ -349,6 +352,9 @@ class Main(newSchedStack):
             "_id": self.stack.trigger_id,
             "trigger_id": self.stack.trigger_id,
             "source_method": "stack",
+            "iac_ci_repo": self.stack.iac_ci_repo,
+            "repo_name": self.stack.iac_ci_repo,
+            "provider": "user_input",
             "resource_type": "iac_ci"
         }
 
