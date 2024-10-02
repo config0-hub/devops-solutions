@@ -80,8 +80,8 @@ class Main(newSchedStack):
     def _dynamodb(self,cloud_tags_hash):
 
         dynamodb_names = [
-            self.dynamodb_name_runs,
-            self.dynamodb_name_settings,
+            self.stack.dynamodb_name_runs,
+            self.stack.dynamodb_name_settings,
         ]
 
         for dynamodb_name in dynamodb_names:
