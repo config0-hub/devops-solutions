@@ -15,7 +15,7 @@ class Main(newSchedStack):
                                 types="str",
                                 default="terraform")
 
-        self.parse.add_optional(key="iac_ci_folder",
+        self.parse.add_optional(key="subdir",
                                 types="str",
                                 default="null")
 
@@ -69,8 +69,8 @@ class Main(newSchedStack):
         if self.stack.get_attr("job_instance_id"):
             item["job_instance_id"] = {"S": str(self.stack.job_instance_id)}
 
-        if self.stack.iac_ci_folder:
-            item["iac_ci_folder"] = {"S": str(self.stack.iac_ci_folder)}
+        if self.stack.subdir:
+            item["iac_ci_folder"] = {"S": str(self.stack.subdir)}
 
         return self.stack.b64_encode(item)
 
