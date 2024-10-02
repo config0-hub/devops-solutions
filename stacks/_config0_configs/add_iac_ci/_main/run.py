@@ -4,14 +4,14 @@ class Main(newSchedStack):
 
         newSchedStack.__init__(self, stackargs)
 
-        self.parse.add_required(key="iac_ci_repo",
+        self.parse.add_required(key="repo_name",
                                 types="str")
 
         self.parse.add_required(key="branch",
                                 types="str")
 
-        # only supporting terraform
-        self.parse.add_required(key="source_method",
+        # only supporting terraform to begin with
+        self.parse.add_optional(key="source_method",
                                 types="str",
                                 default="terraform")
 
@@ -19,7 +19,7 @@ class Main(newSchedStack):
                                 types="str",
                                 default="null")
 
-        # Add substack
+        # add substack
         self.stack.add_substack('config0-publish:::aws_codebuild')
         self.stack.add_substack('config0-publish:::aws_dynamodb_item','dynamodb_item')
 
@@ -31,7 +31,7 @@ class Main(newSchedStack):
             "must_be_one": True,
             "resource_type": "iac_ci",
             "provider": "user_input",
-            "iac_ci_repo": self.stack.iac_ci_repo}
+            "iac_ci_repo": self.stack.repo_name}
 
         resource = self.stack.get_resource(**_lookup)[0]
 
@@ -50,7 +50,8 @@ class Main(newSchedStack):
 
         item = {
             "_id": {"S": _id},
-            "git_repo": {"S": str(self.stack.iac_ci_repo)},
+            "repo_name": {"S": str(self.stack.repo_name)},
+            "iac_ci_repo": {"S": str(self.stack.repo_name)},
             "trigger_id": {"S": str(self.stack.trigger_id)},
             "cluster": {"S": str(self.stack.cluster)},
             "project": {"S": str(self.stack.cluster)},
@@ -67,6 +68,9 @@ class Main(newSchedStack):
 
         if self.stack.get_attr("job_instance_id"):
             item["job_instance_id"] = {"S": str(self.stack.job_instance_id)}
+
+        if self.stack.iac_ci_folder:
+            item["iac_ci_folder"] = {"S": str(self.stack.iac_ci_folder)}
 
         return self.stack.b64_encode(item)
 
@@ -86,7 +90,6 @@ class Main(newSchedStack):
 
         return self.stack.dynamodb_item.insert(display=True,
                                                **inputargs)
-
 
     def run_setup(self):
 
