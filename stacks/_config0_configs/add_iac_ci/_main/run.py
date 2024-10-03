@@ -79,7 +79,8 @@ class Main(newSchedStack):
         arguments = {
             "table_name": self.stack.dynamodb_name_settings,
             "hash_key": "_id",
-            "item_hash": self._get_dynamodb_item()
+            "item_hash": self._get_dynamodb_item(),
+            "aws_default_region": self.stack.aws_default_region
         }
 
         inputargs = {
@@ -95,6 +96,13 @@ class Main(newSchedStack):
 
         self.stack.init_variables()
         self.stack.verify_variables()
+
+        # it must be us-east-1 since the existing
+        # lambda/codebuild projects are created in us-east-1
+        # by default
+        self.stack.set_variable("aws_default_region",
+                                "us-east-1")
+
         self._set_registered_repo_info()
 
         return self._dynamodb_item()
