@@ -35,11 +35,11 @@ class Main(newSchedStack):
 
         resource = self.stack.get_resource(**_lookup)[0]
 
-        self.stack.set_variable("trigger_id",
-                                str(resource["trigger_id"]))
-
         self.stack.set_variable("app_name",
                                 str(resource["app_name"]))
+
+        self.stack.set_variable("trigger_id",
+                                str(resource["trigger_id"]))
 
         self.stack.set_variable("dynamodb_name_runs",f"{self.stack.app_name}-runs")
         self.stack.set_variable("dynamodb_name_settings",f"{self.stack.app_name}-settings")
