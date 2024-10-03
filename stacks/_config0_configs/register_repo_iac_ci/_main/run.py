@@ -356,6 +356,7 @@ class Main(newSchedStack):
             "source_method": "stack",
             "iac_ci_repo": self.stack.iac_ci_repo,
             "repo_name": self.stack.iac_ci_repo,
+            "app_name": self.stack.app_name,
             "provider": "user_input",
             "resource_type": "iac_ci"
         }
