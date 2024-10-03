@@ -35,11 +35,6 @@ class Main(newSchedStack):
 
         resource = self.stack.get_resource(**_lookup)[0]
 
-        self.stack.logger.debug(resource)
-        self.stack.logger.debug(resource)
-        self.stack.logger.debug(resource)
-        self.stack.logger.debug(resource)
-
         self.stack.set_variable("app_name",
                                 str(resource["app_name"]))
 
