@@ -318,6 +318,9 @@ def run(stackargs):
                            general,
                            aws_cloud
                        ],
+                       selectors=[
+                           vpc_info
+                       ],
                        inputvars=["infracost"])
 
     # related to mostly vpc

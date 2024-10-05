@@ -19,6 +19,10 @@ class Main(newSchedStack):
                                 types="str",
                                 default="null")
 
+        self.parse.add_optional(key="ssm_names",
+                                types="str",
+                                default="null")
+
         # add substack
         self.stack.add_substack('config0-publish:::aws_codebuild')
         self.stack.add_substack('config0-publish:::aws_dynamodb_item','dynamodb_item')
@@ -71,6 +75,9 @@ class Main(newSchedStack):
 
         if self.stack.subdir:
             item["iac_ci_folder"] = {"S": str(self.stack.subdir)}
+
+        if self.stack.ssm_names:
+            item["ssm_names"] = {"S": str(self.stack.ssm_names)}
 
         return self.stack.b64_encode(item)
 
