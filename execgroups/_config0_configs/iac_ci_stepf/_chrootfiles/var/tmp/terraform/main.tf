@@ -12,28 +12,32 @@ variable "step_function_name" {
   default = "apigw-codebuild-ci"
 }
 
+variable "app_name" {
+  default = "iac-ci-config0"
+}
+
 variable "process_webhook" {
-  default = "iac-ci-webhook"
+  default = "process-webhook"
 }
 
 variable "pkgcode_to_s3" {
-  default = "iac-ci-pkgcode-to-s3"
+  default = "pkgcode-to-s3"
 }
 
 variable "trigger_lambda" {
-  default = "iac-ci-trigger-lambda"
+  default = "trigger-lambda"
 }
 
 variable "update_pr" {
-  default = "iac-ci-update-pr"
+  default = "update-pr"
 }
 
 variable "check_codebuild" {
-  default = "iac-ci-check-codebuild"
+  default = "check-codebuild"
 }
 
 variable "trigger_codebuild" {
-  default = "iac-ci-trigger-codebuild"
+  default = "trigger-codebuild"
 }
 
 variable "cloud_tags" {
@@ -77,7 +81,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
     "States": {
       "ProcessWebhook": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-webhook",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.process_webhook}",
         "Next": "ChkProcessWebhook"
       },
       "ChkProcessWebhook": {
@@ -93,7 +97,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "PkgCodeToS3": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-pkgcode-to-s3",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.pkgcode_to_s3}",
         "Next": "ChkPkgCodeToS3",
         "InputPath": "$.body"
       },
@@ -110,7 +114,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "TriggerLambda": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-trigger-lambda",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.trigger_lambda}",
         "Next": "ChkTriggerLambda",
         "InputPath": "$.body"
       },
@@ -127,7 +131,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "TriggerCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-trigger-codebuild",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.trigger_codebuild}",
         "Next": "ChkTriggerCodebuild",
         "InputPath": "$.body"
       },
@@ -150,7 +154,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "CheckCodebuild": {
         "Type": "Task",
-        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:iac-ci-check-codebuild",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.check_codebuild}",
         "Next": "ChkCheckCodebuild",
         "InputPath": "$.body"
       },
@@ -187,12 +191,12 @@ resource "aws_iam_role_policy" "step_function_policy" {
           "lambda:InvokeFunction"
         ],
         "Effect": "Allow",
-        "Resource": [ "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.process_webhook}",
-                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.pkgcode_to_s3}",
-                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.trigger_codebuild}",
-                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.trigger_lambda}",
-                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.update_pr}",
-                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.check_codebuild}" ]
+        "Resource": [ "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.process_webhook}",
+                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.pkgcode_to_s3}",
+                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.trigger_codebuild}",
+                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.trigger_lambda}",
+                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.update_pr}",
+                      "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.check_codebuild}" ]
       }
     ]
   }
