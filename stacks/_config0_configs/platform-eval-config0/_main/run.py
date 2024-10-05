@@ -319,7 +319,7 @@ def run(stackargs):
                            aws_cloud
                        ],
                        selectors=[
-                           vpc_info
+                           network_vars
                        ],
                        inputvars=["infracost"])
 
