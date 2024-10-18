@@ -4,7 +4,7 @@ class Main(newSchedStack):
 
         newSchedStack.__init__(self, stackargs)
 
-        self.parse.add_required(key="app_name",
+        self.parse.add_required(key="app_name_iac",
                                 types="str",
                                 default="iac-ci-config0")
 
@@ -20,12 +20,12 @@ class Main(newSchedStack):
         _lookup = {"must_be_one": True,
                    "resource_type": "config0_token",
                    "provider": "config0",
-                   "name": self.stack.app_name}
+                   "name": self.stack.app_name_iac}
 
         return str(self.stack.get_resource(**_lookup)[0]["token"])
 
     def _token(self):
-        return self.stack.create_token(name=self.stack.app_name)
+        return self.stack.create_token(name=self.stack.app_name_iac)
 
     def _set_github_token(self):
 
@@ -63,11 +63,11 @@ class Main(newSchedStack):
         _secret = self.stack.get_hash(f'{self.stack.tmp_bucket}.{self.stack.lambda_bucket}.{self.stack.remote_stateful_bucket}')
 
         self.stack.set_variable("trigger_id",
-                                self.stack.get_hash(f'{_secret}.{self.stack.app_name}'))
+                                self.stack.get_hash(f'{_secret}.{self.stack.app_name_iac}'))
 
         self.stack.set_variable("secret",_secret)
-        self.stack.set_variable("dynamodb_name_runs",f"{self.stack.app_name}-runs")
-        self.stack.set_variable("dynamodb_name_settings",f"{self.stack.app_name}-settings")
+        self.stack.set_variable("dynamodb_name_runs",f"{self.stack.app_name_iac}-runs")
+        self.stack.set_variable("dynamodb_name_settings",f"{self.stack.app_name_iac}-settings")
 
     def _set_iac_ci_repo(self):
 
@@ -84,7 +84,7 @@ class Main(newSchedStack):
             raise Exception("cannot set up iac ci - token missing")
 
         self.stack.set_variable("ssm_iac_ci_github_token",
-                                f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/iac_ci_github_token")
+                                f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/iac_ci_github_token")
 
     def _set_slack_webhook(self):
 
@@ -94,7 +94,7 @@ class Main(newSchedStack):
 
         if self.stack.get_attr("slack_webhook_hash"):
             self.stack.set_variable("ssm_slack_webhook_hash",
-                                    f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/slack_webhook_hash")
+                                    f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/slack_webhook_hash")
         else:
             self.stack.set_variable("ssm_slack_webhook_hash",None)
 
@@ -109,7 +109,7 @@ class Main(newSchedStack):
 
         if self.stack.get_attr("infracost_api_key"):
             self.stack.set_variable("ssm_infracost_api_key",
-                                    f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/infracost_api_key")
+                                    f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/infracost_api_key")
         else:
             self.stack.set_variable("ssm_infracost_api_key",None)
 
@@ -121,7 +121,7 @@ class Main(newSchedStack):
             "must_be_one": True,
             "resource_type": "apigateway_restapi_lambda",
             "provider": "aws",
-            "name": self.stack.app_name
+            "name": self.stack.app_name_iac
         }
 
         results = self.stack.get_resource(**_lookup)[0]
@@ -143,7 +143,7 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region,
             "repo": self.stack.iac_ci_repo,
             "secret": self.stack.secret,
-            "name": self.stack.app_name,
+            "name": self.stack.app_name_iac,
             "url": self._get_api_url()
         }
 
@@ -161,7 +161,7 @@ class Main(newSchedStack):
             "must_be_one": True,
             "resource_type": "ssh_key_pair",
             "provider": "config0",
-            "name": self.stack.app_name
+            "name": self.stack.app_name_iac
             }
 
         resource = self.stack.get_resource(decrypt=True,
@@ -172,7 +172,7 @@ class Main(newSchedStack):
     def _sshdeploy(self):
 
         arguments = {
-            "key_name": self.stack.app_name,
+            "key_name": self.stack.app_name_iac,
             "aws_default_region": self.stack.aws_default_region,
             "repo": self.stack.iac_ci_repo
         }
@@ -180,7 +180,7 @@ class Main(newSchedStack):
         inputargs = {
             "arguments": arguments,
             "automation_phase": "continuous_delivery",
-            "human_description": f'Create deploy key "{self.stack.app_name}"'
+            "human_description": f'Create deploy key "{self.stack.app_name_iac}"'
         }
 
         return self.stack.new_github_ssh_key.insert(display=True,
@@ -198,17 +198,20 @@ class Main(newSchedStack):
 
         item = {
             "_id": {"S": str(self.stack.trigger_id)},
-            "app_name": {"S": str(self.stack.app_name)},
+            "trigger_id": {"S": str(self.stack.trigger_id)},
+            "app_name_iac": {"S": str(self.stack.app_name_iac)},
             "iac_ci_repo": {"S": str(self.stack.iac_ci_repo)},
             "repo_name": {"S": str(self.stack.iac_ci_repo)},
             "trigger_id": {"S": str(self.stack.trigger_id)},
             "secret": {"S": str(self.stack.secret)},
             "saas_env": {"S": str(self.stack.saas_env)},
-            "run_title": {"S": str(self.stack.app_name)},
+            "run_title": {"S": str(self.stack.app_name_iac)},
             "user_endpoint": {"S": str(self.stack.get_user_endpt())},
             "ssm_callback_token": {"S": str(self.stack.ssm_callback_token)},
             "ssm_ssh_key": {"S": str(self.stack.ssm_ssh_key)},
             "ssm_iac_ci_github_token": {"S": str(self.stack.ssm_iac_ci_github_token)},
+            "s3_bucket_tmp": {"S": str(self.stack.tmp_bucket)},
+            "remote_stateful_bucket": {"S": str(self.stack.remote_stateful_bucket)},
             "type": {"S": "registered_repo"}
         }
 
@@ -282,7 +285,7 @@ class Main(newSchedStack):
     def _add_ssm_callback_token(self):
 
         self.stack.set_variable("ssm_callback_token",
-                                f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/callback_token")
+                                f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/callback_token")
 
         # add config0 token
         arguments = {
@@ -300,7 +303,7 @@ class Main(newSchedStack):
     def _add_ssm_ssh_key(self):
 
         self.stack.set_variable("ssm_ssh_key",
-                                f"/config0-iac/imported/{self.stack.app_name}/{self.stack.iac_ci_repo}/sshkeys/private")
+                                f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/sshkeys/private")
 
         # add ssh key
         arguments = {
@@ -342,7 +345,7 @@ class Main(newSchedStack):
         inputargs = {
             "arguments": arguments,
             "automation_phase": "continuous_delivery",
-            "human_description": f'Add register repo for iac ci {self.stack.app_name}'
+            "human_description": f'Add register repo for iac ci {self.stack.app_name_iac}'
         }
 
         return self.stack.dynamodb_item.insert(display=True,
@@ -356,7 +359,7 @@ class Main(newSchedStack):
             "source_method": "stack",
             "iac_ci_repo": self.stack.iac_ci_repo,
             "repo_name": self.stack.iac_ci_repo,
-            "app_name": self.stack.app_name,
+            "app_name_iac": self.stack.app_name_iac,
             "provider": "user_input",
             "resource_type": "iac_ci"
         }
@@ -376,8 +379,8 @@ class Main(newSchedStack):
             values[_key] = self.stack.get_attr(_key)
             inputargs[_key] = self.stack.get_attr(_key)
 
-        values["name"] = self.stack.app_name
-        inputargs["name"] = self.stack.app_name
+        values["name"] = self.stack.app_name_iac
+        inputargs["name"] = self.stack.app_name_iac
 
         self.stack.add_resource(values=values,
                                 **inputargs)

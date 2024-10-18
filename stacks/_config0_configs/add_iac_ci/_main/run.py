@@ -10,6 +10,34 @@ class Main(newSchedStack):
         self.parse.add_required(key="branch",
                                 types="str")
 
+        self.parse.add_optional(key="stateful_id",
+                                types="str",
+                                default="_random")
+
+        self.parse.add_optional(key="tf_runtime",
+                                types="str",
+                                default="tofu:1.6.2")
+
+        self.parse.add_optional(key="app_name",
+                                types="str",
+                                default="terraform")
+
+        self.parse.add_optional(key="apply_str",
+                                types="str",
+                                default="null")
+
+        self.parse.add_optional(key="check_str",
+                                types="str",
+                                default="check tf")
+
+        self.parse.add_optional(key="destroy_str",
+                                types="str",
+                                default="null")
+
+        self.parse.add_optional(key="require_approval",
+                                types="bool",
+                                default="True")
+
         # only supporting terraform to begin with
         self.parse.add_optional(key="source_method",
                                 types="str",
@@ -19,7 +47,7 @@ class Main(newSchedStack):
                                 types="str",
                                 default="null")
 
-        self.parse.add_optional(key="ssm_names",
+        self.parse.add_optional(key="ssm_name",
                                 types="str",
                                 default="null")
 
@@ -39,14 +67,14 @@ class Main(newSchedStack):
 
         resource = self.stack.get_resource(**_lookup)[0]
 
-        self.stack.set_variable("app_name",
-                                str(resource["app_name"]))
+        self.stack.set_variable("app_name_iac",
+                                str(resource["app_name_iac"]))
 
         self.stack.set_variable("trigger_id",
                                 str(resource["trigger_id"]))
 
-        self.stack.set_variable("dynamodb_name_runs",f"{self.stack.app_name}-runs")
-        self.stack.set_variable("dynamodb_name_settings",f"{self.stack.app_name}-settings")
+        self.stack.set_variable("dynamodb_name_runs",f"{self.stack.app_name_iac}-runs")
+        self.stack.set_variable("dynamodb_name_settings",f"{self.stack.app_name_iac}-settings")
 
     def _get_dynamodb_item(self):
 
@@ -61,8 +89,19 @@ class Main(newSchedStack):
             "project": {"S": str(self.stack.cluster)},
             "run_title": {"S": f'{str(self.stack.cluster)}-iac-ci'},
             "source_method": {"S": str(self.stack.source_method)},
+            "stateful_id": {"S": str(self.stack.stateful_id)},
+            "tf_runtime": {"S": str(self.stack.tf_runtime)},
+            "app_name": {"S": str(self.stack.app_name)},
+            "tf_apply": {"S": str(self.stack.tf_apply)},
+            "tf_check": {"S": str(self.stack.tf_check)},
+            "tf_destroy": {"S": str(self.stack.tf_destroy)},
+            "app_dir": {"S": f'var/tmp/{str(self.stack.app_name)}'},
+            "run_share_dir": {"S": f'/var/tmp/share/{str(self.stack.stateful_id)}'},
             "type": {"S": "iac_setting"}
         }
+
+        if self.stack.require_approval not in [ "False", False, "false"]:
+            item["require_approval"] = {"S": "True"}
 
         if self.stack.get_attr("schedule_id"):
             item["schedule_id"] = {"S": str(self.stack.schedule_id)}
@@ -76,8 +115,17 @@ class Main(newSchedStack):
         if self.stack.subdir:
             item["iac_ci_folder"] = {"S": str(self.stack.subdir)}
 
-        if self.stack.ssm_names:
-            item["ssm_names"] = {"S": str(self.stack.ssm_names)}
+        if self.stack.apply_str:
+            item["apply_str"] = {"S": str(self.stack.apply_str)}
+
+        if self.stack.check_str:
+            item["check_str"] = {"S": str(self.stack.check_str)}
+
+        if self.stack.destroy_str:
+            item["destroy_str"] = {"S": str(self.stack.destroy_str)}
+
+        if self.stack.ssm_name:
+            item["ssm_name"] = {"S": str(self.stack.ssm_name)}
 
         return self.stack.b64_encode(item)
 

@@ -107,7 +107,10 @@ class Main(newSchedStack):
             "Action": [
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents"
+                "logs:DescribeLogGroups",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents",
+                "logs:GetLogEvents"
             ],
             "Resource": "arn:aws:logs:*:*:*",
             "Effect": "Allow"
@@ -155,6 +158,7 @@ class Main(newSchedStack):
 
     def _get_s3_policies(self):
 
+        # testtest456 - need to update this
         arn_s3_bucket = f"arn:aws:s3:::{self.stack.remote_stateful_bucket}"
         arn_s3_bucket_lambda = f"arn:aws:s3:::{self.stack.lambda_bucket}"
         arn_s3_bucket_tmp = f"arn:aws:s3:::{self.stack.tmp_bucket}"
@@ -314,6 +318,7 @@ class Main(newSchedStack):
 
         statements = [self._get_log_policy()]
         statements.extend(self._get_s3_policies())
+        statements.append(self._get_dynamodb_policy())
         statements.append(self._get_lambda_policy())
         statements.append(self._get_stepf_policy())
 
@@ -496,6 +501,7 @@ class Main(newSchedStack):
             "runtime": self.stack.runtime,
             "policy_template_hash": self._get_stepf_policy_template_hash(),
             "lambda_env_vars_hash": self.stack.b64_encode({
+                "DYNAMODB_TABLE":self.stack.dynamodb_name_runs,
                 "STATE_MACHINE_ARN":stepf_arn
             }),
             "cloud_tags_hash": cloud_tags_hash,
@@ -503,8 +509,7 @@ class Main(newSchedStack):
             "lambda_layers":self.stack.lambda_layers
         }
 
-        # lambda_name = "lambda_trigger_stepf"
-        lambda_name = "lambda_trigger_stepf"
+        lambda_name = f"{self.stack.app_name}-lambda_trigger_stepf"
         handler = "app.handler"
 
         arguments.update({
