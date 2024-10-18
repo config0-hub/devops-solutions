@@ -88,8 +88,42 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
         "Type": "Choice",
         "Choices": [
           {
-            "Variable": "$.continue",
-            "BooleanEquals": true,
+            "And": [
+              {
+                "Variable": "$.apply",
+                "BooleanEquals": true
+              },
+              {
+                "Variable": "$.continue",
+                "BooleanEquals": true
+              }
+            ],
+            "Next": "TriggerCodebuild"
+          },
+          {
+            "And": [
+              {
+                "Variable": "$.destroy",
+                "BooleanEquals": true
+              },
+              {
+                "Variable": "$.continue",
+                "BooleanEquals": true
+              }
+            ],
+            "Next": "TriggerCodebuild"
+          },
+          {
+            "And": [
+              {
+                "Variable": "$.check",
+                "BooleanEquals": true
+              },
+              {
+                "Variable": "$.continue",
+                "BooleanEquals": true
+              }
+            ],
             "Next": "PkgCodeToS3"
           }
         ],
@@ -124,10 +158,16 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
           {
             "Variable": "$.continue",
             "BooleanEquals": true,
-            "Next": "TriggerCodebuild"
+            "Next": "EvaluatePr"
           }
         ],
         "Default": "Done"
+      },
+      "EvaluatePr": {
+        "Type": "Task",
+        "Resource": "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.app_name}-${var.update_pr}",
+        "InputPath": "$.body",
+        "End": true
       },
       "TriggerCodebuild": {
         "Type": "Task",
@@ -148,7 +188,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       },
       "WaitCodebuildCheck": {
         "Type": "Wait",
-        "Seconds": 30,
+"Seconds": 30,
         "Next": "CheckCodebuild",
         "Comment": "Wait to Check CodeBuild completion"
       },
