@@ -161,6 +161,7 @@ class Main(newSchedStack):
         # testtest456 - need to update this
         arn_s3_bucket = f"arn:aws:s3:::{self.stack.remote_stateful_bucket}"
         arn_s3_bucket_lambda = f"arn:aws:s3:::{self.stack.lambda_bucket}"
+        arn_s3_bucket_log = f"arn:aws:s3:::{self.stack.log_bucket}"
         arn_s3_bucket_tmp = f"arn:aws:s3:::{self.stack.tmp_bucket}"
 
         statements = []
@@ -177,9 +178,11 @@ class Main(newSchedStack):
                 arn_s3_bucket,
                 arn_s3_bucket_lambda,
                 arn_s3_bucket_tmp,
+                arn_s3_bucket_log,
                 f"{arn_s3_bucket}/*",
                 f"{arn_s3_bucket_lambda}/*",
-                f"{arn_s3_bucket_tmp}/*"
+                f"{arn_s3_bucket_tmp}/*",
+                f"{arn_s3_bucket_log}/*"
             ]
         }
 
@@ -441,6 +444,9 @@ class Main(newSchedStack):
 
         self.stack.set_variable("remote_stateful_bucket",
                                 self.stack.bucket_names["stateful"])
+
+        self.stack.set_variable("log_bucket",
+                                self.stack.bucket_names["log"])
 
         self.stack.set_variable("tmp_bucket",
                                 self.stack.bucket_names["tmp"])
