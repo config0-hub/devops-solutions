@@ -445,7 +445,7 @@ class Main(newSchedStack):
             base_arguments["lambda_layers"] = self.stack.lambda_layers
 
         # lambda_name = "process-webhook"
-        lambda_name = "process-webhook"
+        lambda_name = f"{self.stack.ci_environment}-process-webhook"
         handler = "app_webhook.handler"
         s3_key = "{}.zip".format(lambda_name)
 
@@ -466,11 +466,11 @@ class Main(newSchedStack):
         self.stack.py_lambda.insert(display=True,
                                     **inputargs)
 
-        lambda_params = { "trigger-codebuild":["app_codebuild.handler",
+        lambda_params = { f"{self.stack.ci_environment}-trigger-codebuild":["app_codebuild.handler",
                                                self.stack.lambda_codebuild_ci.name],
-                          "pkgcode-to-s3":["app_s3.handler",
+                          f"{self.stack.ci_environment}-pkgcode-to-s3":["app_s3.handler",
                                            self.stack.lambda_codebuild_ci.name],
-                          "check-codebuild":["app_check_build.handler",
+                          f"{self.stack.ci_environment}-check-codebuild":["app_check_build.handler",
                                              self.stack.lambda_codebuild_ci.name]
                           }
 
@@ -550,7 +550,7 @@ class Main(newSchedStack):
             arguments["lambda_layers"] = self.stack.lambda_layers
 
         # lambda_name = "lambda_trigger_stepf"
-        lambda_name = "lambda_trigger_stepf"
+        lambda_name = f"{self.stack.ci_environment}-lambda_trigger_stepf"
         handler = "app.handler"
         s3_key = "{}.zip".format(lambda_name)
 
@@ -579,7 +579,7 @@ class Main(newSchedStack):
 
         # will trigger the lambda function
         # that will trigger the step function
-        lambda_name = "lambda_trigger_stepf"
+        lambda_name = f"{self.stack.ci_environment}-lambda_trigger_stepf"
 
         arguments = {
             "apigateway_name": apigateway_name,

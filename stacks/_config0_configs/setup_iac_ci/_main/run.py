@@ -536,7 +536,7 @@ class Main(newSchedStack):
         cloud_tags_hash = self._set_cloud_tag_hash()
 
         # trigger the lambda function
-        lambda_name = "lambda_trigger_stepf"
+        lambda_name = f"{self.stack.app_name}-lambda_trigger_stepf"
 
         arguments = {
             "apigateway_name": self.stack.app_name,
