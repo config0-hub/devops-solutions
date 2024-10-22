@@ -22,15 +22,15 @@ class Main(newSchedStack):
                                 types="str",
                                 default="terraform")
 
-        self.parse.add_optional(key="apply_str",
+        self.parse.add_optional(key="apply_keyword",
                                 types="str",
                                 default="null")
 
-        self.parse.add_optional(key="check_str",
+        self.parse.add_optional(key="check_keyword",
                                 types="str",
                                 default="check tf")
 
-        self.parse.add_optional(key="destroy_str",
+        self.parse.add_optional(key="destroy_keyword",
                                 types="str",
                                 default="null")
 
@@ -112,14 +112,14 @@ class Main(newSchedStack):
         if self.stack.subdir:
             item["iac_ci_folder"] = {"S": str(self.stack.subdir)}
 
-        if self.stack.apply_str:
-            item["apply_str"] = {"S": str(f'apply {self.stack.apply_str}')}
+        if self.stack.apply_keyword:
+            item["apply_str"] = {"S": str(f'apply {self.stack.apply_keyword}')}
 
-        if self.stack.check_str:
-            item["check_str"] = {"S": str(f'check {self.stack.check_str}')}
+        if self.stack.check_keyword:
+            item["check_str"] = {"S": str(f'check {self.stack.check_keyword}')}
 
-        if self.stack.destroy_str:
-            item["destroy_str"] = {"S": str(f'destroy {self.stack.destroy_str}')}
+        if self.stack.destroy_keyword:
+            item["destroy_str"] = {"S": str(f'destroy {self.stack.destroy_keyword}')}
 
         if self.stack.ssm_name:
             item["ssm_name"] = {"S": str(self.stack.ssm_name)}
