@@ -113,13 +113,13 @@ class Main(newSchedStack):
             item["iac_ci_folder"] = {"S": str(self.stack.subdir)}
 
         if self.stack.apply_str:
-            item["apply_str"] = {"S": str(self.stack.apply_str)}
+            item["apply_str"] = {"S": str(f'apply {self.stack.apply_str}')}
 
         if self.stack.check_str:
-            item["check_str"] = {"S": str(self.stack.check_str)}
+            item["check_str"] = {"S": str(f'check {self.stack.check_str}')}
 
         if self.stack.destroy_str:
-            item["destroy_str"] = {"S": str(self.stack.destroy_str)}
+            item["destroy_str"] = {"S": str(f'destroy {self.stack.destroy_str}')}
 
         if self.stack.ssm_name:
             item["ssm_name"] = {"S": str(self.stack.ssm_name)}

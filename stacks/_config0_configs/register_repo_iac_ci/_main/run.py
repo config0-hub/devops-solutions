@@ -145,6 +145,7 @@ class Main(newSchedStack):
             "secret": self.stack.secret,
             "name": self.stack.app_name_iac,
             "url": self._get_api_url()
+            "events":'push,pull_request,issue_comment')
         }
 
         inputargs = {
