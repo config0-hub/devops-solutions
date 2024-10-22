@@ -36,7 +36,7 @@ class Main(newSchedStack):
 
         self.parse.add_optional(key="require_approval",
                                 types="bool",
-                                default="True")
+                                default=False)
 
         # only supporting terraform to begin with
         self.parse.add_optional(key="source_method",
