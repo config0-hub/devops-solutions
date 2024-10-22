@@ -92,9 +92,6 @@ class Main(newSchedStack):
             "stateful_id": {"S": str(self.stack.stateful_id)},
             "tf_runtime": {"S": str(self.stack.tf_runtime)},
             "app_name": {"S": str(self.stack.app_name)},
-            "tf_apply": {"S": str(self.stack.tf_apply)},
-            "tf_check": {"S": str(self.stack.tf_check)},
-            "tf_destroy": {"S": str(self.stack.tf_destroy)},
             "app_dir": {"S": f'var/tmp/{str(self.stack.app_name)}'},
             "run_share_dir": {"S": f'/var/tmp/share/{str(self.stack.stateful_id)}'},
             "type": {"S": "iac_setting"}
