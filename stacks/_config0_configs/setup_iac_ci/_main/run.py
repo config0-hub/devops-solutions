@@ -19,17 +19,17 @@ class Main(newSchedStack):
                                 default="python3.9")
 
         ########################################################################################
-        # testtest456 - need to implement the two here
+        # TODO, provide user specified lambda and codebuild projects
         ########################################################################################
         # these should already exists to execute terraform/shell scripts
         # with the right roles and permissions
-        self.parse.add_optional(key="codebuild_tf_project_name",
-                                types="str",
-                                default="config0-iac")
+        #self.parse.add_optional(key="codebuild_tf_project_name",
+        #                        types="str",
+        #                        default="config0-iac")
 
-        self.parse.add_optional(key="lambda_tf_project_name",
-                                types="str",
-                                default="config0-iac")
+        #self.parse.add_optional(key="lambda_tf_project_name",
+        #                        types="str",
+        #                        default="config0-iac")
         ########################################################################################
 
         self.stack.add_substack("config0-publish:::aws_dynamodb")
@@ -158,7 +158,6 @@ class Main(newSchedStack):
 
     def _get_s3_policies(self):
 
-        # testtest456 - need to update this
         arn_s3_bucket = f"arn:aws:s3:::{self.stack.remote_stateful_bucket}"
         arn_s3_bucket_lambda = f"arn:aws:s3:::{self.stack.lambda_bucket}"
         arn_s3_bucket_log = f"arn:aws:s3:::{self.stack.log_bucket}"
@@ -305,9 +304,6 @@ class Main(newSchedStack):
         statements.append(self._get_log_policy())
         statements.append(self._get_dynamodb_policy())
         statements.extend(self._get_s3_policies())
-
-        # testtest456
-        # need to update
         statements.append(self._get_lambda_policy())
         statements.append(self._get_codebuild_policy())
 
