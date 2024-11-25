@@ -294,6 +294,11 @@ class Main(newSchedStack):
                                self.stack.inputvars["github_token"],
                                tags="tf_sensitive",
                                types="str")
+        elif self.stack.inputvars.get("GITHUB_TOKEN"):
+            self.stack.set_variable("github_token",
+                                    self.stack.inputvars["GITHUB_TOKEN"],
+                                    tags="tf_sensitive",
+                                    types="str")
         elif self.stack.inputvars.get("github_token_hash"):
             self.stack.set_variable("github_token",
                                self.stack.b64_encode(stack.inputvars["github_token_hash"]),
