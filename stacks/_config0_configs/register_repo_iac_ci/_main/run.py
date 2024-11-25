@@ -33,6 +33,10 @@ class Main(newSchedStack):
             self.stack.set_variable("github_token",
                                     self.stack.inputvars["github_token"],
                                     types="str")
+        elif self.stack.inputvars.get("GITHUB_TOKEN"):
+            self.stack.set_variable("GITHUB_TOKEN",
+                                    self.stack.inputvars["GITHUB_TOKEN"],
+                                    types="str")
         elif self.stack.inputvars.get("github_token_hash"):
             self.stack.set_variable("github_token",
                                     self.stack.b64_encode(self.stack.inputvars["github_token_hash"]),
