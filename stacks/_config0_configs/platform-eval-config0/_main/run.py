@@ -45,7 +45,6 @@ def run(stackargs):
         "private_subnet_ids": "selector:::vpc_info::private_subnet_ids",
         "public_route_table_id": "selector:::vpc_info::public_route_table_id",
         "private_route_table_id": "selector:::vpc_info::private_route_table_id",
-
         "db_sg_id": "selector:::sg_info::db_sg_id",
         "bastion_sg_id": "selector:::sg_info::bastion_sg_id",
         "web_sg_id": "selector:::sg_info::web_sg_id",
