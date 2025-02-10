@@ -41,14 +41,15 @@ def run(stackargs):
     _network_vars_arguments = {
         "vpc_name": "selector:::vpc_info::name",
         "vpc_id": "selector:::vpc_info::vpc_id",
-        "public_subnet_ids": "selector:::public_subnet_info::subnet_id:csv",
-        "private_subnet_ids": "selector:::private_subnet_info::subnet_id:csv",
-        "public_route_table_id": "selector:::public_route_table::route_table_id",
-        "private_route_table_id": "selector:::private_route_table::route_table_id",
-        "db_sg_id": "selector:::sg_database_info::sg_id",
-        "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
-        "web_sg_id": "selector:::sg_web_info::sg_id",
-        "api_sg_id": "selector:::sg_api_info::sg_id"
+        "public_subnet_ids": "selector:::vpc_info::public_subnet_ids",
+        "private_subnet_ids": "selector:::vpc_info::private_subnet_ids",
+        "public_route_table_id": "selector:::vpc_info::public_route_table_id",
+        "private_route_table_id": "selector:::vpc_info::private_route_table_id",
+
+        "db_sg_id": "selector:::sg_info::db_sg_id",
+        "bastion_sg_id": "selector:::sg_info::bastion_sg_id",
+        "web_sg_id": "selector:::sg_info::web_sg_id",
+        "api_sg_id": "selector:::sg_info::api_sg_id"
     }
 
     cloud_tags_hash = {
@@ -131,9 +132,10 @@ def run(stackargs):
     _env_network_values = {
         "vpc_id": "selector:::network_vars::vpc_id",
         "vpc_name": "selector:::vpc_info::vpc_name",
-        "private_route_table_id": "selector:::private_route_table::route_table_id",
+        "private_route_table_id": "selector:::vpc_info::private_route_table_id",
         "public_subnet_ids": "selector:::network_vars::public_subnet_ids:csv",
         "private_subnet_ids": "selector:::network_vars::private_subnet_ids:csv",
+
         "db_sg_id": "selector:::network_vars::db_sg_id",
         "eks_cluster_sg_id": "selector:::network_vars::bastion_sg_id",
         "eks_node_role_arn": "selector:::eks_info::node_role_arn"
@@ -158,8 +160,8 @@ def run(stackargs):
             "mongodb_ami_owner": "099720109477",
             "bastion_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*",
             "bastion_ami_owner": "099720109477",
-            "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
-            "bastion_subnet_ids": "selector:::public_subnet_info::subnet_id:csv"
+            "bastion_sg_id": "selector:::sg_info::bastion_sg_id",
+            "bastion_subnet_ids": "selector:::vpc_info::public_subnet_ids",
         }
     }
 
@@ -171,8 +173,8 @@ def run(stackargs):
         "values": {
             "bastion_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*",
             "bastion_ami_owner": "099720109477",
-            "bastion_sg_id": "selector:::sg_bastion_info::sg_id",
-            "bastion_subnet_ids": "selector:::public_subnet_info::subnet_id:csv",
+            "bastion_sg_id": "selector:::sg_info::bastion_sg_id",
+            "bastion_subnet_ids": "selector:::vpc_info::public_subnet_ids",
             "kafka_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
             "kafka_ami_owner": "099720109477",
             "kafka_instance_type": "t3.micro"
@@ -237,45 +239,9 @@ def run(stackargs):
     vpc_info["name"] = "vpc_info"
     vpc_info["values"]["matchParams"] = { "resource_type": "vpc" }
 
-    public_route_table = deepcopy(_aws_base_network_values)
-    public_route_table["name"] = "public_route_table"
-    public_route_table["values"]["matchParams"] = { "resource_type": "route_table" }
-    public_route_table["values"]["matchKeys"] = { "public_route_table": True }
-
-    private_route_table = deepcopy(_aws_base_network_values)
-    private_route_table["name"] = "private_route_table"
-    private_route_table["values"]["matchParams"] = { "resource_type": "route_table" }
-    private_route_table["values"]["matchKeys"] = { "private_route_table": True }
-
-    private_subnet_info = deepcopy(_aws_base_network_values)
-    private_subnet_info["name"] = "private_subnet_info"
-    private_subnet_info["values"]["matchParams"] = { "resource_type": "subnet" }
-    private_subnet_info["values"]["matchKeys"] = { "name": "private" }
-
-    public_subnet_info = deepcopy(_aws_base_network_values)
-    public_subnet_info["name"] = "public_subnet_info"
-    public_subnet_info["values"]["matchParams"] = { "resource_type": "subnet" }
-    public_subnet_info["values"]["matchKeys"] = { "name": "public" }
-
-    sg_database_info = deepcopy(_aws_base_network_values)
-    sg_database_info["name"] = "sg_database_info"
-    sg_database_info["values"]["matchParams"] = {"resource_type": "security_group"}
-    sg_database_info["values"]["matchKeys"] = {"name": "database"}
-
-    sg_bastion_info = deepcopy(_aws_base_network_values)
-    sg_bastion_info["name"] = "sg_bastion_info"
-    sg_bastion_info["values"]["matchParams"] = {"resource_type": "security_group"}
-    sg_bastion_info["values"]["matchKeys"] = {"name": "bastion"}
-
-    sg_web_info = deepcopy(_aws_base_network_values)
-    sg_web_info["name"] = "sg_web_info"
-    sg_web_info["values"]["matchParams"] = {"resource_type": "security_group"}
-    sg_web_info["values"]["matchKeys"] = {"name": "web"}
-
-    sg_api_info = deepcopy(_aws_base_network_values)
-    sg_api_info["name"] = "sg_api_info"
-    sg_api_info["values"]["matchParams"] = {"resource_type": "security_group"}
-    sg_api_info["values"]["matchKeys"] = {"name": "api"}
+    sg_info = deepcopy(_aws_base_network_values)
+    sg_info["name"] = "sg_info"
+    sg_info["values"]["matchParams"] = {"resource_type": "security_group"}
 
     network_vars = {
         "name": "network_vars",
@@ -338,14 +304,7 @@ def run(stackargs):
                        selectors=[
                            aws_base_network,
                            vpc_info,
-                           public_route_table,
-                           private_route_table,
-                           public_subnet_info,
-                           private_subnet_info,
-                           sg_bastion_info,
-                           sg_database_info,
-                           sg_web_info,
-                           sg_api_info
+                           sg_info
                        ])
 
     # iac-ci with aws
@@ -519,14 +478,7 @@ def run(stackargs):
         eks_info,
         aws_base_network,
         vpc_info,
-        public_route_table,
-        private_route_table,
-        public_subnet_info,
-        private_subnet_info,
-        sg_bastion_info,
-        sg_database_info,
-        sg_web_info,
-        sg_api_info
+        sg_info
     ]
 
     stack.add_substack('config0-publish:::env_sql',
