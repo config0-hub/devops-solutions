@@ -36,8 +36,7 @@ def run(stackargs):
                        provider="aws",
                        execgroup_name=stack.tf_execgroup.name,
                        resource_name=stack.topic_name,
-                       resource_type="sns_topic_subscription",
-                       terraform_type="aws_sns_topic_subscription")
+                       resource_type="sns_topic_subscription")
 
     tf.include(keys=["id",
                      "arn",

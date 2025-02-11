@@ -132,9 +132,8 @@ def run(stackargs):
         "vpc_id": "selector:::network_vars::vpc_id",
         "vpc_name": "selector:::vpc_info::vpc_name",
         "private_route_table_id": "selector:::vpc_info::private_route_table_id",
-        "public_subnet_ids": "selector:::network_vars::public_subnet_ids:csv",
-        "private_subnet_ids": "selector:::network_vars::private_subnet_ids:csv",
-
+        "public_subnet_ids": "selector:::network_vars::public_subnet_ids",
+        "private_subnet_ids": "selector:::network_vars::private_subnet_ids",
         "db_sg_id": "selector:::network_vars::db_sg_id",
         "eks_cluster_sg_id": "selector:::network_vars::bastion_sg_id",
         "eks_node_role_arn": "selector:::eks_info::node_role_arn"

@@ -32,8 +32,7 @@ def run(stackargs):
                        provider="aws",
                        execgroup_name=stack.tf_execgroup.name,
                        resource_name=stack.step_function_name,
-                       resource_type="step_function",
-                       terraform_type="aws_sfn_state_machine")
+                       resource_type="step_function")
 
     tf.include(keys=["id",
                      "role_arn",
