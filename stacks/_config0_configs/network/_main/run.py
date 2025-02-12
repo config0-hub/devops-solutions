@@ -144,8 +144,7 @@ class Main(newSchedStack):
             "instance_types": self.stack.nat_instance_types,
             "public_subnet_ids": self.stack.public_subnet_ids,
             "private_route_table_id": self.stack.private_route_table_id,
-            "vpc_id": self.stack.vpc_id,
-            "use_spot_instance": True
+            "vpc_id": self.stack.vpc_id
         }
 
         human_description = f'Create natgw "{self.stack.env_name}"'
