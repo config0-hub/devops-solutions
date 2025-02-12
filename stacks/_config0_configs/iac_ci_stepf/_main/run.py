@@ -39,8 +39,7 @@ def run(stackargs):
         "step_func":stack.step_function_name
     })
 
-    tf.output(keys=["id",
-                    "role_arn",
+    tf.output(keys=["role_arn",
                     "arn"])
 
     # finalize the tf_executor

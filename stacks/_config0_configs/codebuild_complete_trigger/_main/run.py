@@ -38,10 +38,10 @@ def run(stackargs):
                        resource_name=stack.topic_name,
                        resource_type="sns_topic_subscription")
 
-    tf.include(keys=["id",
-                     "arn",
-                     "topic_arn",
-                     "endpoint"])
+    tf.include(values={
+        "aws_default_region":stack.aws_default_region,
+        "topic_name":stack.topic_name,
+    })
 
     tf.output(keys=["id",
                     "topic_arn",
