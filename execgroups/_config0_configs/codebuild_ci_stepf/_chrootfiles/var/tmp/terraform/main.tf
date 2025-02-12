@@ -171,3 +171,15 @@ resource "aws_iam_role_policy" "step_function_policy" {
   }
   EOF
 }
+
+output "id" {
+  value = aws_sfn_state_machine.sfn_state_machine.id
+}
+
+output "role_arn" {
+  value = aws_sfn_state_machine.sfn_state_machine.role_arn
+}
+
+output "arn" {
+  value = aws_sfn_state_machine.sfn_state_machine.arn
+}

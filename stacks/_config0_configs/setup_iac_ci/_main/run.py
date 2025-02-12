@@ -1,4 +1,3 @@
-from xml.dom.pulldom import default_bufsize
 
 
 class Main(newSchedStack):
@@ -17,20 +16,6 @@ class Main(newSchedStack):
         self.parse.add_optional(key="runtime",
                                 types="str",
                                 default="python3.9")
-
-        ########################################################################################
-        # TODO, provide user specified lambda and codebuild projects
-        ########################################################################################
-        # these should already exists to execute terraform/shell scripts
-        # with the right roles and permissions
-        #self.parse.add_optional(key="codebuild_tf_project_name",
-        #                        types="str",
-        #                        default="config0-iac")
-
-        #self.parse.add_optional(key="lambda_tf_project_name",
-        #                        types="str",
-        #                        default="config0-iac")
-        ########################################################################################
 
         self.stack.add_substack("config0-publish:::aws_dynamodb")
         self.stack.add_substack("config0-publish:::apigw_lambda-integ","apigw")

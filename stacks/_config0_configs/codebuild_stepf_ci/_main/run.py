@@ -34,9 +34,10 @@ def run(stackargs):
                        resource_name=stack.step_function_name,
                        resource_type="step_function")
 
-    tf.include(keys=["id",
-                     "role_arn",
-                     "arn"])
+    tf.include(values={
+        "aws_default_region":stack.aws_default_region,
+        "step_func":stack.step_function_name
+    })
 
     tf.output(keys=["id",
                     "role_arn",
