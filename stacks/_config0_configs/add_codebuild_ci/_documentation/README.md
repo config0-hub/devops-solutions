@@ -39,7 +39,7 @@
 | run_title                  | the run title for the Config0 UI                   |string    | codebuild_ci |
 | secret                     | the secret for the webhook validation              |string    | _random |
 | slack_channel              | name of the slack channel                          |string    | None |
-| slack_webhook_hash         | slack channel webhook as base64                    |string    | null |
+| slack_webhook_b64         | slack channel webhook as base64                    |string    | null |
 | suffix_id                  | suffix_id is added like a random string that makes the s3 buckets unique                          |string    | None |
 | suffix_length              | the number of characters in suffix_id to use        |int       | 4 |
 | trigger_id                 | job trigger id                                     |string    | _random |

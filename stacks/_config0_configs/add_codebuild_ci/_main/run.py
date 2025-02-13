@@ -301,24 +301,38 @@ class Main(newSchedStack):
                                     types="str")
         elif self.stack.inputvars.get("github_token_hash"):
             self.stack.set_variable("github_token",
-                               self.stack.b64_encode(stack.inputvars["github_token_hash"]),
+                               self.stack.b64_encode(self.stack.inputvars["github_token_hash"]),
                                tags="tf_sensitive",
                                types="str")
-    
+
+    # dup 3453254
+    def _set_slack_webhook(self):
+
+        if self.stack.inputvars.get("slack_webhook_b64"):
+            self.stack.set_variable("slack_webhook_b64",
+                                    self.stack.inputvars.get("slack_webhook_b64"),
+                                    tags="tf_sensitive",
+                                    types="str")
+        elif self.stack.inputvars.get("slack_webhook_hash"):
+            self.stack.set_variable("slack_webhook_b64",
+                                    self.stack.inputvars.get("slack_webhook_hash"),
+                                    tags="tf_sensitive",
+                                    types="str")
+        else:
+            self.stack.set_variable("slack_webhook_b64",
+                                    None,
+                                    tags="tf_sensitive",
+                                    types="str")
+
     def _eval_inputvars(self):
 
         self._set_github_token()
+        self._set_slack_webhook()
 
         self.stack.set_variable("docker_token", 
                                 self.stack.inputvars.get("docker_token"),
                                 tags="tf_sensitive",
                                 types="str")
-
-        self.stack.set_variable("slack_webhook_hash", 
-                                self.stack.inputvars.get("slack_webhook_hash"),
-                                tags="tf_sensitive",
-                                types="str")
-
 
     def run_ssm(self):
 
@@ -362,10 +376,10 @@ class Main(newSchedStack):
 
             self.stack.aws_ssm_param.insert(display=True, **inputargs)
 
-        if self.stack.get_attr("slack_webhook_hash"):
+        if self.stack.get_attr("slack_webhook_b64"):
 
-            arguments = {"ssm_key": self.stack.ssm_slack_webhook_hash,
-                         "ssm_value": self.stack.slack_webhook_hash,
+            arguments = {"ssm_key": self.stack.ssm_slack_webhook_b64,
+                         "ssm_value": self.stack.slack_webhook_b64,
                          "aws_default_region": self.stack.aws_default_region}
 
             inputargs = {"arguments": arguments,
@@ -462,9 +476,12 @@ class Main(newSchedStack):
                 }
 
         # additional credentials
-        if self.stack.get_attr("ssm_slack_webhook_hash"):
+        if self.stack.get_attr("ssm_slack_webhook_b64"):
             item["ssm_slack_webhook_hash"] = {
-                "S": str(self.stack.ssm_slack_webhook_hash)}
+                "S": str(self.stack.ssm_slack_webhook_b64)}
+
+            item["ssm_slack_webhook_b64"] = {
+                "S": str(self.stack.ssm_slack_webhook_b64)}
 
         if self.stack.get_attr("slack_channel"):
             item["slack_channel"] = {"S": str(self.stack.slack_channel)}
@@ -505,7 +522,7 @@ class Main(newSchedStack):
     def _set_ssm_keys(self):
 
         self.stack.set_variable("ssm_docker_token", None)
-        self.stack.set_variable("ssm_slack_webhook_hash", None)
+        self.stack.set_variable("ssm_slack_webhook_b64", None)
 
         self.stack.set_variable("ssm_ssh_key", 
                                 "/codebuild/{}/sshkeys/private".format(self.stack.codebuild_name))
@@ -517,9 +534,9 @@ class Main(newSchedStack):
             self.stack.set_variable("ssm_docker_token", 
                                     "/codebuild/{}/config0/docker_token".format(self.stack.codebuild_name))
 
-        if self.stack.get_attr("slack_webhook_hash"):
-            self.stack.set_variable("ssm_slack_webhook_hash", 
-                                    "/codebuild/{}/config0/slack_webhook_hash".format(self.stack.codebuild_name))
+        if self.stack.get_attr("slack_webhook_b64"):
+            self.stack.set_variable("ssm_slack_webhook_b64",
+                                    "/codebuild/{}/config0/slack_webhook_b64".format(self.stack.codebuild_name))
 
     def _get_token(self):
 
@@ -566,8 +583,9 @@ class Main(newSchedStack):
         if self.stack.get_attr("ssm_docker_token"):
             ssm_params["DOCKER_TOKEN"] = self.stack.ssm_docker_token
 
-        if self.stack.get_attr("ssm_slack_webhook_hash"):
-            ssm_params["SLACK_WEBHOOK_HASH"] = self.stack.ssm_slack_webhook_hash
+        if self.stack.get_attr("ssm_slack_webhook_b64"):
+            ssm_params["SLACK_WEBHOOK_HASH"] = self.stack.ssm_slack_webhook_b64
+            ssm_params["SLACK_WEBHOOK_B64"] = self.stack.ssm_slack_webhook_b64
 
         codebuild_env_vars = {"GIT_URL": self.stack.git_url}
 

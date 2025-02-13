@@ -89,9 +89,7 @@ class Main(newSchedStack):
             "BUILD_SETTINGS": "ci-shared-settings"
         }
 
-        webhook_hash = self.stack.b64_encode(env_vars)
-
-        return base_hash, webhook_hash
+        return base_hash, self.stack.b64_encode(env_vars)
 
     def _s3(self,cloud_tags_hash):
 

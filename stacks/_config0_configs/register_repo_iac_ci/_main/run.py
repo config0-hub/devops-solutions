@@ -90,17 +90,32 @@ class Main(newSchedStack):
         self.stack.set_variable("ssm_iac_ci_github_token",
                                 f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/iac_ci_github_token")
 
+    # dup 3453254
     def _set_slack_webhook(self):
 
-        self.stack.set_variable("slack_webhook_hash",
-                                self.stack.inputvars.get("slack_webhook_hash"),
-                                types="str")
-
-        if self.stack.get_attr("slack_webhook_hash"):
-            self.stack.set_variable("ssm_slack_webhook_hash",
-                                    f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/slack_webhook_hash")
+        if self.stack.inputvars.get("slack_webhook_b64"):
+            self.stack.set_variable("slack_webhook_b64",
+                                    self.stack.inputvars.get("slack_webhook_b64"),
+                                    tags="tf_sensitive",
+                                    types="str")
+        elif self.stack.inputvars.get("slack_webhook_hash"):
+            self.stack.set_variable("slack_webhook_b64",
+                                    self.stack.inputvars.get("slack_webhook_hash"),
+                                    tags="tf_sensitive",
+                                    types="str")
         else:
-            self.stack.set_variable("ssm_slack_webhook_hash",None)
+            self.stack.set_variable("slack_webhook_b64",
+                                    None,
+                                    tags="tf_sensitive",
+                                    types="str")
+
+    def _set_slack_webhook_ssm(self):
+
+        if self.stack.get_attr("slack_webhook_b64"):
+            self.stack.set_variable("ssm_slack_webhook_b64",
+                                    f"/config0-iac/imported/{self.stack.app_name_iac}/{self.stack.iac_ci_repo}/slack_webhook_b64")
+        else:
+            self.stack.set_variable("ssm_slack_webhook_b64",None)
 
     def _set_infracost(self):
 
@@ -137,7 +152,7 @@ class Main(newSchedStack):
         self._set_github_token()
         self._set_buckets()
         self._set_iac_ci_repo()
-        self._set_slack_webhook()
+        self._set_slack_webhook_ssm()
         self._set_infracost()
         self._set_misc()
 
@@ -226,9 +241,13 @@ class Main(newSchedStack):
                 "S": str(self.stack.ssm_infracost_api_key)
             }
 
-        if self.stack.get_attr("ssm_slack_webhook_hash"):
+        if self.stack.get_attr("ssm_slack_webhook_b64"):
+            item["ssm_slack_webhook_b64"] = {
+                "S": str(self.stack.ssm_slack_webhook_b64)
+            }
+
             item["ssm_slack_webhook_hash"] = {
-                "S": str(self.stack.ssm_slack_webhook_hash)
+                "S": str(self.stack.ssm_slack_webhook_b64)
             }
 
         # config0 settings
@@ -325,11 +344,11 @@ class Main(newSchedStack):
 
     def _add_ssm_slack(self):
 
-        if not self.stack.get_attr("slack_webhook_hash"):
+        if not self.stack.get_attr("slack_webhook_b64"):
             return
 
-        arguments = {"ssm_key": self.stack.ssm_slack_webhook_hash,
-                     "ssm_value": self.stack.slack_webhook_hash,
+        arguments = {"ssm_key": self.stack.ssm_slack_webhook_b64,
+                     "ssm_value": self.stack.slack_webhook_b64,
                      "aws_default_region": self.stack.aws_default_region}
 
         inputargs = {"arguments": arguments,
