@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CodebuddyPersistentProjectState">
+    <option name="autoFileSelection" value="true" />
+    <option name="promptHistory">
+      <list>
+        <option value="add docstrings to the files in the folder iac_ci/helper, but do not modify the code" />
+        <option value="add docstrings to the file iac_ci/helper/utilities.py but do not modify the code" />
+        <option value="add docstings only to files, methods, and classes that do not have an existing one.  do not modify the code" />
+        <option value="for locations which use format for text subsitution and replace with f-string" />
+        <option value="in the codebase find lines that use format string subsitution and replace with f-string" />
+        <option value="continue with making change only to convert format to f-strings.  no other changes are to be made" />
+      </list>
+    </option>
+    <option name="selectedModel" value="codebuddy:CLAUDE_3.5_SONNET_V7" />
+  </component>
+</project>

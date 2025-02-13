@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+
+from iac_ci.helper.resource.common import TFAppHelper
+
+class TFInfracostHelper(TFAppHelper):
+    """
+    A helper class for managing Infracost installations and executions.
+
+    Inherits from TFAppHelper to facilitate the installation and execution
+    of the Infracost binary within a specified runtime environment.
+    """
+
+    def __init__(self, **kwargs):
+        """
+        Initializes the TFInfracostHelper instance.
+
+        Args:
+            **kwargs: Additional keyword arguments including:
+                - version (str): Version of Infracost to install (default: "0.10.39").
+                - arch (str): Architecture of the Infracost binary (default: "linux_amd64").
+                - app_dir (str): Directory for the application.
+                - tmp_bucket (str): Temporary bucket for storage.
+                - runtime_env (str): Runtime environment for execution.
+        """
+        self.classname = "TFInfracostHelper"
+
+        binary = 'infracost'
+        version = kwargs.get("version","0.10.39")
+        arch = kwargs.get("arch","linux_amd64")
+
+        src_remote_path = f'https://github.com/infracost/{binary}/releases/download/v{version}/{binary}-{arch}'.replace("_","-")  # tfsec uses hythen
+
+        TFAppHelper.__init__(self,
+                             binary=binary,
+                             version=version,
+                             app_dir=kwargs.get("app_dir"),
+                             arch=arch,
+                             bucket=kwargs["tmp_bucket"],
+                             installer_format="targz",
+                             runtime_env=kwargs["runtime_env"],
+                             src_remote_path=src_remote_path)
+
+    def install_cmds(self):
+        """
+        Generates installation commands for Infracost.
+
+        Returns:
+            list: A list of shell commands to install the Infracost binary.
+        """
+        # infracost-linux-amd64.tar.gz
+        dl_file = f'{self.binary}-{self.arch}'.replace("_", "-")
+
+        cmds = self.download_cmds()
+        cmds.append(f'(cd $TMPDIR && mv {dl_file} {self.bin_dir}/{self.binary} > /dev/null) || exit 0')
+        cmds.append(f'chmod 777 {self.bin_dir}/{self.binary}')
+
+        return cmds
+
+    # infracost only executed in lambda
+    def exec_cmds(self):
+        """
+        Generates execution commands for Infracost.
+
+        Returns:
+            list: A list of shell commands to execute Infracost and handle output.
+        """
+        cmds = [
+            f'echo "executing INFRACOST"',
+            f'({self.base_cmd} --no-color breakdown --path . --format json --out-file {self.tmp_base_output_file}.json) || (echo "WARNING: looks like INFRACOST failed")',
+            f'({self.base_cmd} --no-color breakdown --path . --out-file {self.tmp_base_output_file}.out && cat {self.tmp_base_output_file}.out | tee -a /tmp/$STATEFUL_ID.log ) || (echo "WARNING: looks like INFRACOST failed")'
+        ]
+
+        cmds.extend(self.local_output_to_s3(suffix="json",last_apply=None))
+        cmds.extend(self.local_output_to_s3(suffix="out",last_apply=None))
+
+        return cmds
+
+    def get_all_cmds(self):
+        """
+        Combines installation and execution commands.
+
+        Returns:
+            list: A list of all shell commands for installation and execution of Infracost.
+        """
+        cmds = self.install_cmds()
+        cmds.extend(self.exec_cmds())
+
+        return cmds
