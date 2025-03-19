@@ -1,0 +1,16 @@
+desc: Creates a three-tier environment with AWS EKS, RDS, and networking
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GPL-3.0
+categories: 
+   - demo
+tags:
+   - demo
+   - infrastructure
+   - aws
+   - cloud
+   - public_cloud
+   - kubernetes
+   - eks
+   - rds
+   - database

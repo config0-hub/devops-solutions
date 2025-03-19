@@ -1,0 +1,15 @@
+desc: Deploys MongoDB replica set and EKS cluster in parallel within the specified VPC
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GNU General Public License v3.0
+categories:
+   - infrastructure
+   - database
+   - kubernetes
+tags:
+   - mongodb
+   - eks
+   - aws
+   - infrastructure
+   - cloud
+   - public_cloud

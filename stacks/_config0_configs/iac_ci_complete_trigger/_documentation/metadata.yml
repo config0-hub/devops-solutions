@@ -1,0 +1,14 @@
+desc: The stack sets up an SNS topic subscription that triggers a Lambda function when events occur.
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GPL-3.0
+categories: 
+   - aws
+   - cloud
+   - public_cloud
+tags:
+   - cloudwatch
+   - codebuild
+   - aws
+   - lambda
+   - sns
