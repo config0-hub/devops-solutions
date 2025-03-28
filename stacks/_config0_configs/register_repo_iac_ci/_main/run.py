@@ -152,6 +152,8 @@ class Main(newSchedStack):
                                 tags="tf_sensitive",
                                 types="str")
 
+        self._set_slack_webhook_ssm()
+
     def _set_slack_webhook_ssm(self):
         """
         Sets the Slack webhook hash SSM parameter if it exists.
@@ -207,7 +209,7 @@ class Main(newSchedStack):
         self._set_github_token()
         self._set_buckets()
         self._set_iac_ci_repo()
-        self._set_slack_webhook_ssm()
+        self._set_slack_webhook()
         self._set_infracost()
         self._set_misc()
 
