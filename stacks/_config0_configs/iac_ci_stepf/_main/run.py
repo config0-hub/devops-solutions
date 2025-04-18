@@ -55,11 +55,9 @@ def run(stackargs):
         "step_func": stack.step_function_name
     })
 
-    tf.output(keys=["role_arn",
-                    "arn"])
+    tf.output(keys=["role_arn", "arn"])
 
     # finalize the tf_executor
-    stack.tf_executor.insert(display=True,
-                             **tf.get())
+    stack.tf_executor.insert(display=True, **tf.get())
 
     return stack.get_results()

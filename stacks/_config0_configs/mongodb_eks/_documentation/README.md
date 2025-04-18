@@ -9,8 +9,8 @@ This stack deploys both a MongoDB replica set on EC2 instances and an Amazon EKS
 
 | Name | Description | Default |
 |------|-------------|---------|
-| env_name | Configuration for env name | |
-| vpc_id | VPC network identifier | |
+| env_name | Configuration for env name | &nbsp; |
+| vpc_id | VPC network identifier | &nbsp; |
 | bastion_sg_id | Bastion host security group | null |
 | bastion_subnet_ids | Subnets for bastion hosts | null |
 | db_sg_id | Database security group ID | null |
@@ -20,7 +20,7 @@ This stack deploys both a MongoDB replica set on EC2 instances and an Amazon EKS
 | Name | Description | Default |
 |------|-------------|---------|
 | aws_default_region | Default AWS region | eu-west-1 |
-| cloud_tags_hash | Resource tags for cloud provider | |
+| cloud_tags_hash | Resource tags for cloud provider | &nbsp; |
 | public_subnet_ids | Public subnet IDs | null |
 | private_subnet_ids | Private subnet IDs | null |
 | eks_cluster | EKS cluster name | null |
@@ -48,21 +48,23 @@ This stack deploys both a MongoDB replica set on EC2 instances and an Amazon EKS
 | mongodb_volume_size | MongoDB data volume size (GB) | 100 |
 | mongodb_cluster | MongoDB cluster name | null |
 
-## Features
-- Parallel deployment of MongoDB and EKS infrastructure
-- Configurable node counts, instance types, and capacity
-- Support for custom AMIs and security groups
-- Dynamic naming based on environment name
-
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::mongodb_replica_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/mongodb_replica_on_ec2)
-- [config0-publish:::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_eks)
+- [config0-publish:::mongodb_replica_on_ec2](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/mongodb_replica_on_ec2/default)
+- [config0-publish:::aws_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_eks/default)
+
+### Execgroups
+- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+
+### Shelloutconfigs
+- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
 
 ## License
+<pre>
 Copyright (C) 2025 Gary Leong <gary@config0.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, version 3 of the License.
+</pre>

@@ -18,7 +18,7 @@
 
 def run(stackargs):
     '''
-    this is platform versioning example 
+    This is platform versioning example 
     for the starting out guide
     '''
 

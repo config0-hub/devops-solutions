@@ -1,7 +1,7 @@
-# 3-Tier NoSQL Environment with Mongodb and EKS
+# 3-Tier NoSQL Environment with MongoDB and EKS
 
 ## Description
-This stack creates a complete three-tier environment in AWS, including networking infrastructure, an EKS cluster for application hosting, and a Mongodb replicaset for the database. It sets up networking, deploys a MongoDB cluster with the specified number of replica nodes, and creates an EKS Kubernetes cluster with configured node groups.
+This stack creates a complete three-tier environment in AWS, including networking infrastructure, an EKS cluster for application hosting, and a MongoDB replicaset for the database. It sets up networking, deploys a MongoDB cluster with the specified number of replica nodes, and creates an EKS Kubernetes cluster with configured node groups.
 
 ## Variables
 
@@ -9,18 +9,18 @@ This stack creates a complete three-tier environment in AWS, including networkin
 
 | Name | Description | Default |
 |------|-------------|---------|
-| env_name | Configuration for env name | |
-| vpc_id | VPC network identifier | |
-| bastion_sg_id | Bastion host security group | |
-| bastion_subnet_ids | Subnets for bastion hosts | |
-| db_sg_id | Database security group ID | |
+| env_name | Configuration for env name | &nbsp; |
+| vpc_id | VPC network identifier | &nbsp; |
+| bastion_sg_id | Bastion host security group | &nbsp; |
+| bastion_subnet_ids | Subnets for bastion hosts | &nbsp; |
+| db_sg_id | Database security group ID | &nbsp; |
 
 ### Optional Variables
 
 | Name | Description | Default |
 |------|-------------|---------|
 | aws_default_region | Default AWS region | eu-west-1 |
-| cloud_tags_hash | Resource tags for cloud provider | |
+| cloud_tags_hash | Resource tags for cloud provider | &nbsp; |
 | public_subnet_ids | Public subnet IDs | null |
 | private_route_table_id | Private route table ID | null |
 | private_subnet_ids | Private subnet IDs | null |
@@ -53,23 +53,23 @@ This stack creates a complete three-tier environment in AWS, including networkin
 | mongodb_volume_size | MongoDB data volume size (GB) | 100 |
 | mongodb_cluster | MongoDB cluster name | null |
 
-## Features
-- Automated provisioning of 3-tier network architecture
-- MongoDB cluster deployment with configurable replicas
-- EKS cluster with managed node groups
-- Integration between database and Kubernetes environments
-- Comprehensive security group configuration
-- Bastion host for executing Ansible and installing through private subnet
-
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
-- [config0-publish:::mongodb_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/mongodb_eks)
+- [config0-publish:::network](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/network/default)
+- [config0-publish:::mongodb_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/mongodb_eks/default)
+
+### Execgroups
+- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+
+### ShelloutConfigs
+- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
 
 ## License
+<pre>
 Copyright (C) 2025 Gary Leong <gary@config0.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, version 3 of the License.
+</pre>

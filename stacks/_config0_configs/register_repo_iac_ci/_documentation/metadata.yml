@@ -1,4 +1,4 @@
-desc: This stack manages GitHub webhooks and AWS resources for IaC CI/CD pipelines
+desc: This stack registers a GitOps repository for the developer solutions "iac-ci"
 release: 0.0.1
 author: Gary Leong <gary@config0.com>
 license: GPL-3.0

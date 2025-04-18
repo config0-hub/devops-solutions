@@ -97,7 +97,7 @@ def run(stackargs):
                              types="int")
 
     stack.parse.add_optional(key="eks_node_instance_types",
-                             default=["t3.medium","t3.large"],
+                             default=["t3.medium", "t3.large"],
                              types="list")
 
     stack.parse.add_optional(key="eks_node_ami_type",

@@ -8,11 +8,11 @@ This stack creates a three-tier environment with Kafka and EKS clusters on AWS. 
 ### Required Variables
 | Name | Description | Default |
 |------|-------------|---------|
-| env_name | Configuration for env name | |
-| vpc_id | VPC network identifier | |
-| bastion_sg_id | Bastion host security group | |
-| bastion_subnet_ids | Subnets for bastion hosts | |
-| db_sg_id | Database security group ID | |
+| env_name | Configuration for env name | &nbsp; |
+| vpc_id | VPC network identifier | &nbsp; |
+| bastion_sg_id | Bastion host security group | &nbsp; |
+| bastion_subnet_ids | Subnets for bastion hosts | &nbsp; |
+| db_sg_id | Database security group ID | &nbsp; |
 | kafka_num_of_zookeeper | ZooKeeper node count | 1 |
 | kafka_num_of_broker | Kafka broker count | 1 |
 | kafka_num_of_schema_registry | Schema registry node count | 1 |
@@ -25,7 +25,7 @@ This stack creates a three-tier environment with Kafka and EKS clusters on AWS. 
 | Name | Description | Default |
 |------|-------------|---------|
 | aws_default_region | Default AWS region | eu-west-1 |
-| cloud_tags_hash | Resource tags for cloud provider | |
+| cloud_tags_hash | Resource tags for cloud provider | &nbsp; |
 | public_subnet_ids | Public subnet IDs | null |
 | private_route_table_id | Private route table ID | null |
 | private_subnet_ids | Private subnet IDs | null |
@@ -53,23 +53,23 @@ This stack creates a three-tier environment with Kafka and EKS clusters on AWS. 
 | kafka_instance_type | EC2 instance type for Kafka | t3.micro |
 | kafka_disksize | Kafka node disk size (GB) | 20 |
 
-## Features
-- Automated deployment of a three-tier network architecture
-- Kafka cluster with configurable node types and sizing
-- EKS cluster with customizable node groups
-- Integration with AWS networking and security components
-- Support for custom AMIs and instance types
-- Bastion host for executing Ansible and installing through private subnet
-
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
-- [config0-publish:::kafka_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/kafka_eks)
+- [config0-publish:::network](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/network/default)
+- [config0-publish:::kafka_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/kafka_eks/default)
+
+### Execgroups
+- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+
+### Shelloutconfigs
+- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
 
 ## License
+<pre>
 Copyright (C) 2025 Gary Leong <gary@config0.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, version 3 of the License.
+</pre>

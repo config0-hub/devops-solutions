@@ -98,7 +98,7 @@ def run(stackargs):
                              types="int")
 
     stack.parse.add_optional(key="eks_node_instance_types",
-                             default=["t3.medium","t3.large"],
+                             default=["t3.medium", "t3.large"],
                              types="list")
 
     stack.parse.add_optional(key="eks_node_ami_type",
@@ -170,19 +170,16 @@ def run(stackargs):
         "human_description": f'create 3tier env {stack.eks_cluster}'
     }
 
-    stack.network.insert(display=True,
-                         **inputargs)
+    stack.network.insert(display=True, **inputargs)
 
     # configure kafka & eks
     # Configure and deploy EKS cluster and associated resources
     if not stack.get_attr("kafka"):
-        stack.set_variable("kafka",
-                           f'{stack.env_name}-kafka')
+        stack.set_variable("kafka", f'{stack.env_name}-kafka')
 
     # eks
     if not stack.get_attr("eks_cluster"):
-        stack.set_variable("eks_cluster",
-                           f'{stack.env_name}-eks')
+        stack.set_variable("eks_cluster", f'{stack.env_name}-eks')
 
     arguments = {
         "aws_default_region": stack.aws_default_region,
@@ -227,7 +224,6 @@ def run(stackargs):
         "human_description": f'create kafka/eks cluster "{stack.eks_cluster}"'
     }
 
-    stack.rds_eks.insert(display=True,
-                         **inputargs)
+    stack.rds_eks.insert(display=True, **inputargs)
 
     return stack.get_results()

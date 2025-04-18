@@ -30,12 +30,14 @@ class Main(newSchedStack):
         self.parse.add_optional(key="cloud_tags_hash", types="str")
         self.parse.add_optional(key="runtime", types="str", default="python3.9")
 
+        # Initialize substacks
         self.stack.add_substack("config0-publish:::aws_dynamodb")
         self.stack.add_substack("config0-publish:::apigw_lambda-integ", "apigw")
         self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild", "py_lambda")
         self.stack.add_substack("config0-publish:::iac_ci_stepf")
         self.stack.add_substack("config0-publish:::iac_ci_complete_trigger", "sns_subscription")
 
+        # Initialize execution groups
         self.stack.add_execgroup("config0-publish:::github::lambda_trigger_stepf")
         self.stack.add_execgroup("config0-publish:::devops-solutions::iac_ci", "lambda_iac_ci")
 
@@ -443,9 +445,7 @@ class Main(newSchedStack):
             "config0_lambda_execgroup_name": self.stack.lambda_iac_ci.name
         }
 
-        ###########################################################################
-        # create the first function with py_lambda
-        ###########################################################################
+        # Create webhook function
         lambda_name = f"{self.stack.app_name}-process-webhook"
         handler = "app_webhook.handler"
 
@@ -464,6 +464,7 @@ class Main(newSchedStack):
 
         self.stack.py_lambda.insert(display=True, **inputargs)
 
+        # Create additional Lambda functions
         lambda_params = {
             f"{self.stack.app_name}-trigger-codebuild": "app_codebuild.handler",
             f"{self.stack.app_name}-pkgcode-to-s3": "app_s3.handler",
@@ -642,15 +643,6 @@ class Main(newSchedStack):
     def run(self):
         """
         Define and execute the sequence of job steps required for the infrastructure setup.
-
-        This method:
-        - Unsets parallel execution with `sched_init=True`.
-        - Adds a series of jobs to be executed in order:
-            1. `setup`: Initializes resources like S3 and DynamoDB.
-            2. `lambda_stepf`: Creates Lambda functions and Step Functions.
-            3. `trigger_stepf`: Sets up the Lambda trigger for the Step Function.
-            4. `apigw`: Creates an API Gateway.
-            5. `sns_subscription`: Creates an SNS subscription for CodeBuild events.
 
         Returns:
             dict: Finalized details of all executed jobs.

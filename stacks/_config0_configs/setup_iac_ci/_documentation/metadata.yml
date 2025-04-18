@@ -2,7 +2,7 @@ desc: This stack creates an AWS-based Infrastructure as Code (IaC) CI pipeline w
 release: 0.0.1
 author: Gary Leong <gary@config0.com>
 license: GPL-3.0
-categories: 
+categories:
    - ci
    - cd
    - build

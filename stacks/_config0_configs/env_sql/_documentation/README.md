@@ -8,15 +8,15 @@ This stack creates a complete three-tier environment in AWS, including networkin
 ### Required
 | Name | Description | Default |
 |------|-------------|---------|
-| env_name | Configuration for env name | |
-| vpc_id | VPC network identifier | |
-| db_sg_id | Database security group ID | |
+| env_name | Configuration for env name | &nbsp; |
+| vpc_id | VPC network identifier | &nbsp; |
+| db_sg_id | Database security group ID | &nbsp; |
 
 ### Optional
 | Name | Description | Default |
 |------|-------------|---------|
 | aws_default_region | Default AWS region | eu-west-1 |
-| cloud_tags_hash | Resource tags for cloud provider | |
+| cloud_tags_hash | Resource tags for cloud provider | &nbsp; |
 | public_subnet_ids | Public subnet IDs | null |
 | private_route_table_id | Private route table ID | null |
 | private_subnet_ids | Private subnet IDs | null |
@@ -40,26 +40,26 @@ This stack creates a complete three-tier environment in AWS, including networkin
 | db_instance_class | Configuration for db instance class | db.t3.micro |
 | db_multi_az | Configuration for db multi az | false |
 | db_storage_type | Configuration for db storage type | gp2 |
-| db_master_username | Database admin username | |
-| db_master_password | Database admin password | |
-
-## Features
-- Automated deployment of a three-tier architecture
-- EKS cluster with configurable node capacity and instance types
-- RDS database setup with configurable parameters
-- Comprehensive networking setup with NAT configuration
-- Supports both public and private subnets
-- Kafka deployment for messaging and streaming needs
+| db_master_username | Database admin username | &nbsp; |
+| db_master_password | Database admin password | &nbsp; |
 
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
-- [config0-publish:::rds_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/rds_eks)
+- [config0-publish:::network](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/network/default)
+- [config0-publish:::rds_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/rds_eks/default)
+
+### Execgroups
+- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+
+### Shelloutconfigs
+- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
 
 ## License
+<pre>
 Copyright (C) 2025 Gary Leong <gary@config0.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, version 3 of the License.
+</pre>

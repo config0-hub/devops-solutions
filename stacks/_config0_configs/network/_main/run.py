@@ -18,7 +18,6 @@
 class Main(newSchedStack):
 
     def __init__(self, stackargs):
-
         newSchedStack.__init__(self, stackargs)
 
         self.parse.add_optional(key="aws_default_region",
@@ -74,7 +73,6 @@ class Main(newSchedStack):
         return f'{self.stack.env_name}-network_vars_set'
 
     def _set_cloud_tag_hash(self):
-
         try:
             cloud_tags = self.stack.b64_decode(self.stack.cloud_tags_hash)
         except:
@@ -88,7 +86,6 @@ class Main(newSchedStack):
         return self.stack.b64_encode(cloud_tags)
 
     def run_vpc(self):
-
         self.stack.init_variables()
         self.stack.verify_variables()
 
@@ -114,11 +111,9 @@ class Main(newSchedStack):
             "human_description": human_description
         }
 
-        return self.stack.aws_vpc_simple.insert(display=True,
-                                                **inputargs)
+        return self.stack.aws_vpc_simple.insert(display=True, **inputargs)
 
     def run_network_vars_set(self):
-
         self.stack.init_variables()
         self.stack.verify_variables()
 
@@ -141,11 +136,9 @@ class Main(newSchedStack):
             "human_description": human_description
         }
 
-        return self.stack.network_vars_set.insert(display=True,
-                                                  **inputargs)
+        return self.stack.network_vars_set.insert(display=True, **inputargs)
 
     def run_nat_instance(self):
-
         self.stack.init_variables()
         self.stack.verify_variables()
 
@@ -172,11 +165,9 @@ class Main(newSchedStack):
             "human_description": human_description
         }
 
-        return self.stack.aws_nat_inst_vpc.insert(display=True,
-                                                  **inputargs)
+        return self.stack.aws_nat_inst_vpc.insert(display=True, **inputargs)
 
     def run(self):
-
         self.stack.unset_parallel()
         self.add_job("vpc")
         self.add_job("network_vars_set")
@@ -185,7 +176,6 @@ class Main(newSchedStack):
         return self.finalize_jobs()
 
     def schedule(self):
-
         sched = self.new_schedule()
         sched.job = "vpc"
         sched.archive.timeout = 1800
