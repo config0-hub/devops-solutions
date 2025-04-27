@@ -18,7 +18,7 @@ This stack implements an Infrastructure as Code (IaC) Continuous Integration/Con
 | Name | Description | Default |
 | ---- | ----------- | ------- |
 | stateful_id | Stateful ID for storing the resource code/state | _random |
-| tf_runtime | Terraform runtime version | tofu:1.6.2 |
+| tf_runtime | Terraform runtime version | tofu:1.9.1 |
 | app_name | Application name | terraform |
 | apply_keyword | Keyword to trigger apply operations | null |
 | check_keyword | Keyword to trigger check operations | check tf |
