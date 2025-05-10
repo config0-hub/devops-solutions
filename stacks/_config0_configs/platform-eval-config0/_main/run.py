@@ -174,10 +174,6 @@ def run(stackargs):
     env_nosql_arguments = {
         "name": "env_nosql_arguments",
         "values": {
-            "mongodb_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
-            "mongodb_ami_owner": "099720109477",
-            "bastion_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*",
-            "bastion_ami_owner": "099720109477",
             "bastion_sg_id": "selector:::sg_info::bastion_sg_id",
             "bastion_subnet_ids": "selector:::vpc_info::public_subnet_ids",
         }
@@ -189,12 +185,8 @@ def run(stackargs):
     env_streaming_arguments = {
         "name": "env_streaming_arguments",
         "values": {
-            "bastion_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*",
-            "bastion_ami_owner": "099720109477",
             "bastion_sg_id": "selector:::sg_info::bastion_sg_id",
             "bastion_subnet_ids": "selector:::vpc_info::public_subnet_ids",
-            "kafka_ami_filter": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
-            "kafka_ami_owner": "099720109477",
             "kafka_instance_type": "t3.micro"
         }
     }

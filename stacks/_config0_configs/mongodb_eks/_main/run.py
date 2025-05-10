@@ -122,10 +122,6 @@ def run(stackargs):
                              types="str",
                              default="null")
 
-    stack.parse.add_optional(key="mongodb_version",
-                             types="str",
-                             default="4.2")
-
     stack.parse.add_required(key="db_sg_id",
                              default="null")
 
@@ -164,7 +160,6 @@ def run(stackargs):
     arguments = {
         "aws_default_region": stack.aws_default_region,
         "mongodb_cluster": stack.mongodb_cluster,
-        "mongodb_version": stack.mongodb_version,
         "vpc_id": stack.vpc_id,
         "subnet_ids": stack.public_subnet_ids,
         "cloud_tags_hash": stack.cloud_tags_hash,

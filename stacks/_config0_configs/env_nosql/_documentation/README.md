@@ -47,7 +47,6 @@ This stack creates a complete three-tier environment in AWS, including networkin
 | mongodb_ami_owner | MongoDB AMI owner ID | null |
 | mongodb_username | MongoDB admin username | null |
 | mongodb_password | MongoDB admin password | null |
-| mongodb_version | MongoDB version | 4.2 |
 | mongodb_instance_type | MongoDB compute instance type | t3.micro |
 | mongodb_disksize | MongoDB node disk size (GB) | 20 |
 | mongodb_volume_size | MongoDB data volume size (GB) | 100 |
