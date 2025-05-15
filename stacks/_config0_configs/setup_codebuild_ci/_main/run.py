@@ -31,10 +31,6 @@ class Main(newSchedStack):
                                 types="int",
                                 default="4")
 
-        self.parse.add_optional(key="aws_default_region",
-                                types="str",
-                                default="eu-west-1")
-
         self.parse.add_optional(key="cloud_tags_hash",
                                 types="str")
 
@@ -68,6 +64,9 @@ class Main(newSchedStack):
         self.stack.add_execgroup("config0-publish:::github::lambda_codebuild_ci")
         self.stack.init_execgroups()
         self.stack.init_substacks()
+
+        # we need to overide the region since all the buckets are created here by default
+        self.stack.set_variable("aws_default_region", "us-east-1")
 
     def _determine_suffix_id(self):
         if self.stack.get_attr("suffix_id"):
