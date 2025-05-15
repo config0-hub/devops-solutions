@@ -583,7 +583,7 @@ class Main(newSchedStack):
         self.stack.init_variables()
         self.stack.verify_variables()
 
-        lambda_name = "check-codebuild"
+        lambda_name = f"{self.stack.ci_environment}-check-codebuild"
         topic_name = f"{self.stack.ci_environment}-codebuild-complete-trigger"
 
         cloud_tags_hash = self._set_cloud_tag_hash()
