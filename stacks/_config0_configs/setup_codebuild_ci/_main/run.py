@@ -46,10 +46,6 @@ class Main(newSchedStack):
                                 types="str",
                                 default="python3.9")
 
-        self.parse.add_optional(key="lambda_layers",
-                                types="str",
-                                default="arn:aws:lambda:eu-west-1:553035198032:layer:git-lambda2:8")
-
         # Add substack
         self.stack.add_substack("config0-publish:::aws_s3_bucket")
         self.stack.add_substack("config0-publish:::aws_dynamodb")
@@ -67,6 +63,7 @@ class Main(newSchedStack):
 
         # we need to overide the region since all the buckets are created here by default
         self.stack.set_variable("aws_default_region", "us-east-1")
+        self.stack.set_variable("lambda_layers", f"arn:aws:lambda:{self.stack.aws_default_region}:553035198032:layer:git-lambda2:8")
 
     def _determine_suffix_id(self):
         if self.stack.get_attr("suffix_id"):
