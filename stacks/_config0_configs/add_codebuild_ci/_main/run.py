@@ -102,10 +102,6 @@ class Main(newSchedStack):
                                 types="str",
                                 default="ecr")
 
-        self.parse.add_optional(key="aws_default_region",
-                                types="str",
-                                default="us-west-1")
-
         self.parse.add_optional(key="cloud_tags_hash",
                                 types="str")
 
@@ -138,6 +134,12 @@ class Main(newSchedStack):
         self.stack.add_substack('config0-publish:::github_webhook')
 
         self.stack.init_substacks()
+
+    def _setup_vars(self):
+        self.stack.init_variables()
+
+        # we need to overide the region since all the buckets are created here by default
+        self.stack.set_variable("aws_default_region", "us-east-1")
 
     def _determine_suffix_id(self):
         """
@@ -238,7 +240,7 @@ class Main(newSchedStack):
         Returns:
             dict: Result of webhook creation
         """
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
 
         _name = f"config0-codebuild-{self.stack.ci_environment}-{self.stack.codebuild_name}"
@@ -267,7 +269,7 @@ class Main(newSchedStack):
         Returns:
             dict: Result of S3 bucket creation
         """
-        self.stack.init_variables()
+        self._setup_vars()
         self._eval_inputvars()
         self.stack.verify_variables()
         self.stack.set_parallel()
@@ -291,7 +293,7 @@ class Main(newSchedStack):
         Returns:
             dict: Result of webhook creation
         """
-        self.stack.init_variables()
+        self._setup_vars()
         self._eval_inputvars()
         self.stack.verify_variables()
         self._dynamodb()
@@ -428,7 +430,7 @@ class Main(newSchedStack):
         Returns:
             bool: True if successful
         """
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
         self._eval_inputvars()
         self._set_ssm_keys()
@@ -678,7 +680,7 @@ class Main(newSchedStack):
         Returns:
             dict: Result of CodeBuild project creation
         """
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
         self._eval_inputvars()
         self._set_ssm_keys()
