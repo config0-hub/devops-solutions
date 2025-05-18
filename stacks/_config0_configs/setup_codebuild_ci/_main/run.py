@@ -23,6 +23,10 @@ class Main(newSchedStack):
         # Add default variables
         self.parse.add_required(key="ci_environment")
 
+        self.parse.add_optional(key="aws_default_region",
+                                types="str",
+                                default="us-east-1")
+
         # this is required to make the buckets unique
         self.parse.add_optional(key="suffix_id",
                                 types="str")
@@ -61,8 +65,6 @@ class Main(newSchedStack):
         self.stack.init_execgroups()
         self.stack.init_substacks()
 
-        # we need to overide the region since all the buckets are created here by default
-        self.stack.set_variable("aws_default_region", "us-east-1")
         self.stack.set_variable("lambda_layers", f"arn:aws:lambda:{self.stack.aws_default_region}:553035198032:layer:git-lambda2:8")
 
     def _determine_suffix_id(self):

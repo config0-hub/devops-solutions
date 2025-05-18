@@ -28,7 +28,7 @@ def run(stackargs):
                              types="str")
 
     stack.parse.add_optional(key="aws_default_region",
-                             default="eu-west-1",
+                             default="us-east-1",
                              tags="tfvar,resource,db,tf_exec_env",
                              types="str")
 

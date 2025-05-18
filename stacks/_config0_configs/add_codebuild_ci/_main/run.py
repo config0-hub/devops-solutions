@@ -124,6 +124,10 @@ class Main(newSchedStack):
                                 default="null",
                                 types="str")
 
+        self.parse.add_optional(key="aws_default_region",
+                                types="str",
+                                default="us-east-1")
+
         # Add substack
         self.stack.add_substack('config0-publish:::aws_ecr_repo')
         self.stack.add_substack('config0-publish:::aws_s3_bucket')
@@ -137,9 +141,6 @@ class Main(newSchedStack):
 
     def _setup_vars(self):
         self.stack.init_variables()
-
-        # we need to overide the region since all the buckets are created here by default
-        self.stack.set_variable("aws_default_region", "us-east-1")
 
     def _determine_suffix_id(self):
         """

@@ -29,6 +29,7 @@ class Main(newSchedStack):
         self.parse.add_required(key="app_name", types="str", default="iac-ci")
         self.parse.add_optional(key="cloud_tags_hash", types="str")
         self.parse.add_optional(key="runtime", types="str", default="python3.9")
+        self.parse.add_optional(key="aws_default_region", types="str", default="us-east-1")
 
         # Initialize substacks
         self.stack.add_substack("config0-publish:::aws_dynamodb")
