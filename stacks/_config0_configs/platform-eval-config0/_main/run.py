@@ -34,7 +34,10 @@ def run(stackargs):
     #####################################################
     # specific vars for platform
     #####################################################
-    aws_default_region = "eu-west-1"
+    # we use us-east-1 since most of our s3 buckets are here
+    # so for lambda functions and storing them. it's better
+    # to keep it for the evaluation and demo in this region
+    aws_default_region = "us-east-1"
 
     global_labels = {
         "environment": "dev",
