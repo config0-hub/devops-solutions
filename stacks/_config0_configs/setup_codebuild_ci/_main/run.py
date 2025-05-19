@@ -67,6 +67,9 @@ class Main(newSchedStack):
         self.stack.init_execgroups()
         self.stack.init_substacks()
 
+    def _setup_vars(self):
+
+        self.stack.init_variables()
         self.stack.set_variable("lambda_layers", f"arn:aws:lambda:{self.stack.aws_default_region}:553035198032:layer:git-lambda2:8")
 
     def _determine_suffix_id(self):
@@ -488,7 +491,7 @@ class Main(newSchedStack):
 
     # job definitions are prefixed with run_
     def run_setup(self):
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -504,7 +507,7 @@ class Main(newSchedStack):
         return True
 
     def run_lambda_stepf(self):
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -519,7 +522,7 @@ class Main(newSchedStack):
         return True
 
     def run_trigger_stepf(self):
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
         cloud_tags_hash = self._set_cloud_tag_hash()
 
@@ -559,7 +562,7 @@ class Main(newSchedStack):
         self.stack.py_lambda.insert(display=True, **inputargs)
 
     def run_apigw(self):
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
 
         cloud_tags_hash = self._set_cloud_tag_hash()
@@ -585,7 +588,7 @@ class Main(newSchedStack):
         return self.stack.apigw.insert(display=True, **inputargs)
 
     def run_sns_subscription(self):
-        self.stack.init_variables()
+        self._setup_vars()
         self.stack.verify_variables()
 
         lambda_name = f"{self.stack.ci_environment}-check-codebuild"
