@@ -4,6 +4,11 @@ variable "aws_default_region" {
   default     = "eu-west-1"
 }
 
+variable "ci_environment" {
+  description = "CI environment"
+  type        = string
+}
+
 variable "step_function_name" {
   description = "Name of the AWS Step Function state machine"
   type        = string
@@ -19,13 +24,13 @@ variable "process_webhook" {
 variable "pkgcode_to_s3" {
   description = "Name of the Lambda function that packages code to S3"
   type        = string
-  default     = "pkgcode-to-s3"
+  default     = "eval-pkgcode-to-s3"
 }
 
 variable "check_codebuild" {
   description = "Name of the Lambda function that checks CodeBuild status"
   type        = string
-  default     = "check-codebuild"
+  default     = "eval-check-codebuild"
 }
 
 variable "trigger_codebuild" {

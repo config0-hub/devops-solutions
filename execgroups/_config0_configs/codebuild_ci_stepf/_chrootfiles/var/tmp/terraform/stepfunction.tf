@@ -1,5 +1,5 @@
 resource "aws_sfn_state_machine" "sfn_state_machine" {
-  name     = var.step_function_name
+  name     = "${var.ci_environment}-${var.step_function_name}"
   role_arn = aws_iam_role.default.arn
   tags     = var.cloud_tags
 
@@ -9,7 +9,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
     States = {
       ProcessWebhook = {
         Type     = "Task"
-        Resource = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.process_webhook}"
+        Resource = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.ci_environment}-${var.process_webhook}"
         Next     = "ChkProcessWebhook"
       }
       ChkProcessWebhook = {
@@ -25,7 +25,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       }
       PkgCodeToS3 = {
         Type      = "Task"
-        Resource  = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.pkgcode_to_s3}"
+        Resource  = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.ci_environment}-${var.pkgcode_to_s3}"
         Next      = "ChkPkgCodeToS3"
         InputPath = "$.body"
       }
@@ -42,7 +42,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       }
       TriggerCodebuild = {
         Type      = "Task"
-        Resource  = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.trigger_codebuild}"
+        Resource  = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.ci_environment}-${var.trigger_codebuild}"
         Next      = "ChkTriggerCodebuild"
         InputPath = "$.body"
       }
@@ -65,7 +65,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
       }
       CheckCodebuild = {
         Type      = "Task"
-        Resource  = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.check_codebuild}"
+        Resource  = "arn:aws:lambda:${var.aws_default_region}:${data.aws_caller_identity.current.account_id}:function:${var.ci_environment}-${var.check_codebuild}"
         Next      = "ChkCheckCodebuild"
         InputPath = "$.body"
       }

@@ -21,7 +21,9 @@ class Main(newSchedStack):
         newSchedStack.__init__(self, stackargs)
 
         # Add default variables
-        self.parse.add_required(key="ci_environment")
+        self.parse.add_required(key="ci_environment",
+                                types="str",
+                                default="config0-eval")
 
         self.parse.add_optional(key="aws_default_region",
                                 types="str",
@@ -394,6 +396,7 @@ class Main(newSchedStack):
 
         arguments = {
             "step_function_name": stepf_name,
+            "ci_environment": self.stack.ci_environment,
             "cloud_tags_hash": cloud_tags_hash,
             "aws_default_region": self.stack.aws_default_region
         }
