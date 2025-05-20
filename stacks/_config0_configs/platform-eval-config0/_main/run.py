@@ -37,7 +37,7 @@ def run(stackargs):
     # we use us-east-1 since most of our s3 buckets are here
     # so for lambda functions and storing them. it's better
     # to keep it for the evaluation and demo in this region
-    aws_default_region = "us-east-1"
+    aws_default_region = "eu-west-1"
 
     global_labels = {
         "environment": "dev",
@@ -113,6 +113,13 @@ def run(stackargs):
         "name": "network_vars_set_arguments_hash",
         "values": {
             "arguments_hash": stack.b64_encode(_network_vars_arguments),
+        }
+    }
+
+    aws_default_region_args = {
+        "name": aws_default_region,
+        "values": {
+            "aws_default_region": aws_default_region
         }
     }
 
@@ -296,6 +303,7 @@ def run(stackargs):
     # vpc/network_vars_set for vpc setting
     stack.add_substack('config0-publish:::aws_vpc_simple',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -328,6 +336,7 @@ def run(stackargs):
     # iac-ci with aws
     stack.add_substack('config0-publish:::setup_iac_ci',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -338,6 +347,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::register_repo_iac_ci',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -348,6 +358,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::add_iac_ci',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -359,6 +370,7 @@ def run(stackargs):
     # ci with aws codebuild
     stack.add_substack('config0-publish:::setup_codebuild_ci',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -369,6 +381,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::add_codebuild_ci',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -382,6 +395,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::aws_nat_inst_vpc',  # nat instance (instead of nat gw)
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -395,6 +409,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::aws_nat_vpc',  # aws nat gateway saas
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -409,6 +424,7 @@ def run(stackargs):
     # aws stateful stacks
     stack.add_substack('config0-publish:::aws_rds',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -422,6 +438,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::mongodb_replica_on_ec2',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -435,6 +452,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::kafka_on_ec2',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -449,6 +467,7 @@ def run(stackargs):
     # aws kubernetes
     stack.add_substack('config0-publish:::aws_eks',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash
                        ],
                        labels=[
@@ -501,6 +520,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::env_sql',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash,
                            env_sql_arguments,
                            netvars_set_arguments_hash,
@@ -515,6 +535,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::env_nosql',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash,
                            env_nosql_arguments,
                            netvars_set_arguments_hash,
@@ -529,6 +550,7 @@ def run(stackargs):
 
     stack.add_substack('config0-publish:::env_streaming',
                        arguments=[
+                           aws_default_region_args,
                            cloud_tags_hash,
                            env_streaming_arguments,
                            netvars_set_arguments_hash,

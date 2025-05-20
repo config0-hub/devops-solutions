@@ -85,8 +85,7 @@ class Main(newSchedStack):
             cloud_tags = {}
 
         cloud_tags.update({
-            "ci_environment": self.stack.ci_environment,
-            "aws_default_region": self.stack.aws_default_region
+            "ci_environment": self.stack.ci_environment
         })
 
         return self.stack.b64_encode(cloud_tags)
