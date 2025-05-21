@@ -24,13 +24,13 @@ variable "process_webhook" {
 variable "pkgcode_to_s3" {
   description = "Name of the Lambda function that packages code to S3"
   type        = string
-  default     = "eval-pkgcode-to-s3"
+  default     = "pkgcode-to-s3"
 }
 
 variable "check_codebuild" {
   description = "Name of the Lambda function that checks CodeBuild status"
   type        = string
-  default     = "eval-check-codebuild"
+  default     = "check-codebuild"
 }
 
 variable "trigger_codebuild" {
