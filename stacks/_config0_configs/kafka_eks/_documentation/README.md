@@ -53,15 +53,9 @@ This stack deploys a combined infrastructure consisting of a Kafka cluster on EC
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::empty_stack](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/empty_stack/default)
-- [config0-publish:::kafka_on_ec2](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/kafka_on_ec2/default)
-- [config0-publish:::aws_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_eks/default)
-
-### ShelloutConfigs
-- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
-
-### ExecGroups
-- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+- [config0-publish:::empty_stack](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/empty_stack)
+- [config0-publish:::kafka_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/kafka_on_ec2)
+- [config0-publish:::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_eks)
 
 ## License
 <pre>
@@ -69,5 +63,14 @@ Copyright (C) 2025 Gary Leong <gary@config0.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation, version 3 of the License.
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 </pre>

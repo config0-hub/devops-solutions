@@ -29,31 +29,25 @@ This stack configures a platform environment including networking, security grou
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::aws_vpc_simple](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_vpc_simple/default)
-- [config0-publish:::network_vars_set](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/network_vars_set/default)
-- [config0-publish:::setup_iac_ci](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/setup_iac_ci/default)
-- [config0-publish:::register_repo_iac_ci](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/register_repo_iac_ci/default)
-- [config0-publish:::add_iac_ci](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/add_iac_ci/default)
-- [config0-publish:::setup_codebuild_ci](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/setup_codebuild_ci/default)
-- [config0-publish:::add_codebuild_ci](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/add_codebuild_ci/default)
-- [config0-publish:::aws_nat_inst_vpc](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_nat_inst_vpc/default)
-- [config0-publish:::aws_nat_vpc](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_nat_vpc/default)
-- [config0-publish:::aws_rds](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_rds/default)
-- [config0-publish:::mongodb_replica_on_ec2](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/mongodb_replica_on_ec2/default)
-- [config0-publish:::kafka_on_ec2](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/kafka_on_ec2/default)
-- [config0-publish:::aws_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_eks/default)
-- [config0-publish:::jenkins_on_do](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/jenkins_on_do/default)
-- [config0-publish:::doks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/doks/default)
-- [config0-publish:::check_drift_resources](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/check_drift_resources/default)
-- [config0-publish:::env_sql](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/env_sql/default)
-- [config0-publish:::env_nosql](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/env_nosql/default)
-- [config0-publish:::env_streaming](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/env_streaming/default)
-
-### Execgroups
-- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
-
-### Shelloutconfigs
-- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
+- [config0-publish:::aws_vpc_simple](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_vpc_simple)
+- [config0-publish:::network_vars_set](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network_vars_set)
+- [config0-publish:::setup_iac_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/setup_iac_ci)
+- [config0-publish:::register_repo_iac_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/register_repo_iac_ci)
+- [config0-publish:::add_iac_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/add_iac_ci)
+- [config0-publish:::setup_codebuild_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/setup_codebuild_ci)
+- [config0-publish:::add_codebuild_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/add_codebuild_ci)
+- [config0-publish:::aws_nat_inst_vpc](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_nat_inst_vpc)
+- [config0-publish:::aws_nat_vpc](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_nat_vpc)
+- [config0-publish:::aws_rds](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_rds)
+- [config0-publish:::mongodb_replica_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/mongodb_replica_on_ec2)
+- [config0-publish:::kafka_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/kafka_on_ec2)
+- [config0-publish:::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_eks)
+- [config0-publish:::jenkins_on_do](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/jenkins_on_do)
+- [config0-publish:::doks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/doks)
+- [config0-publish:::check_drift_resources](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/check_drift_resources)
+- [config0-publish:::env_sql](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/env_sql)
+- [config0-publish:::env_nosql](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/env_nosql)
+- [config0-publish:::env_streaming](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/env_streaming)
 
 ## License
 <pre>

@@ -48,21 +48,21 @@ This stack automates the setup of AWS CodeBuild CI/CD pipelines, including the n
 
 ### Substacks
 
-- [config0-publish:::aws_ecr_repo](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_ecr_repo/default)
-- [config0-publish:::aws_s3_bucket](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_s3_bucket/default)
-- [config0-publish:::new_github_ssh_key](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/new_github_ssh_key/default)
-- [config0-publish:::aws_dynamodb_item](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_dynamodb_item/default)
-- [config0-publish:::aws_ssm_param](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_ssm_param/default)
-- [config0-publish:::aws_codebuild](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_codebuild/default)
-- [config0-publish:::github_webhook](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/github_webhook/default)
+- [config0-publish:::aws_ecr_repo](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_ecr_repo)
+- [config0-publish:::aws_s3_bucket](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_s3_bucket)
+- [config0-publish:::new_github_ssh_key](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/new_github_ssh_key)
+- [config0-publish:::aws_dynamodb_item](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_dynamodb_item)
+- [config0-publish:::aws_ssm_param](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_ssm_param)
+- [config0-publish:::aws_codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_codebuild)
+- [config0-publish:::github_webhook](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/github_webhook)
 
 ### Execgroups
 
-- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+No execgroups were found in the current code.
 
 ### Shelloutconfigs
 
-- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
+No shelloutconfigs were found in the current code.
 
 ## License
 <pre>

@@ -42,14 +42,14 @@ This stack creates an AWS RDS database instance and an EKS cluster in parallel. 
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::aws_rds](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_rds/default)
-- [config0-publish:::aws_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/aws_eks/default)
+- [config0-publish:::aws_rds](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_rds)
+- [config0-publish:::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_eks)
 
 ### Execgroups
-- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+None identified in the code.
 
 ### Shelloutconfigs
-- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
+None identified in the code.
 
 ## License
 <pre>

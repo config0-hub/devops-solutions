@@ -366,6 +366,7 @@ class Main(newSchedStack):
 
     def _get_stepf_policy_template_hash(self):
         statements = [self._get_log_policy()]
+        statements.append(self._get_dynamodb_policy())
         statements.extend(self._get_s3_policies())
         statements.append(self._get_lambda_policy())
         statements.append(self._get_stepf_policy())
@@ -532,7 +533,11 @@ class Main(newSchedStack):
             "s3_bucket": s3_bucket,
             "runtime": self.stack.runtime,
             "policy_template_hash": self._get_stepf_policy_template_hash(),
-            "lambda_env_vars_hash": self.stack.b64_encode({"STATE_MACHINE_ARN": stepf_arn}),
+            "lambda_env_vars_hash": self.stack.b64_encode({
+                "DYNAMODB_TABLE_RUNS": "ci-shared-runs",
+                "DYNAMODB_TABLE_SETTINGS": "ci-shared-settings",
+                "STATE_MACHINE_ARN": stepf_arn
+            }),
             "cloud_tags_hash": cloud_tags_hash,
             "aws_default_region": self.stack.aws_default_region
         }

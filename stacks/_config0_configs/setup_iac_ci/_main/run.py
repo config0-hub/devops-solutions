@@ -556,7 +556,8 @@ class Main(newSchedStack):
             "runtime": self.stack.runtime,
             "policy_template_hash": self._get_stepf_policy_template_hash(),
             "lambda_env_vars_hash": self.stack.b64_encode({
-                "DYNAMODB_TABLE": self.stack.dynamodb_name_runs,
+                "DYNAMODB_TABLE_RUNS": self.stack.dynamodb_name_runs,
+                "DYNAMODB_TABLE_SETTINGS": self.stack.dynamodb_name_settings,
                 "STATE_MACHINE_ARN": stepf_arn
             }),
             "cloud_tags_hash": cloud_tags_hash,

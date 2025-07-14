@@ -56,14 +56,14 @@ This stack creates a three-tier environment with Kafka and EKS clusters on AWS. 
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/network/default)
-- [config0-publish:::kafka_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/kafka_eks/default)
+- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
+- [config0-publish:::kafka_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/kafka_eks)
 
 ### Execgroups
-- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+None found in the provided code.
 
 ### Shelloutconfigs
-- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
+None found in the provided code.
 
 ## License
 <pre>

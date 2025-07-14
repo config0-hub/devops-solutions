@@ -46,14 +46,14 @@ This stack creates a complete three-tier environment in AWS, including networkin
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/network/default)
-- [config0-publish:::rds_eks](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/rds_eks/default)
+- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
+- [config0-publish:::rds_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/rds_eks)
 
 ### Execgroups
-- [config0-publish:::github::lambda_trigger_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/github/lambda_trigger_stepf/default)
+No execgroups explicitly added in the code.
 
 ### Shelloutconfigs
-- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
+No shelloutconfigs explicitly added in the code.
 
 ## License
 <pre>

@@ -10,23 +10,24 @@ This stack creates an AWS Step Function using Terraform. It configures and deplo
 | Name | Description | Default |
 |------|-------------|---------|
 | step_function_name | Step Function workflow name | &nbsp; |
+| ci_environment | The CI environment | &nbsp; |
 
 ### Optional
 
 | Name | Description | Default |
 |------|-------------|---------|
-| aws_default_region | Default AWS region | eu-west-1 |
+| aws_default_region | Default AWS region | us-east-1 |
 
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::tf_executor](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/stacks/config0-publish/tf_executor/default)
+- [config0-publish:::tf_executor](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/tf_executor)
 
 ### Execgroups
-- [config0-publish:::devops-solutions::codebuild_ci_stepf](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/exec/groups/config0-publish/devops-solutions/codebuild_ci_stepf/default)
+- [config0-publish:::devops-solutions::codebuild_ci_stepf](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-publish/devops-solutions/codebuild_ci_stepf)
 
 ### Shelloutconfigs
-- [config0-publish:::terraform::resource_wrapper](http://config0.http.redirects.s3-website-us-east-1.amazonaws.com/assets/shelloutconfigs/config0-publish/terraform/resource_wrapper/default)
+None
 
 ## License
 <pre>
@@ -34,5 +35,14 @@ Copyright (C) 2025 Gary Leong <gary@config0.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation, version 3 of the License.
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 </pre>
