@@ -173,7 +173,7 @@ class Main(newSchedStack):
         elif self.stack.inputvars.get("infracost_api_key"):
             infracost_api_key = self.stack.inputvars["infracost_api_key"]
         else:
-            infracost_api_key = self.stack.inputvars["infracost_api_key"]
+            infracost_api_key = None
 
         self.stack.set_variable("infracost_api_key", infracost_api_key)
 
