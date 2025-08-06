@@ -480,6 +480,18 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
+    # aws kubernetes v2 (EKS with External DNS and ArgoCD)
+    stack.add_substack('config0-publish:::aws_eks2',
+                       arguments=[
+                           aws_default_region_args,
+                           cloud_tags_hash
+                       ],
+                       labels=[
+                           general,
+                           aws_cloud
+                       ],
+                       inputvars=["infracost"])
+
     # digital ocean
     stack.add_substack("config0-publish:::jenkins_on_do",
                        arguments=[
