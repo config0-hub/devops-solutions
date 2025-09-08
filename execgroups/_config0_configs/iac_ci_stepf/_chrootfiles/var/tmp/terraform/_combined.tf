@@ -1,8 +1,8 @@
 ####FILE####:::step_function.tf
 resource "aws_sfn_state_machine" "sfn_state_machine" {
-  name     = var.step_function_name
-  role_arn = aws_iam_role.default.arn
-  tags     = var.cloud_tags
+  name       = var.step_function_name
+  role_arn   = aws_iam_role.default.arn
+  tags       = var.cloud_tags
   definition = <<EOF
 {
   "Comment": "Processes webhook, executes CodeBuild, supports optional parallel folder builds when report && parallel_folder_builds. No parsing of $.body.",
@@ -425,10 +425,10 @@ resource "aws_cloudwatch_event_rule" "codebuild_state_change" {
 
 # EventBridge target to invoke Step Function
 resource "aws_cloudwatch_event_target" "invoke_step_function" {
-  rule      = aws_cloudwatch_event_rule.codebuild_state_change.name
-  arn       = aws_sfn_state_machine.sfn_state_machine.arn
-  role_arn  = aws_iam_role.eventbridge_sfn_role.arn
-  
+  rule     = aws_cloudwatch_event_rule.codebuild_state_change.name
+  arn      = aws_sfn_state_machine.sfn_state_machine.arn
+  role_arn = aws_iam_role.eventbridge_sfn_role.arn
+
   # Format the event data for the Step Function
   input_transformer {
     input_paths = {
@@ -457,7 +457,7 @@ EOF
 # IAM role for EventBridge to invoke Step Function
 resource "aws_iam_role" "eventbridge_sfn_role" {
   name = "${var.app_name}-eventbridge-sfn-role"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -478,7 +478,7 @@ resource "aws_iam_role" "eventbridge_sfn_role" {
 resource "aws_iam_role_policy" "eventbridge_sfn_policy" {
   name = "${var.app_name}-eventbridge-sfn-policy"
   role = aws_iam_role.eventbridge_sfn_role.id
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
