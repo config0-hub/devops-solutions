@@ -19,7 +19,7 @@ This stack sets up a complete CI/CD environment in AWS, including S3 buckets, Dy
 | cloud_tags_hash | Resource tags for cloud provider | &nbsp; |
 | bucket_acl | S3 bucket access permissions | private |
 | bucket_expire_days | Days until object expiration | 7 |
-| runtime | Lambda runtime environment | python3.9 |
+| runtime | Lambda runtime environment | python3.11 |
 | lambda_layers | Lambda function layers | &nbsp; |
 
 ## Dependencies

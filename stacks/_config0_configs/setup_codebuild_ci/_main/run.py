@@ -50,7 +50,7 @@ class Main(newSchedStack):
 
         self.parse.add_optional(key="runtime",
                                 types="str",
-                                default="python3.9")
+                                default="python3.11")
 
         # Add substack
         self.stack.add_substack("config0-publish:::aws_s3_bucket")

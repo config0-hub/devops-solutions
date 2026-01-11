@@ -14,7 +14,7 @@ This stack automates the creation of the developer solution "iac-ci" on top of A
 | Name | Description | Default |
 |------|-------------|---------|
 | cloud_tags_hash | Resource tags for cloud provider | &nbsp; |
-| runtime | Configuration for runtime | python3.9 |
+| runtime | Configuration for runtime | python3.11 |
 | aws_default_region | AWS region for deployment | us-east-1 |
 
 ## Dependencies
