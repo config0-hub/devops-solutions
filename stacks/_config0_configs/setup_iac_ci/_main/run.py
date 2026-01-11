@@ -673,7 +673,7 @@ class Main(newSchedStack):
         # Schedule for "lambda_stepf" job
         sched = self.new_schedule()
         sched.job = "lambda_stepf"
-        sched.archive.timeout = 1800
+        sched.archive.timeout = 2700
         sched.archive.timewait = 120
         sched.automation_phase = "infrastructure"
         sched.human_description = "Setup Lambdas and Step Functions"
