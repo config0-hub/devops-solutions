@@ -637,10 +637,7 @@ class Main(newSchedStack):
             item["cluster"] = {"S": str(self.stack.cluster)}
             item["project"] = {"S": str(self.stack.cluster)}
 
-        ########################################################################################
-        # TODO
-        # revisit 54324345234535
-        ########################################################################################
+        # REF: revisit 54324345234535
         item["sched_type"] = {"S": "build"}
 
         if self.stack.get_attr("sched_type") != "build":
