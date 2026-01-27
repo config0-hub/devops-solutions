@@ -465,29 +465,33 @@ class Main(newSchedStack):
 
         self.stack.py_lambda.insert(display=True, **inputargs)
 
+        ##############################################################
+        # debug777
+        ##############################################################
         # Create additional Lambda functions
-        lambda_params = {
-            f"{self.stack.app_name}-trigger-codebuild": "app_codebuild.handler",
-            f"{self.stack.app_name}-pkgcode-to-s3": "app_s3.handler",
-            f"{self.stack.app_name}-check-codebuild": "app_check_build.handler",
-            f"{self.stack.app_name}-trigger-lambda": "app_lambda.handler",
-            f"{self.stack.app_name}-update-pr": "app_pr.handler"
-        }
+        #lambda_params = {
+        #    f"{self.stack.app_name}-trigger-codebuild": "app_codebuild.handler",
+        #    f"{self.stack.app_name}-pkgcode-to-s3": "app_s3.handler",
+        #    f"{self.stack.app_name}-check-codebuild": "app_check_build.handler",
+        #    f"{self.stack.app_name}-trigger-lambda": "app_lambda.handler",
+        #    f"{self.stack.app_name}-update-pr": "app_pr.handler"
+        #}
 
-        for lambda_name, handler in lambda_params.items():
-            arguments = base_arguments.copy()
-            arguments.update({
-                "lambda_name": lambda_name,
-                "handler": handler
-            })
+        #for lambda_name, handler in lambda_params.items():
+        #    arguments = base_arguments.copy()
+        #    arguments.update({
+        #        "lambda_name": lambda_name,
+        #        "handler": handler
+        #    })
 
-            inputargs = {
-                "arguments": arguments,
-                "automation_phase": "infrastructure",
-                "human_description": f"Create Lambda function {lambda_name}"
-            }
+        #    inputargs = {
+        #        "arguments": arguments,
+        #        "automation_phase": "infrastructure",
+        #        "human_description": f"Create Lambda function {lambda_name}"
+        #    }
 
-            self.stack.py_lambda.insert(display=True, **inputargs)
+        #    self.stack.py_lambda.insert(display=True, **inputargs)
+        ##############################################################
 
         self.stack.unset_parallel()
 
