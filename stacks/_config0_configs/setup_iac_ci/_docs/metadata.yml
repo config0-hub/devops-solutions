@@ -1,0 +1,22 @@
+desc: This stack creates an AWS-based Infrastructure as Code (IaC) CI pipeline with DynamoDB, Lambda, Step Functions, API Gateway, and SNS
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GPL-3.0
+categories:
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - ci
+   - cd
+   - infrastructure
+   - featured_infrastructure
+   - codebuild
+   - aws
+   - cloud
+   - public_cloud
+   - lambda
+   - stepfunctions
+   - dynamodb
+   - apigateway

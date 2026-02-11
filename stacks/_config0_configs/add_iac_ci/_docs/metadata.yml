@@ -1,0 +1,18 @@
+desc: This stack implements Infrastructure as Code (IaC) CI/CD pipelines using AWS CodeBuild and DynamoDB for automated infrastructure testing and deployment
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GNU General Public License v3.0
+categories: 
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - ci
+   - cd
+   - infrastructure
+   - featured_infrastructure
+   - codebuild
+   - aws
+   - cloud
+   - public_cloud

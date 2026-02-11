@@ -1,0 +1,15 @@
+desc: Platform versioning example for DigitalOcean with Jenkins and Kubernetes
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GNU General Public License v3.0
+categories: 
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - infrastructure
+   - featured_infrastructure
+   - do
+   - platform
+   - public_cloud

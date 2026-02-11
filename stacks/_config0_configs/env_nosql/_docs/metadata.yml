@@ -1,0 +1,14 @@
+desc: MongoDB and EKS infrastructure deployment for three-tier architecture on AWS
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GPL-3.0
+categories: 
+   - database
+   - kubernetes
+tags:
+   - mongodb
+   - eks
+   - infrastructure
+   - aws
+   - cloud
+   - public_cloud

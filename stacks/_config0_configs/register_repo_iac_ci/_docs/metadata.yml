@@ -1,0 +1,21 @@
+desc: This stack registers a GitOps repository for the developer solutions "iac-ci"
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GPL-3.0
+categories: 
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - ci
+   - cd
+   - infrastructure
+   - featured_infrastructure
+   - github
+   - aws
+   - cloud
+   - public_cloud
+   - webhook
+   - dynamodb
+   - ssm

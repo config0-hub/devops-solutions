@@ -1,0 +1,14 @@
+desc: Deploys AWS RDS database and EKS cluster infrastructure in parallel
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GPLv3
+categories: 
+   - infrastructure
+tags:
+   - aws
+   - cloud
+   - public_cloud
+   - rds
+   - eks
+   - kubernetes
+   - database

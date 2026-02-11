@@ -1,0 +1,18 @@
+desc: This stack automates the setup of AWS CodeBuild CI/CD pipelines, including necessary AWS resources like S3 buckets, ECR repositories, SSH keys, and GitHub webhooks.
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GNU General Public License v3.0
+categories: 
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - ci
+   - cd
+   - infrastructure
+   - featured_infrastructure
+   - codebuild
+   - aws
+   - cloud
+   - public_cloud

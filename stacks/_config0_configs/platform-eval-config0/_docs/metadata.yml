@@ -1,0 +1,18 @@
+desc: Platform stack for AWS and DigitalOcean cloud infrastructure deployment with pre-configured networking, security, and service components.
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GNU General Public License v3
+categories: 
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - infrastructure
+   - featured_infrastructure
+   - do
+   - platform
+   - public_cloud
+   - aws
+   - kubernetes
+   - database

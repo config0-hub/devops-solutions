@@ -1,0 +1,14 @@
+desc: Creates an AWS SNS topic subscription connected to a Lambda function for event-driven architectures.
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GPL-3.0
+categories: 
+   - aws
+   - cloud
+   - public_cloud
+tags:
+   - cloudwatch
+   - codebuild
+   - aws
+   - lambda
+   - sns

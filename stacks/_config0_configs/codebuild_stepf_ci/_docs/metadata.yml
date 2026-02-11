@@ -1,0 +1,14 @@
+desc: Creates an AWS Step Function for workflow automation
+release: 0.0.1
+author: Gary Leong <gary@config0.com>
+license: GNU General Public License v3
+categories: 
+   - aws
+   - cloud
+   - public_cloud
+tags:
+   - cloudwatch
+   - codebuild
+   - aws
+   - lambda
+   - step_func
