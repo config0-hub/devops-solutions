@@ -30,9 +30,9 @@ This stack creates a complete AWS network infrastructure including a VPC, networ
 
 ### Substacks
 
-- [config0-publish:::aws_vpc_simple](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_vpc_simple)
-- [config0-publish:::network_vars_set](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network_vars_set)
-- [config0-publish:::aws_nat_inst_vpc](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_nat_inst_vpc)
+- [config0-hub:::aws_networking::aws_vpc_simple](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_vpc_simple)
+- [config0-hub:::config0_core::network_vars_set](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/network_vars_set)
+- [config0-hub:::aws_networking::aws_nat_inst_vpc](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_nat_inst_vpc)
 
 ## License
 <pre>

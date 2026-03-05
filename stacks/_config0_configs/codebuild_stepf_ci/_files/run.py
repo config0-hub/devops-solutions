@@ -38,11 +38,11 @@ def run(stackargs):
                              types="str")
 
     # Add execgroup
-    stack.add_execgroup("config0-publish:::devops-solutions::codebuild_ci_stepf",
+    stack.add_execgroup("config0-hub:::devops-solutions::codebuild_ci_stepf",
                         "tf_execgroup")
 
     # Add substack
-    stack.add_substack('config0-publish:::tf_executor')
+    stack.add_substack('config0-hub:::config0_core::tf_executor')
 
     # Initialize Variables in stack
     stack.init_variables()

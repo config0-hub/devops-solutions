@@ -53,17 +53,17 @@ class Main(newSchedStack):
                                 default="python3.11")
 
         # Add substack
-        self.stack.add_substack("config0-publish:::aws_s3_bucket")
-        self.stack.add_substack("config0-publish:::aws_dynamodb")
-        self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild", "py_lambda")
-        self.stack.add_substack("config0-publish:::apigw_lambda-integ", "apigw")
-        self.stack.add_substack("config0-publish:::codebuild_stepf_ci")
-        self.stack.add_substack("config0-publish:::codebuild_complete_trigger",
+        self.stack.add_substack("config0-hub:::aws_storage::aws_s3_bucket")
+        self.stack.add_substack("config0-hub:::aws_storage::aws_dynamodb")
+        self.stack.add_substack("config0-hub:::aws::aws-lambda-python-codebuild", "py_lambda")
+        self.stack.add_substack("config0-hub:::aws_networking::apigw_lambda-integ", "apigw")
+        self.stack.add_substack("config0-hub:::devops-solutions::codebuild_stepf_ci")
+        self.stack.add_substack("config0-hub:::devops-solutions::codebuild_complete_trigger",
                                 "sns_subscription")
 
         # this is lock versioning of execgroups
-        self.stack.add_execgroup("config0-publish:::github::lambda_trigger_stepf")
-        self.stack.add_execgroup("config0-publish:::github::lambda_codebuild_ci")
+        self.stack.add_execgroup("config0-hub:::github::lambda_trigger_stepf")
+        self.stack.add_execgroup("config0-hub:::github::lambda_codebuild_ci")
         self.stack.init_execgroups()
         self.stack.init_substacks()
 

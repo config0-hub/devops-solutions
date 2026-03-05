@@ -32,15 +32,15 @@ class Main(newSchedStack):
         self.parse.add_optional(key="aws_default_region", types="str", default="us-east-1")
 
         # Initialize substacks
-        self.stack.add_substack("config0-publish:::aws_dynamodb")
-        self.stack.add_substack("config0-publish:::apigw_lambda-integ", "apigw")
-        self.stack.add_substack("config0-publish:::aws-lambda-python-codebuild", "py_lambda")
-        self.stack.add_substack("config0-publish:::iac_ci_stepf")
-        self.stack.add_substack("config0-publish:::iac_ci_complete_trigger", "sns_subscription")
+        self.stack.add_substack("config0-hub:::aws_storage::aws_dynamodb")
+        self.stack.add_substack("config0-hub:::aws_networking::apigw_lambda-integ", "apigw")
+        self.stack.add_substack("config0-hub:::aws::aws-lambda-python-codebuild", "py_lambda")
+        self.stack.add_substack("config0-hub:::devops-solutions::iac_ci_stepf")
+        self.stack.add_substack("config0-hub:::devops-solutions::iac_ci_complete_trigger", "sns_subscription")
 
         # Initialize execution groups
-        self.stack.add_execgroup("config0-publish:::github::lambda_trigger_stepf")
-        self.stack.add_execgroup("config0-publish:::devops-solutions::iac_ci", "lambda_iac_ci")
+        self.stack.add_execgroup("config0-hub:::github::lambda_trigger_stepf")
+        self.stack.add_execgroup("config0-hub:::devops-solutions::iac_ci", "lambda_iac_ci")
 
         self.stack.init_execgroups()
         self.stack.init_substacks()

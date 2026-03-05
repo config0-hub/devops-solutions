@@ -53,9 +53,9 @@ This stack deploys a combined infrastructure consisting of a Kafka cluster on EC
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::empty_stack](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/empty_stack)
-- [config0-publish:::kafka_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/kafka_on_ec2)
-- [config0-publish:::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_eks)
+- [config0-hub:::config0_core::empty_stack](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/empty_stack)
+- [config0-hub:::kafka::kafka_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/kafka_on_ec2)
+- [config0-hub:::aws_eks::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_eks)
 
 ## License
 <pre>

@@ -55,13 +55,13 @@ This stack creates a complete three-tier environment in AWS, including networkin
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
-- [config0-publish:::mongodb_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/mongodb_eks)
+- [config0-hub:::devops-solutions::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/network)
+- [config0-hub:::devops-solutions::mongodb_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/mongodb_eks)
 
 ### Execgroups
 None
 
-### ShelloutConfigs
+### Scripts
 None
 
 ## License

@@ -142,8 +142,8 @@ def run(stackargs):
                              types="str")
 
     # Initialize required infrastructure components
-    stack.add_substack("config0-publish:::network")
-    stack.add_substack("config0-publish:::rds_eks")
+    stack.add_substack("config0-hub:::devops-solutions::network")
+    stack.add_substack("config0-hub:::devops-solutions::rds_eks")
 
     # initialize
     stack.init_variables()

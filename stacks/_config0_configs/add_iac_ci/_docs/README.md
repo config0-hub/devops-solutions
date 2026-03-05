@@ -31,13 +31,13 @@ This stack implements an Infrastructure as Code (IaC) Continuous Integration/Con
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::aws_codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_codebuild)
-- [config0-publish:::aws_dynamodb_item](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_dynamodb_item)
+- [config0-hub:::aws::aws_codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_codebuild)
+- [config0-hub:::aws_storage::aws_dynamodb_item](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_dynamodb_item)
 
 ### Execgroups
 None
 
-### Shelloutconfigs
+### Scripts
 None
 
 ## License

@@ -56,13 +56,13 @@ This stack creates a three-tier environment with Kafka and EKS clusters on AWS. 
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
-- [config0-publish:::kafka_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/kafka_eks)
+- [config0-hub:::devops-solutions::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/network)
+- [config0-hub:::devops-solutions::kafka_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/kafka_eks)
 
 ### Execgroups
 None found in the provided code.
 
-### Shelloutconfigs
+### Scripts
 None found in the provided code.
 
 ## License

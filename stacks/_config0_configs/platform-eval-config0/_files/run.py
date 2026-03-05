@@ -301,7 +301,7 @@ def run(stackargs):
 
     # Individual IaCs
     # vpc/network_vars_set for vpc setting
-    stack.add_substack('config0-publish:::aws_vpc_simple',
+    stack.add_substack('config0-hub:::aws_networking::aws_vpc_simple',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -317,7 +317,7 @@ def run(stackargs):
                        inputvars=["infracost"])
 
     # related to mostly vpc
-    stack.add_substack('config0-publish:::network_vars_set',
+    stack.add_substack('config0-hub:::config0_core::network_vars_set',
                        arguments=[
                            cloud_tags_hash,
                            network_vars_set_labels_hash,
@@ -334,7 +334,7 @@ def run(stackargs):
                        ])
 
     # iac-ci with aws
-    stack.add_substack('config0-publish:::setup_iac_ci',
+    stack.add_substack('config0-hub:::devops-solutions::setup_iac_ci',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -345,7 +345,7 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    stack.add_substack('config0-publish:::register_repo_iac_ci',
+    stack.add_substack('config0-hub:::devops-solutions::register_repo_iac_ci',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -356,7 +356,7 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    stack.add_substack('config0-publish:::add_iac_ci',
+    stack.add_substack('config0-hub:::devops-solutions::add_iac_ci',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -368,7 +368,7 @@ def run(stackargs):
                        inputvars=["infracost"])
 
     # ci with aws codebuild
-    stack.add_substack('config0-publish:::setup_codebuild_ci',
+    stack.add_substack('config0-hub:::devops-solutions::setup_codebuild_ci',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -379,21 +379,7 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    stack.add_substack('config0-publish:::add_codebuild_ci',
-                       arguments=[
-                           aws_default_region_args,
-                           cloud_tags_hash
-                       ],
-                       labels=[
-                           general,
-                           aws_cloud
-                       ],
-                       selectors=[
-                           network_vars
-                       ],
-                       inputvars=["infracost"])
-
-    stack.add_substack('config0-publish:::aws_nat_inst_vpc',  # nat instance (instead of nat gw)
+    stack.add_substack('config0-hub:::devops-solutions::add_codebuild_ci',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -407,7 +393,21 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    stack.add_substack('config0-publish:::aws_nat_vpc',  # aws nat gateway saas
+    stack.add_substack('config0-hub:::aws_networking::aws_nat_inst_vpc',  # nat instance (instead of nat gw)
+                       arguments=[
+                           aws_default_region_args,
+                           cloud_tags_hash
+                       ],
+                       labels=[
+                           general,
+                           aws_cloud
+                       ],
+                       selectors=[
+                           network_vars
+                       ],
+                       inputvars=["infracost"])
+
+    stack.add_substack('config0-hub:::aws_networking::aws_nat_vpc',  # aws nat gateway saas
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -422,7 +422,7 @@ def run(stackargs):
                        inputvars=["infracost"])
 
     # aws stateful stacks
-    stack.add_substack('config0-publish:::aws_rds',
+    stack.add_substack('config0-hub:::aws_storage::aws_rds',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -436,7 +436,7 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    stack.add_substack('config0-publish:::mongodb_replica_on_ec2',
+    stack.add_substack('config0-hub:::mongodb::mongodb_replica_on_ec2',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -450,7 +450,7 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    stack.add_substack('config0-publish:::kafka_on_ec2',
+    stack.add_substack('config0-hub:::kafka::kafka_on_ec2',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -465,7 +465,7 @@ def run(stackargs):
                        inputvars=["infracost"])
 
     # aws kubernetes
-    stack.add_substack('config0-publish:::aws_eks',
+    stack.add_substack('config0-hub:::aws_eks::aws_eks',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash
@@ -481,7 +481,7 @@ def run(stackargs):
                        inputvars=["infracost"])
 
     # aws kubernetes v2 (EKS with External DNS and ArgoCD)
-    stack.add_substack('config0-publish:::aws_eks2',
+    stack.add_substack('config0-hub:::aws_eks::aws_eks2',
                        arguments=[
                            cloud_tags_hash
                        ],
@@ -492,7 +492,7 @@ def run(stackargs):
                        inputvars=["infracost"])
 
     # digital ocean
-    stack.add_substack("config0-publish:::jenkins_on_do",
+    stack.add_substack("config0-hub:::do::jenkins_on_do",
                        arguments=[
                            cloud_tags_hash
                        ],
@@ -502,7 +502,7 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    stack.add_substack("config0-publish:::doks",
+    stack.add_substack("config0-hub:::do::doks",
                        arguments=[
                            cloud_tags_hash
                        ],
@@ -513,7 +513,7 @@ def run(stackargs):
                        inputvars=["infracost"])
 
     # drift detection of resources
-    stack.add_substack('config0-publish:::check_drift_resources',
+    stack.add_substack('config0-hub:::config0_core::check_drift_resources',
                        arguments=[
                            cloud_tags_hash
                        ],
@@ -529,7 +529,7 @@ def run(stackargs):
         sg_info
     ]
 
-    stack.add_substack('config0-publish:::env_sql',
+    stack.add_substack('config0-hub:::devops-solutions::env_sql',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash,
@@ -544,7 +544,7 @@ def run(stackargs):
                        inputvars=["infracost"],
                        at_launch=["labels", "selectors"])
 
-    stack.add_substack('config0-publish:::env_nosql',
+    stack.add_substack('config0-hub:::devops-solutions::env_nosql',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash,
@@ -559,7 +559,7 @@ def run(stackargs):
                        inputvars=["infracost"],
                        at_launch=["labels", "selectors"])
 
-    stack.add_substack('config0-publish:::env_streaming',
+    stack.add_substack('config0-hub:::devops-solutions::env_streaming',
                        arguments=[
                            aws_default_region_args,
                            cloud_tags_hash,

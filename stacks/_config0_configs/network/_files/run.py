@@ -57,9 +57,9 @@ class Main(newSchedStack):
                                 default="0.0.0.0/0")
 
         # add substack
-        self.stack.add_substack("config0-publish:::aws_vpc_simple")
-        self.stack.add_substack("config0-publish:::network_vars_set")
-        self.stack.add_substack("config0-publish:::aws_nat_inst_vpc")
+        self.stack.add_substack("config0-hub:::aws_networking::aws_vpc_simple")
+        self.stack.add_substack("config0-hub:::config0_core::network_vars_set")
+        self.stack.add_substack("config0-hub:::aws_networking::aws_nat_inst_vpc")
 
         self.stack.init_substacks()
 

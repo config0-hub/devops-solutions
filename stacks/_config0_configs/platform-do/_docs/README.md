@@ -20,9 +20,9 @@ This stack provides a controlled platform versioning for development environment
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::jenkins_on_do](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/jenkins_on_do)
-- [config0-publish:::doks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/doks)
-- [config0-publish:::check_drift_resources](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/check_drift_resources)
+- [config0-hub:::do::jenkins_on_do](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/jenkins_on_do)
+- [config0-hub:::do::doks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/doks)
+- [config0-hub:::config0_core::check_drift_resources](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/check_drift_resources)
 
 ## License
 <pre>

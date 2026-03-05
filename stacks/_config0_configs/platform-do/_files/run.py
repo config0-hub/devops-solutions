@@ -63,14 +63,14 @@ def run(stackargs):
     }
 
     # digital ocean
-    stack.add_substack("config0-publish:::jenkins_on_do",
+    stack.add_substack("config0-hub:::do::jenkins_on_do",
                        arguments=[cloud_tags],
                        labels=[
                            general,
                            do_cloud
                        ])
 
-    stack.add_substack("config0-publish:::doks",
+    stack.add_substack("config0-hub:::do::doks",
                        arguments=[cloud_tags],
                        labels=[
                            general,
@@ -78,7 +78,7 @@ def run(stackargs):
                        ])
 
     # drift detection of resources
-    stack.add_substack('config0-publish:::check_drift_resources',
+    stack.add_substack('config0-hub:::config0_core::check_drift_resources',
                        arguments=[cloud_tags],
                        labels=[general])
 

@@ -142,8 +142,8 @@ def run(stackargs):
                              default="null")
 
     # add substack
-    stack.add_substack("config0-publish:::mongodb_replica_on_ec2")
-    stack.add_substack("config0-publish:::aws_eks")
+    stack.add_substack("config0-hub:::mongodb::mongodb_replica_on_ec2")
+    stack.add_substack("config0-hub:::aws_eks::aws_eks")
 
     # initialize
     stack.init_variables()

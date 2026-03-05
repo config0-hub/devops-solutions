@@ -129,13 +129,13 @@ class Main(newSchedStack):
                                 default="us-east-1")
 
         # Add substack
-        self.stack.add_substack('config0-publish:::aws_ecr_repo')
-        self.stack.add_substack('config0-publish:::aws_s3_bucket')
-        self.stack.add_substack('config0-publish:::new_github_ssh_key')
-        self.stack.add_substack('config0-publish:::aws_dynamodb_item', 'dynamodb')
-        self.stack.add_substack('config0-publish:::aws_ssm_param')
-        self.stack.add_substack('config0-publish:::aws_codebuild')
-        self.stack.add_substack('config0-publish:::github_webhook')
+        self.stack.add_substack('config0-hub:::aws_storage::aws_ecr_repo')
+        self.stack.add_substack('config0-hub:::aws_storage::aws_s3_bucket')
+        self.stack.add_substack('config0-hub:::github::new_github_ssh_key')
+        self.stack.add_substack('config0-hub:::aws_storage::aws_dynamodb_item', 'dynamodb')
+        self.stack.add_substack('config0-hub:::aws_storage::aws_ssm_param')
+        self.stack.add_substack('config0-hub:::aws::aws_codebuild')
+        self.stack.add_substack('config0-hub:::github::github_webhook')
 
         self.stack.init_substacks()
 

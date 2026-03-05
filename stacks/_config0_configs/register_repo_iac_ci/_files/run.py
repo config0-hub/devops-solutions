@@ -36,10 +36,10 @@ class Main(newSchedStack):
 
         self.parse.add_required(key="app_name_iac", types="str", default="iac-ci")
 
-        self.stack.add_substack('config0-publish:::github_webhook')
-        self.stack.add_substack('config0-publish:::aws_dynamodb_item', 'dynamodb_item')
-        self.stack.add_substack('config0-publish:::aws_ssm_param')
-        self.stack.add_substack('config0-publish:::new_github_ssh_key')
+        self.stack.add_substack('config0-hub:::github::github_webhook')
+        self.stack.add_substack('config0-hub:::aws_storage::aws_dynamodb_item', 'dynamodb_item')
+        self.stack.add_substack('config0-hub:::aws_storage::aws_ssm_param')
+        self.stack.add_substack('config0-hub:::github::new_github_ssh_key')
 
         self.stack.init_substacks()
 

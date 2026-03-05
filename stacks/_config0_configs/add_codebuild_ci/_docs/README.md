@@ -48,21 +48,21 @@ This stack automates the setup of AWS CodeBuild CI/CD pipelines, including the n
 
 ### Substacks
 
-- [config0-publish:::aws_ecr_repo](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_ecr_repo)
-- [config0-publish:::aws_s3_bucket](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_s3_bucket)
-- [config0-publish:::new_github_ssh_key](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/new_github_ssh_key)
-- [config0-publish:::aws_dynamodb_item](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_dynamodb_item)
-- [config0-publish:::aws_ssm_param](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_ssm_param)
-- [config0-publish:::aws_codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_codebuild)
-- [config0-publish:::github_webhook](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/github_webhook)
+- [config0-hub:::aws_storage::aws_ecr_repo](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_ecr_repo)
+- [config0-hub:::aws_storage::aws_s3_bucket](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_s3_bucket)
+- [config0-hub:::github::new_github_ssh_key](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/new_github_ssh_key)
+- [config0-hub:::aws_storage::aws_dynamodb_item](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_dynamodb_item)
+- [config0-hub:::aws_storage::aws_ssm_param](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_ssm_param)
+- [config0-hub:::aws::aws_codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_codebuild)
+- [config0-hub:::github::github_webhook](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/github_webhook)
 
 ### Execgroups
 
 No execgroups were found in the current code.
 
-### Shelloutconfigs
+### Scripts
 
-No shelloutconfigs were found in the current code.
+No scripts were found in the current code.
 
 ## License
 <pre>

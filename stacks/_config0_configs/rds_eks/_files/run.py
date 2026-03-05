@@ -116,8 +116,8 @@ def run(stackargs):
                              types="str")
 
     # add substack
-    stack.add_substack("config0-publish:::aws_rds")
-    stack.add_substack("config0-publish:::aws_eks")
+    stack.add_substack("config0-hub:::aws_storage::aws_rds")
+    stack.add_substack("config0-hub:::aws_eks::aws_eks")
 
     # initialize
     stack.init_variables()

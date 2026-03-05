@@ -50,13 +50,13 @@ This stack deploys both a MongoDB replica set on EC2 instances and an Amazon EKS
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::mongodb_replica_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/mongodb_replica_on_ec2)
-- [config0-publish:::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_eks)
+- [config0-hub:::mongodb::mongodb_replica_on_ec2](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/mongodb_replica_on_ec2)
+- [config0-hub:::aws_eks::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_eks)
 
 ### Execgroups
 None
 
-### Shelloutconfigs
+### Scripts
 None
 
 ## License

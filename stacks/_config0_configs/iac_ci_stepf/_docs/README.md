@@ -18,12 +18,12 @@ This stack creates and manages an AWS Step Function workflow using Terraform. It
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::tf_executor](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/tf_executor)
+- [config0-hub:::config0_core::tf_executor](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/tf_executor)
 
 ### Execgroups
-- [config0-publish:::devops-solutions::iac_ci_stepf](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-publish/devops-solutions/iac_ci_stepf)
+- [config0-hub:::devops-solutions::iac_ci_stepf](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-hub/devops-solutions/iac_ci_stepf)
 
-### Shelloutconfigs
+### Scripts
 None
 
 ## License

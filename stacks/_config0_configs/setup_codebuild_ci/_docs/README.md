@@ -25,18 +25,18 @@ This stack sets up a complete CI/CD environment in AWS, including S3 buckets, Dy
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::aws_s3_bucket](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_s3_bucket)
-- [config0-publish:::aws_dynamodb](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_dynamodb)
-- [config0-publish:::aws-lambda-python-codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws-lambda-python-codebuild)
-- [config0-publish:::apigw_lambda-integ](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/apigw_lambda-integ)
-- [config0-publish:::codebuild_stepf_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/codebuild_stepf_ci)
-- [config0-publish:::codebuild_complete_trigger](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/codebuild_complete_trigger)
+- [config0-hub:::aws_storage::aws_s3_bucket](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_s3_bucket)
+- [config0-hub:::aws_storage::aws_dynamodb](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_dynamodb)
+- [config0-hub:::aws::aws-lambda-python-codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws-lambda-python-codebuild)
+- [config0-hub:::aws_networking::apigw_lambda-integ](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/apigw_lambda-integ)
+- [config0-hub:::devops-solutions::codebuild_stepf_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/codebuild_stepf_ci)
+- [config0-hub:::devops-solutions::codebuild_complete_trigger](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/codebuild_complete_trigger)
 
 ### Execgroups
-- [config0-publish:::github::lambda_trigger_stepf](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-publish/github/lambda_trigger_stepf)
-- [config0-publish:::github::lambda_codebuild_ci](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-publish/github/lambda_codebuild_ci)
+- [config0-hub:::github::lambda_trigger_stepf](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-hub/github/lambda_trigger_stepf)
+- [config0-hub:::github::lambda_codebuild_ci](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-hub/github/lambda_codebuild_ci)
 
-### Shelloutconfigs
+### Scripts
 None identified in the provided code.
 
 ## License

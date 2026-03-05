@@ -78,8 +78,8 @@ class Main(newSchedStack):
                                 default="null")
 
         # add substack
-        self.stack.add_substack('config0-publish:::aws_codebuild')
-        self.stack.add_substack('config0-publish:::aws_dynamodb_item', 'dynamodb_item')
+        self.stack.add_substack('config0-hub:::aws::aws_codebuild')
+        self.stack.add_substack('config0-hub:::aws_storage::aws_dynamodb_item', 'dynamodb_item')
 
         self.stack.init_substacks()
 

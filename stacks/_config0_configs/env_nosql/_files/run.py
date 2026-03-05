@@ -163,8 +163,8 @@ def run(stackargs):
                              default="null")
 
     # add substack
-    stack.add_substack("config0-publish:::network")
-    stack.add_substack("config0-publish:::mongodb_eks")
+    stack.add_substack("config0-hub:::devops-solutions::network")
+    stack.add_substack("config0-hub:::devops-solutions::mongodb_eks")
 
     # initialize
     stack.init_variables()

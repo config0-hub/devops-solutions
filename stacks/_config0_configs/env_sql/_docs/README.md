@@ -46,14 +46,14 @@ This stack creates a complete three-tier environment in AWS, including networkin
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/network)
-- [config0-publish:::rds_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/rds_eks)
+- [config0-hub:::devops-solutions::network](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/network)
+- [config0-hub:::devops-solutions::rds_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/rds_eks)
 
 ### Execgroups
 No execgroups explicitly added in the code.
 
-### Shelloutconfigs
-No shelloutconfigs explicitly added in the code.
+### Scripts
+No scripts explicitly added in the code.
 
 ## License
 <pre>

@@ -20,15 +20,15 @@ This stack automates the creation of the developer solution "iac-ci" on top of A
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::aws_dynamodb](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_dynamodb)
-- [config0-publish:::apigw_lambda-integ](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/apigw_lambda-integ)
-- [config0-publish:::aws-lambda-python-codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws-lambda-python-codebuild)
-- [config0-publish:::iac_ci_stepf](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/iac_ci_stepf)
-- [config0-publish:::iac_ci_complete_trigger](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/iac_ci_complete_trigger)
+- [config0-hub:::aws_storage::aws_dynamodb](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_dynamodb)
+- [config0-hub:::aws_networking::apigw_lambda-integ](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/apigw_lambda-integ)
+- [config0-hub:::aws::aws-lambda-python-codebuild](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws-lambda-python-codebuild)
+- [config0-hub:::devops-solutions::iac_ci_stepf](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/iac_ci_stepf)
+- [config0-hub:::devops-solutions::iac_ci_complete_trigger](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/iac_ci_complete_trigger)
 
 ### Execgroups
-- [config0-publish:::github::lambda_trigger_stepf](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-publish/github/lambda_trigger_stepf)
-- [config0-publish:::devops-solutions::iac_ci](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-publish/devops-solutions/iac_ci)
+- [config0-hub:::github::lambda_trigger_stepf](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-hub/github/lambda_trigger_stepf)
+- [config0-hub:::devops-solutions::iac_ci](https://api-app.config0.com/web_api/v1.0/exec/groups/config0-hub/devops-solutions/iac_ci)
 
 ## License
 <pre>

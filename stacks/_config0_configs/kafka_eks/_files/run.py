@@ -154,9 +154,9 @@ class Main(newSchedStack):
                                default="null")
 
         # Add substack
-        self.stack.add_substack("config0-publish:::empty_stack")
-        self.stack.add_substack("config0-publish:::kafka_on_ec2")
-        self.stack.add_substack("config0-publish:::aws_eks")
+        self.stack.add_substack("config0-hub:::config0_core::empty_stack")
+        self.stack.add_substack("config0-hub:::kafka::kafka_on_ec2")
+        self.stack.add_substack("config0-hub:::aws_eks::aws_eks")
 
         self.stack.init_substacks()
 

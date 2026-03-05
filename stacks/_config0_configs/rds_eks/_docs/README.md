@@ -42,13 +42,13 @@ This stack creates an AWS RDS database instance and an EKS cluster in parallel. 
 ## Dependencies
 
 ### Substacks
-- [config0-publish:::aws_rds](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_rds)
-- [config0-publish:::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-publish/aws_eks)
+- [config0-hub:::aws_storage::aws_rds](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_rds)
+- [config0-hub:::aws_eks::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_eks)
 
 ### Execgroups
 None identified in the code.
 
-### Shelloutconfigs
+### Scripts
 None identified in the code.
 
 ## License
