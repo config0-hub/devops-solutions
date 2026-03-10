@@ -1,15 +1,18 @@
 desc: Deploys a Kafka cluster on EC2 instances and an Amazon EKS (Elastic Kubernetes Service) cluster
-release: 0.0.1
+release: 0.5.0
 author: Gary Leong <gary@config0.com>
 license: GPL-3.0
-categories: 
-   - demo
-tags:
-   - demo
-   - infrastructure
+categories:
    - aws
-   - cloud
-   - public_cloud
    - kafka
    - eks
    - kubernetes
+   - infrastructure
+tags:
+   - featured
+   - kafka
+   - eks
+   - kubernetes
+   - aws
+   - infrastructure
+   - terraform

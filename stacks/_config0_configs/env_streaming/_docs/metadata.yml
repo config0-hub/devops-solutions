@@ -1,15 +1,14 @@
 desc: Creates a three-tier environment with Kafka and EKS clusters on AWS
-release: 0.0.1
+release: 0.3.0
 author: Gary Leong <gary@config0.com>
 license: GPL-3.0
-categories: 
-   - demo
-tags:
-   - demo
-   - infrastructure
+categories:
    - aws
-   - cloud
-   - public_cloud
+   - kafka
+   - infrastructure
+tags:
    - kafka
    - eks
+   - aws
+   - infrastructure
    - kubernetes

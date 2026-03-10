@@ -1,16 +1,16 @@
 desc: Creates a complete three-tier environment in AWS with EKS cluster, RDS database, and secure networking
-release: 0.0.1
+release: 0.3.0
 author: Gary Leong <gary@config0.com>
 license: GPL-3.0
-categories: 
-   - demo
-tags:
-   - demo
-   - infrastructure
+categories:
    - aws
-   - cloud
-   - public_cloud
-   - kubernetes
-   - eks
    - rds
    - database
+   - infrastructure
+tags:
+   - rds
+   - eks
+   - aws
+   - database
+   - infrastructure
+   - kubernetes

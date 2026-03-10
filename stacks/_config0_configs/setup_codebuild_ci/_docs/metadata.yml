@@ -1,22 +1,15 @@
 desc: This stack sets up a complete CI/CD environment in AWS with S3, DynamoDB, Lambda, Step Functions, and API Gateway integration
-release: 0.0.1
+release: 0.3.0
 author: Gary Leong <gary@config0.com>
-license: GNU General Public License v3.0
-categories: 
-   - ci
-   - cd
-   - build
+license: GPL-3.0
+categories:
+   - aws
+   - codebuild
+   - cicd
 tags:
-   - build
-   - ci
-   - cd
-   - infrastructure
-   - featured_infrastructure
    - codebuild
    - aws
-   - cloud
-   - public_cloud
+   - cicd
    - lambda
    - stepfunctions
-   - apigateway
    - serverless
