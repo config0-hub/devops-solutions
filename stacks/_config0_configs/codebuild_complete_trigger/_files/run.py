@@ -27,7 +27,7 @@ def run(stackargs):
     stack.parse.add_required(key="topic_name",
                              tags="tfvar",
                              types="str")
-    
+
     stack.parse.add_required(key="lambda_name",
                              tags="tfvar",
                              types="str")

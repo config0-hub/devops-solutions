@@ -74,7 +74,7 @@ class Main(newSchedStack):
 
     def _set_cloud_tag_hash(self):
         try:
-            cloud_tags = self.stack.b64_decode(self.stack.cloud_tags_hash)
+            cloud_tags = self.stack.deserialize(self.stack.cloud_tags_hash, json=True)
         except:
             cloud_tags = {}
 
@@ -83,7 +83,7 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region
         })
 
-        return self.stack.b64_encode(cloud_tags)
+        return self.stack.serialize(cloud_tags, json=False)
 
     def run_vpc(self):
         self.stack.init_variables()

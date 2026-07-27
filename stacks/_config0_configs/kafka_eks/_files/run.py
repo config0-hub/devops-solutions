@@ -21,136 +21,136 @@ class Main(newSchedStack):
         newSchedStack.__init__(self, stackargs)
 
         # General
-        self.parse.add_optional(key="aws_default_region", 
-                               default="eu-west-1", 
+        self.parse.add_optional(key="aws_default_region",
+                               default="eu-west-1",
                                types="str")
-        
-        self.parse.add_required(key="env_name", 
+
+        self.parse.add_required(key="env_name",
                                types="str")
-        
-        self.parse.add_optional(key="cloud_tags_hash", 
+
+        self.parse.add_optional(key="cloud_tags_hash",
                                types="str")
-        
-        self.parse.add_optional(key="public_subnet_ids", 
-                               default="null", 
+
+        self.parse.add_optional(key="public_subnet_ids",
+                               default="null",
                                types="str")
-        
-        self.parse.add_optional(key="private_subnet_ids", 
-                               default="null", 
+
+        self.parse.add_optional(key="private_subnet_ids",
+                               default="null",
                                types="str")
-        
-        self.parse.add_required(key="vpc_id", 
+
+        self.parse.add_required(key="vpc_id",
                                types="str")
 
         # EKS
-        self.parse.add_optional(key="eks_cluster", 
-                               default="null", 
+        self.parse.add_optional(key="eks_cluster",
+                               default="null",
                                types="str")
-        
-        self.parse.add_optional(key="eks_cluster_version", 
-                               types="str", 
+
+        self.parse.add_optional(key="eks_cluster_version",
+                               types="str",
                                default="1.29")
-        
-        self.parse.add_optional(key="eks_cluster_sg_id", 
-                               default="null", 
+
+        self.parse.add_optional(key="eks_cluster_sg_id",
+                               default="null",
                                types="str")
-        
-        self.parse.add_optional(key="eks_node_role_arn", 
-                               default="null", 
+
+        self.parse.add_optional(key="eks_node_role_arn",
+                               default="null",
                                types="str")
-        
-        self.parse.add_optional(key="eks_node_max_capacity", 
-                               default=1, 
+
+        self.parse.add_optional(key="eks_node_max_capacity",
+                               default=1,
                                types="int")
-        
-        self.parse.add_optional(key="eks_node_min_capacity", 
-                               default=1, 
+
+        self.parse.add_optional(key="eks_node_min_capacity",
+                               default=1,
                                types="int")
-        
-        self.parse.add_optional(key="eks_node_desired_capacity", 
-                               default=1, 
+
+        self.parse.add_optional(key="eks_node_desired_capacity",
+                               default=1,
                                types="int")
-        
-        self.parse.add_optional(key="eks_node_disksize", 
-                               default=25, 
+
+        self.parse.add_optional(key="eks_node_disksize",
+                               default=25,
                                types="int")
-        
-        self.parse.add_optional(key="eks_node_instance_types", 
-                               default=["t3.medium", "t3.large"], 
+
+        self.parse.add_optional(key="eks_node_instance_types",
+                               default=["t3.medium", "t3.large"],
                                types="list")
-        
-        self.parse.add_optional(key="eks_node_ami_type", 
-                               default="AL2_x86_64", 
+
+        self.parse.add_optional(key="eks_node_ami_type",
+                               default="AL2_x86_64",
                                types="str")
 
         # Kafka
-        self.parse.add_required(key="bastion_sg_id", 
+        self.parse.add_required(key="bastion_sg_id",
                                default="null")
-        
-        self.parse.add_required(key="bastion_subnet_ids", 
+
+        self.parse.add_required(key="bastion_subnet_ids",
                                default="null")
-        
-        self.parse.add_optional(key="bastion_ami", 
+
+        self.parse.add_optional(key="bastion_ami",
                                default="null")
-        
-        self.parse.add_optional(key="bastion_ami_filter", 
+
+        self.parse.add_optional(key="bastion_ami_filter",
                                default="null")
-        
-        self.parse.add_optional(key="bastion_ami_owner", 
+
+        self.parse.add_optional(key="bastion_ami_owner",
                                default="null")
-        
-        self.parse.add_optional(key="kafka_ami", 
-                               types="str", 
+
+        self.parse.add_optional(key="kafka_ami",
+                               types="str",
                                default="null")
-        
-        self.parse.add_optional(key="kafka_cluster", 
-                               types="str", 
+
+        self.parse.add_optional(key="kafka_cluster",
+                               types="str",
                                default="null")
-        
-        self.parse.add_optional(key="kafka_ami_filter", 
-                               types="str", 
+
+        self.parse.add_optional(key="kafka_ami_filter",
+                               types="str",
                                default="null")
-        
-        self.parse.add_optional(key="kafka_ami_owner", 
+
+        self.parse.add_optional(key="kafka_ami_owner",
                                default="null")
-        
-        self.parse.add_optional(key="kafka_instance_type", 
-                               types="str", 
+
+        self.parse.add_optional(key="kafka_instance_type",
+                               types="str",
                                default="t3.micro")
-        
-        self.parse.add_optional(key="kafka_disksize", 
-                               types="int", 
+
+        self.parse.add_optional(key="kafka_disksize",
+                               types="int",
                                default="20")
-        
-        self.parse.add_required(key="kafka_num_of_zookeeper", 
-                               types="int", 
+
+        self.parse.add_required(key="kafka_num_of_zookeeper",
+                               types="int",
                                default=1)
-        
-        self.parse.add_required(key="kafka_num_of_broker", 
-                               types="int", 
+
+        self.parse.add_required(key="kafka_num_of_broker",
+                               types="int",
                                default=1)
-        
-        self.parse.add_required(key="kafka_num_of_schema_registry", 
-                               types="int", 
+
+        self.parse.add_required(key="kafka_num_of_schema_registry",
+                               types="int",
                                default=1)
-        
-        self.parse.add_required(key="kafka_num_of_connect", 
-                               types="int", 
+
+        self.parse.add_required(key="kafka_num_of_connect",
+                               types="int",
                                default=1)
-        
-        self.parse.add_required(key="kafka_num_of_rest", 
-                               types="int", 
+
+        self.parse.add_required(key="kafka_num_of_rest",
+                               types="int",
                                default=1)
-        
-        self.parse.add_required(key="kafka_num_of_ksql", 
-                               types="int", 
+
+        self.parse.add_required(key="kafka_num_of_ksql",
+                               types="int",
                                default=1)
-        
-        self.parse.add_required(key="kafka_num_of_control_center", 
-                               types="int", 
+
+        self.parse.add_required(key="kafka_num_of_control_center",
+                               types="int",
                                default=1)
-        
-        self.parse.add_required(key="db_sg_id", 
+
+        self.parse.add_required(key="db_sg_id",
                                default="null")
 
         # Add substack
@@ -162,11 +162,11 @@ class Main(newSchedStack):
 
     def _set_vars(self):
         if not self.stack.get_attr("kafka_cluster"):
-            self.stack.set_variable("kafka_cluster", 
+            self.stack.set_variable("kafka_cluster",
                                    f"{self.stack.env_name}-kafka")
 
         if not self.stack.get_attr("eks_cluster"):
-            self.stack.set_variable("eks_cluster", 
+            self.stack.set_variable("eks_cluster",
                                    f"{self.stack.env_name}-eks")
 
     def _kafka(self):
@@ -202,7 +202,7 @@ class Main(newSchedStack):
             "human_description": f'create kafka_cluster "{self.stack.kafka_cluster}"'
         }
 
-        return self.stack.kafka_on_ec2.insert(display=True, 
+        return self.stack.kafka_on_ec2.insert(display=True,
                                              **inputargs)
 
     def _eks(self):
@@ -232,7 +232,7 @@ class Main(newSchedStack):
             "human_description": f'create eks cluster "{self.stack.eks_cluster}"'
         }
 
-        return self.stack.aws_eks.insert(display=True, 
+        return self.stack.aws_eks.insert(display=True,
                                         **inputargs)
 
     def run_kafka_eks(self):

@@ -145,7 +145,7 @@ class Main(newSchedStack):
     def _determine_suffix_id(self):
         """
         Determine the suffix ID for resource naming.
-        
+
         Returns:
             str: A lowercase suffix ID either from the stack's suffix_id attribute
                 or generated from the CI environment name
@@ -153,15 +153,15 @@ class Main(newSchedStack):
         if self.stack.get_attr("suffix_id"):
             return self.stack.suffix_id.lower()
 
-        return self.stack.b64_encode(self.stack.ci_environment)[0:int(self.stack.suffix_length)].lower()
+        return self.stack.serialize(self.stack.ci_environment, json=False)[0:int(self.stack.suffix_length)].lower()
 
     def _get_api_url(self):
         """
         Retrieve the API Gateway URL for the CI environment.
-        
+
         Returns:
             str: The complete API URL including the trigger ID
-        
+
         Raises:
             Exception: If the API Gateway resource cannot be found
         """
@@ -181,10 +181,10 @@ class Main(newSchedStack):
     def _get_ssh_private_key(self):
         """
         Retrieve the SSH private key for the CodeBuild deployment.
-        
+
         Returns:
             str: Base64 encoded private key
-        
+
         Raises:
             Exception: If the SSH key resource cannot be found
         """
@@ -195,17 +195,17 @@ class Main(newSchedStack):
                   "provider": "config0",
                   "name": key_name}
 
-        results = self.stack.get_resource(decrypt=True, **_lookup)[0]
+        results = self.stack.get_resource(**_lookup)[0]
 
-        return self.stack.b64_encode(results["private_key"])
+        return self.stack.serialize(results["private_key"], json=False)
 
     def _get_ecr_uri(self):
         """
         Get the ECR repository URI.
-        
+
         Returns:
             str: The ECR repository URI if ecr_repo_name is set, None otherwise
-        
+
         Raises:
             Exception: If the ECR repository resource cannot be found
         """
@@ -220,7 +220,7 @@ class Main(newSchedStack):
     def _set_codebuild_buckets(self):
         """
         Set the S3 bucket names for CodeBuild cache and output.
-        
+
         This method generates unique S3 bucket names using the codebuild_name
         and suffix_id. The buckets are used for:
         - Cache storage (s3_bucket_cache)
@@ -234,10 +234,10 @@ class Main(newSchedStack):
     def _webhook(self):
         """
         Configure GitHub webhook for the CodeBuild project.
-        
+
         Creates a webhook in the GitHub repository that triggers the CodeBuild
         project when code changes are pushed.
-        
+
         Returns:
             dict: Result of webhook creation
         """
@@ -266,9 +266,9 @@ class Main(newSchedStack):
     def run_setup(self):
         """
         Initialize and run the setup phase of the CodeBuild project.
-        
+
         Sets up ECR repository, SSH deployment keys, and S3 buckets.
-        
+
         Returns:
             dict: Result of S3 bucket creation
         """
@@ -285,14 +285,14 @@ class Main(newSchedStack):
     def run_connect_repo(self):
         """
         Connect the repository to the CodeBuild project.
-        
+
         This method:
         1. Initializes variables
         2. Evaluates input variables
         3. Verifies required variables
         4. Sets up DynamoDB configuration
         5. Creates GitHub webhook
-        
+
         Returns:
             dict: Result of webhook creation
         """
@@ -391,7 +391,7 @@ class Main(newSchedStack):
                                     types="str")
         elif self.stack.inputvars.get("github_token_hash"):
             self.stack.set_variable("github_token",
-                               self.stack.b64_encode(self.stack.inputvars["github_token_hash"]),
+                               self.stack.serialize(self.stack.inputvars["github_token_hash"], json=False),
                                tags="tf_sensitive",
                                types="str")
 
@@ -399,7 +399,7 @@ class Main(newSchedStack):
     def _set_slack_webhook(self):
         """
         Set the Slack webhook URL for notifications.
-        
+
         This method retrieves the Slack webhook URL from input variables and stores it
         in the stack's variables for later use.
         """
@@ -423,7 +423,7 @@ class Main(newSchedStack):
         self._set_github_token()
         self._set_slack_webhook()
 
-        self.stack.set_variable("docker_token", 
+        self.stack.set_variable("docker_token",
                                 self.stack.inputvars.get("docker_token"),
                                 tags="tf_sensitive",
                                 types="str")
@@ -431,13 +431,13 @@ class Main(newSchedStack):
     def run_ssm(self):
         """
         Configure AWS Systems Manager (SSM) parameters.
-        
+
         Stores sensitive information in SSM Parameter Store including:
         - Config0 callback token
         - SSH private key
         - Docker token (if provided)
         - Slack webhook URL (if provided)
-        
+
         Returns:
             bool: True if successful
         """
@@ -461,7 +461,7 @@ class Main(newSchedStack):
         }
 
         self.stack.aws_ssm_param.insert(display=True, **inputargs)
-  
+
         # add ssh key
         arguments = {
             "ssm_key": self.stack.ssm_ssh_key,
@@ -561,13 +561,13 @@ class Main(newSchedStack):
     def _get_dynamodb_item(self):
         """
         Generate the DynamoDB item for storing CodeBuild configuration.
-        
+
         Creates a complete configuration item including:
         - Build settings
         - Repository information
         - Credentials and tokens
         - S3 bucket configurations
-        
+
         Returns:
             str: Base64 encoded DynamoDB item
         """
@@ -618,7 +618,7 @@ class Main(newSchedStack):
         self._set_docker_items(item)
 
         # config0 settings
-        item["user_endpoint"] = {"S": str(self.stack.get_user_endpt())}
+        item["user_endpoint"] = {"S": str(self.stack.get_user_endpoint())}
 
         if self.stack.get_attr("sched_name"):
             item["sched_name"] = {"S": str(self.stack.sched_name)}
@@ -643,20 +643,20 @@ class Main(newSchedStack):
         if self.stack.get_attr("sched_type") != "build":
             self.stack.logger.warn('sched_type should be build - overide ci/commit UI display')
 
-        return self.stack.b64_encode(item)
+        return self.stack.serialize(item, json=False)
 
     def _set_ssm_keys(self):
         self.stack.set_variable("ssm_docker_token", None)
         self.stack.set_variable("ssm_slack_webhook_hash", None)
 
-        self.stack.set_variable("ssm_ssh_key", 
+        self.stack.set_variable("ssm_ssh_key",
                                 f"/codebuild/{self.stack.codebuild_name}/sshkeys/private")
 
-        self.stack.set_variable("ssm_callback_token", 
+        self.stack.set_variable("ssm_callback_token",
                                 f"/codebuild/{self.stack.codebuild_name}/config0/callback_token")
 
         if self.stack.get_attr("docker_token"):
-            self.stack.set_variable("ssm_docker_token", 
+            self.stack.set_variable("ssm_docker_token",
                                     f"/codebuild/{self.stack.codebuild_name}/config0/docker_token")
 
         if self.stack.get_attr("slack_webhook_hash"):
@@ -674,12 +674,12 @@ class Main(newSchedStack):
         return str(self.stack.get_resource(**_lookup)[0]["token"])
 
     def _token(self):
-        self.stack.create_token(name=self.stack.codebuild_name)
+        self.stack.add_callback_token(name=self.stack.codebuild_name)
 
         return True
 
     def _dynamodb(self):
-        table_name = f"ci-shared-settings"
+        table_name = "ci-shared-settings"
         item_hash = self._get_dynamodb_item()
 
         arguments = {
@@ -701,13 +701,13 @@ class Main(newSchedStack):
     def run_codebuild(self):
         """
         Create and configure the AWS CodeBuild project.
-        
+
         Sets up:
         - Build environment variables
         - SSM parameter mappings
         - S3 bucket configurations
         - VPC settings (if provided)
-        
+
         Returns:
             dict: Result of CodeBuild project creation
         """
@@ -728,8 +728,8 @@ class Main(newSchedStack):
 
         arguments = {
             "docker_registry": self.stack.docker_registry,
-            "ssm_params_hash": self.stack.b64_encode(ssm_params),
-            "codebuild_env_vars_hash": self.stack.b64_encode(codebuild_env_vars),
+            "ssm_params_hash": self.stack.serialize(ssm_params, json=False),
+            "codebuild_env_vars_hash": self.stack.serialize(codebuild_env_vars, json=False),
             "aws_default_region": self.stack.aws_default_region,
             "codebuild_name": self.stack.codebuild_name
         }
@@ -768,14 +768,14 @@ class Main(newSchedStack):
     def run(self):
         """
         Execute the complete CodeBuild setup process.
-        
+
         This method orchestrates the entire setup by:
         1. Disabling parallel execution
         2. Adding setup jobs
         3. Adding repository connection jobs
         4. Adding SSM parameter configuration jobs
         5. Adding CodeBuild project creation jobs
-        
+
         Returns:
             dict: Results of all job executions
         """
