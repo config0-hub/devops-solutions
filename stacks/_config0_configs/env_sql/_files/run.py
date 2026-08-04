@@ -118,8 +118,8 @@ def run(stackargs):
                              types="str")
 
     stack.parse.add_optional(key="db_engine_version",
-                             default="8.0.35",
-                             types="float")
+                             default="8.0.46",
+                             types="str")
 
     stack.parse.add_optional(key="db_instance_class",
                              default="db.t3.micro",
