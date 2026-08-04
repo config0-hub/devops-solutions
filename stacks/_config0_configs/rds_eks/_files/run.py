@@ -144,7 +144,7 @@ def run(stackargs):
         "cloud_tags_hash": stack.cloud_tags_hash,
         "rds_name": rds_name,
     }
-    
+
     if stack.db_multi_az:
         arguments["multi_az"] = stack.db_multi_az
 

@@ -65,7 +65,7 @@ class Main(newSchedStack):
         Returns:
             str: The newly created token.
         """
-        return self.stack.create_token(name=self.stack.app_name_iac)
+        return self.stack.add_callback_token(name=self.stack.app_name_iac)
 
     def _set_github_token(self):
         """
@@ -81,7 +81,7 @@ class Main(newSchedStack):
         elif self.stack.inputvars.get("GITHUB_TOKEN"):
             github_token = self.stack.inputvars["GITHUB_TOKEN"],
         elif self.stack.inputvars.get("github_token_hash"):
-            github_token = self.stack.b64_encode(self.stack.inputvars["github_token_hash"]),
+            github_token = self.stack.serialize(self.stack.inputvars["github_token_hash"], json=False),
 
         self.stack.set_variable("github_token",
                                 github_token,
@@ -169,7 +169,7 @@ class Main(newSchedStack):
         Sets the Infracost API key from input variables and configures its SSM parameter.
         """
         if self.stack.inputvars.get("infracost_api_key_hash"):
-            infracost_api_key = self.stack.b64_decode(self.stack.inputvars["infracost_api_key_hash"])
+            infracost_api_key = self.stack.deserialize(self.stack.inputvars["infracost_api_key_hash"], json=False)
         elif self.stack.inputvars.get("infracost_api_key"):
             infracost_api_key = self.stack.inputvars["infracost_api_key"]
         else:
@@ -248,10 +248,9 @@ class Main(newSchedStack):
             "name": self.stack.app_name_iac
         }
 
-        resource = self.stack.get_resource(decrypt=True,
-                                           **_lookup)[0]
-    
-        return self.stack.b64_encode(resource["private_key"])
+        resource = self.stack.get_resource(**_lookup)[0]
+
+        return self.stack.serialize(resource["private_key"], json=False)
 
     def _sshdeploy(self):
         """
@@ -298,7 +297,7 @@ class Main(newSchedStack):
             "secret": {"S": str(self.stack.secret)},
             "saas_env": {"S": str(self.stack.saas_env)},
             "run_title": {"S": str(self.stack.app_name_iac)},
-            "user_endpoint": {"S": str(self.stack.get_user_endpt())},
+            "user_endpoint": {"S": str(self.stack.get_user_endpoint())},
             "ssm_callback_token": {"S": str(self.stack.ssm_callback_token)},
             "ssm_ssh_key": {"S": str(self.stack.ssm_ssh_key)},
             "ssm_iac_ci_github_token": {"S": str(self.stack.ssm_iac_ci_github_token)},
@@ -336,7 +335,7 @@ class Main(newSchedStack):
             item["cluster"] = {"S": str(self.stack.cluster)}
             item["project"] = {"S": str(self.stack.cluster)}
 
-        return self.stack.b64_encode(item)
+        return self.stack.serialize(item, json=False)
 
     def _add_ssm_iac_ci_github_token(self):
         """
@@ -481,19 +480,19 @@ class Main(newSchedStack):
             "project_id"
         ]
 
-        inputargs = {}
-
         for _key in _keys_to_add:
             if not self.stack.get_attr(_key):
                 continue
             values[_key] = self.stack.get_attr(_key)
-            inputargs[_key] = self.stack.get_attr(_key)
 
         values["name"] = self.stack.app_name_iac
-        inputargs["name"] = self.stack.app_name_iac
 
-        self.stack.add_resource(values=values,
-                                **inputargs)
+        # Record the iac_ci row INLINE — it registers an existing repo, it runs
+        # nothing, so it emits NO order (was a values-only add_resource order
+        # whose only job was to write the row). record_resource keys the row by
+        # the caller-supplied _id (trigger_id) and stamps the stack identity
+        # fields itself, so the redundant top-level identity kwargs are dropped.
+        self.stack.record_resource(values=values)
 
     def run_connect_repo(self):
 

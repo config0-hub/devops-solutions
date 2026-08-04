@@ -18,7 +18,7 @@
 
 def run(stackargs):
     '''
-    This is platform versioning example 
+    This is platform versioning example
     for the starting out guide
     '''
 
@@ -41,10 +41,10 @@ def run(stackargs):
     cloud_tags = {
         "name": "cloud_tags",
         "values": {
-            "cloud_tags_hash": stack.b64_encode({
+            "cloud_tags_hash": stack.serialize({
                 **general_labels,
                 "billing": billing_tag
-            })
+            }, json=False)
         }
     }
 

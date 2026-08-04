@@ -53,7 +53,7 @@ class Main(newSchedStack):
             str: Encoded cloud tags hash.
         """
         try:
-            cloud_tags = self.stack.b64_decode(self.stack.cloud_tags_hash)
+            cloud_tags = self.stack.deserialize(self.stack.cloud_tags_hash, json=True)
         except:
             cloud_tags = {}
 
@@ -62,7 +62,7 @@ class Main(newSchedStack):
             "aws_default_region": self.stack.aws_default_region
         })
 
-        return self.stack.b64_encode(cloud_tags)
+        return self.stack.serialize(cloud_tags, json=False)
 
     def _get_env_vars_lambda_hashes(self):
         """
@@ -71,14 +71,14 @@ class Main(newSchedStack):
         Returns:
             tuple: Base environment variable hash and webhook environment variable hash.
         """
-        base_hash = self.stack.b64_encode({"ENV": "build"})
+        base_hash = self.stack.serialize({"ENV": "build"}, json=False)
 
         env_vars = {
             "ENV": "build",
             "DEBUG_IAC_CI": "true",
             "BUILD_TTL": "60"
         }
-        webhook_hash = self.stack.b64_encode(env_vars)
+        webhook_hash = self.stack.serialize(env_vars, json=False)
 
         return base_hash, webhook_hash
 
@@ -359,7 +359,7 @@ class Main(newSchedStack):
             "Statement": statements
         }
 
-        return self.stack.b64_encode(policy, json_dumps=True)
+        return self.stack.serialize(policy, json=False)
 
     def _get_stepf_policy_template_hash(self):
         """
@@ -379,7 +379,7 @@ class Main(newSchedStack):
             "Statement": statements
         }
 
-        return self.stack.b64_encode(policy, json_dumps=True)
+        return self.stack.serialize(policy, json=False)
 
     def _get_stepf_name(self):
         """
@@ -559,11 +559,11 @@ class Main(newSchedStack):
             "s3_bucket": self.stack.lambda_bucket,
             "runtime": self.stack.runtime,
             "policy_template_hash": self._get_stepf_policy_template_hash(),
-            "lambda_env_vars_hash": self.stack.b64_encode({
+            "lambda_env_vars_hash": self.stack.serialize({
                 "DYNAMODB_TABLE_SETTINGS": self.stack.dynamodb_name_settings,
                 "DYNAMODB_TABLE_RUNS": self.stack.dynamodb_name_runs,
                 "STATE_MACHINE_ARN": stepf_arn
-            }),
+            }, json=False),
             "cloud_tags_hash": cloud_tags_hash,
             "aws_default_region": self.stack.aws_default_region,
             "lambda_layers": self.stack.lambda_layers
@@ -673,7 +673,7 @@ class Main(newSchedStack):
         sched.conditions.retries = 1
         sched.on_success = ["lambda_stepf"]
         self.add_schedule()
-    
+
         # Schedule for "lambda_stepf" job
         sched = self.new_schedule()
         sched.job = "lambda_stepf"
@@ -683,7 +683,7 @@ class Main(newSchedStack):
         sched.human_description = "Setup Lambdas and Step Functions"
         sched.on_success = ["trigger_stepf"]
         self.add_schedule()
-    
+
         # Schedule for "trigger_stepf" job
         sched = self.new_schedule()
         sched.job = "trigger_stepf"
@@ -693,7 +693,7 @@ class Main(newSchedStack):
         sched.human_description = "Create Lambda Trigger for Step Function"
         sched.on_success = ["apigw"]
         self.add_schedule()
-    
+
         # Schedule for "apigw" job
         sched = self.new_schedule()
         sched.job = "apigw"
@@ -703,7 +703,7 @@ class Main(newSchedStack):
         sched.human_description = "Create API Gateway"
         sched.on_success = ["sns_subscription"]
         self.add_schedule()
-    
+
         # Schedule for "sns_subscription" job
         sched = self.new_schedule()
         sched.job = "sns_subscription"
@@ -712,5 +712,5 @@ class Main(newSchedStack):
         sched.automation_phase = "infrastructure"
         sched.human_description = "Create CodeBuild Complete Trigger"
         self.add_schedule()
-    
+
         return self.get_schedules()

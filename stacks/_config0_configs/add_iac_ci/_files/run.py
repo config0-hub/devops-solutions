@@ -170,7 +170,7 @@ class Main(newSchedStack):
         if self.stack.ssm_name:
             item["ssm_name"] = {"S": str(self.stack.ssm_name)}
 
-        return self.stack.b64_encode(item)
+        return self.stack.serialize(item, json=False)
 
     def _dynamodb_item(self):
         """

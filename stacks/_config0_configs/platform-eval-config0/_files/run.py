@@ -20,7 +20,7 @@ def run(stackargs):
     from copy import deepcopy
 
     '''
-    this is platform versioning example 
+    this is platform versioning example
     for the starting out guide
     '''
 
@@ -112,7 +112,7 @@ def run(stackargs):
     network_vars_set_arguments_hash = {
         "name": "network_vars_set_arguments_hash",
         "values": {
-            "arguments_hash": stack.b64_encode(_network_vars_arguments),
+            "arguments_hash": stack.serialize(_network_vars_arguments, json=False),
         }
     }
 
@@ -154,7 +154,7 @@ def run(stackargs):
     netvars_set_arguments_hash = {
         "name": "netvars_set_arguments_hash",
         "values": {
-            "netvars_set_arguments_hash": stack.b64_encode(_network_vars_arguments)
+            "netvars_set_arguments_hash": stack.serialize(_network_vars_arguments, json=False)
         }
     }
 
@@ -248,33 +248,33 @@ def run(stackargs):
     #}
     #####################################################
 
-    _aws_base_network_values = {
-        "values": {
-            "matchLabels": {
+    _aws_base_network_match = {
+        "match": {
+            "labels": {
                 **global_labels
             }
         }
     }
 
-    aws_base_network = deepcopy(_aws_base_network_values)
+    aws_base_network = deepcopy(_aws_base_network_match)
     aws_base_network["name"] = "aws_base_network"
     aws_base_network["base"] = True
 
-    vpc_info = deepcopy(_aws_base_network_values)
+    vpc_info = deepcopy(_aws_base_network_match)
     vpc_info["name"] = "vpc_info"
-    vpc_info["values"]["matchParams"] = { "resource_type": "vpc" }
+    vpc_info["match"]["filter"] = {"resource_type": "vpc"}
 
-    sg_info = deepcopy(_aws_base_network_values)
+    sg_info = deepcopy(_aws_base_network_match)
     sg_info["name"] = "sg_info"
-    sg_info["values"]["matchParams"] = {"resource_type": "security_group"}
+    sg_info["match"]["filter"] = {"resource_type": "security_group"}
 
     network_vars = {
         "name": "network_vars",
-        "values": {
-            "matchLabels": {
+        "match": {
+            "labels": {
                 **global_labels
             },
-            "matchParams": {
+            "filter": {
                 "resource_type": "vars_set"
             }
         }
@@ -282,14 +282,14 @@ def run(stackargs):
 
     eks_info = {
         "name": "eks_info",
-        "values": {
-            "matchLabels": {
+        "match": {
+            "labels": {
                 **global_labels
             },
-            "matchKeys": {
+            "keys": {
                 "region": aws_default_region
             },
-            "matchParams": {
+            "filter": {
                 "resource_type": "eks"
             }
         }

@@ -76,11 +76,11 @@ class Main(newSchedStack):
         if self.stack.get_attr("suffix_id"):
             return str(self.stack.suffix_id).lower()
 
-        return self.stack.b64_encode(self.stack.ci_environment)[0:int(self.stack.suffix_length)].lower()
+        return self.stack.serialize(self.stack.ci_environment, json=False)[0:int(self.stack.suffix_length)].lower()
 
     def _set_cloud_tag_hash(self):
         try:
-            cloud_tags = self.stack.b64_decode(self.stack.cloud_tags_hash)
+            cloud_tags = self.stack.deserialize(self.stack.cloud_tags_hash, json=True)
         except:
             cloud_tags = {}
 
@@ -88,10 +88,10 @@ class Main(newSchedStack):
             "ci_environment": self.stack.ci_environment
         })
 
-        return self.stack.b64_encode(cloud_tags)
+        return self.stack.serialize(cloud_tags, json=False)
 
     def _get_env_vars_lambda_hashes(self):
-        base_hash = self.stack.b64_encode({"ENV": "build"})
+        base_hash = self.stack.serialize({"ENV": "build"}, json=False)
 
         # this setting is for processing the webhook
         env_vars = {
@@ -102,7 +102,7 @@ class Main(newSchedStack):
             "BUILD_SETTINGS": "ci-shared-settings"
         }
 
-        return base_hash, self.stack.b64_encode(env_vars)
+        return base_hash, self.stack.serialize(env_vars, json=False)
 
     def _s3(self, cloud_tags_hash):
         suffix_id = self._determine_suffix_id()
@@ -130,7 +130,7 @@ class Main(newSchedStack):
             "human_description": human_description
         }
 
-        self.stack.aws_s3_bucket.insert(display=True, 
+        self.stack.aws_s3_bucket.insert(display=True,
                                         **inputargs)
 
         # temp shared bucket
@@ -222,7 +222,7 @@ class Main(newSchedStack):
                 "dynamodb:ListStreams",
                 "dynamodb:PartiQLDelete"
             ],
-            "Resource": [arn_dynamodb_name_runs, 
+            "Resource": [arn_dynamodb_name_runs,
                         arn_dynamodb_name_settings]
         }
 
@@ -362,7 +362,7 @@ class Main(newSchedStack):
         policy = {"Version": "2012-10-17",
                  "Statement": statements}
 
-        return self.stack.b64_encode(policy, json_dumps=True)
+        return self.stack.serialize(policy, json=False)
 
     def _get_stepf_policy_template_hash(self):
         statements = [self._get_log_policy()]
@@ -374,7 +374,7 @@ class Main(newSchedStack):
         policy = {"Version": "2012-10-17",
                  "Statement": statements}
 
-        return self.stack.b64_encode(policy, json_dumps=True)
+        return self.stack.serialize(policy, json=False)
 
     def _get_s3_bucket(self):
         suffix_id = self._determine_suffix_id()
@@ -533,11 +533,11 @@ class Main(newSchedStack):
             "s3_bucket": s3_bucket,
             "runtime": self.stack.runtime,
             "policy_template_hash": self._get_stepf_policy_template_hash(),
-            "lambda_env_vars_hash": self.stack.b64_encode({
+            "lambda_env_vars_hash": self.stack.serialize({
                 "DYNAMODB_TABLE_RUNS": "ci-shared-runs",
                 "DYNAMODB_TABLE_SETTINGS": "ci-shared-settings",
                 "STATE_MACHINE_ARN": stepf_arn
-            }),
+            }, json=False),
             "cloud_tags_hash": cloud_tags_hash,
             "aws_default_region": self.stack.aws_default_region
         }
@@ -571,7 +571,7 @@ class Main(newSchedStack):
 
         cloud_tags_hash = self._set_cloud_tag_hash()
         apigateway_name = f"ci-shared-{self.stack.ci_environment}"
-        
+
         # will trigger the lambda function that will trigger the step function
         lambda_name = f"{self.stack.ci_environment}-lambda_trigger_stepf"
 
