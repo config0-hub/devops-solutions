@@ -255,8 +255,6 @@ class Main(newSchedStack):
         sched.job = "kafka_eks"
         sched.archive.timeout = 2700
         sched.archive.timewait = 120
-        sched.conditions.retries = 1
-        sched.automation_phase = "infrastructure"
         sched.human_description = 'create kafka/eks'
         self.add_schedule()
 

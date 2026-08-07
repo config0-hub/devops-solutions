@@ -530,8 +530,6 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.conditions.retries = 1
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Setup repo deploy key and token"
         sched.on_success = ["connect_repo"]
         self.add_schedule()
@@ -540,7 +538,6 @@ class Main(newSchedStack):
         sched.job = "connect_repo"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
         sched.human_description = "Connect repo with api gateway"
         self.add_schedule()
 

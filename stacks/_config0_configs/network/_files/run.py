@@ -180,9 +180,7 @@ class Main(newSchedStack):
         sched.job = "vpc"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Creates vpc"
-        sched.conditions.retries = 1
         sched.on_success = ["network_vars_set"]
         self.add_schedule()
 
@@ -190,7 +188,6 @@ class Main(newSchedStack):
         sched.job = "network_vars_set"
         sched.archive.timeout = 900
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Creates variable set"
         sched.on_success = ["nat_instance"]
         self.add_schedule()
@@ -199,7 +196,6 @@ class Main(newSchedStack):
         sched.job = "nat_instance"
         sched.archive.timeout = 1200
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = 'Create nat instance'
         self.add_schedule()
 

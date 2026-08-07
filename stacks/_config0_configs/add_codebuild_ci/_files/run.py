@@ -793,9 +793,7 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
         sched.human_description = "Setup Basic for Codebuild"
-        sched.conditions.retries = 1
         sched.on_success = ["connect_repo"]
         self.add_schedule()
 
@@ -803,7 +801,6 @@ class Main(newSchedStack):
         sched.job = "connect_repo"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
         sched.human_description = "Add configurations to DynamoDb"
         sched.on_success = ["ssm"]
         self.add_schedule()
@@ -812,7 +809,6 @@ class Main(newSchedStack):
         sched.job = "ssm"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
         sched.human_description = "Upload deploy key to ssm"
         sched.on_success = ["codebuild"]
         self.add_schedule()
@@ -821,7 +817,6 @@ class Main(newSchedStack):
         sched.job = "codebuild"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
         sched.human_description = "Create Codebuild Project"
         self.add_schedule()
 

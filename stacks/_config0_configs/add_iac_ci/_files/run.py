@@ -256,9 +256,7 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 900
         sched.archive.timewait = 120
-        sched.automation_phase = "continuous_delivery"
         sched.human_description = "Setup IAC CI for existing IAC"
-        sched.conditions.retries = 1
         self.add_schedule()
 
         return self.get_schedules()

@@ -668,9 +668,7 @@ class Main(newSchedStack):
         sched.job = "setup"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Setup S3 and DynamoDB"
-        sched.conditions.retries = 1
         sched.on_success = ["lambda_stepf"]
         self.add_schedule()
 
@@ -679,7 +677,6 @@ class Main(newSchedStack):
         sched.job = "lambda_stepf"
         sched.archive.timeout = 2700
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Setup Lambdas and Step Functions"
         sched.on_success = ["trigger_stepf"]
         self.add_schedule()
@@ -689,7 +686,6 @@ class Main(newSchedStack):
         sched.job = "trigger_stepf"
         sched.archive.timeout = 1200
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Create Lambda Trigger for Step Function"
         sched.on_success = ["apigw"]
         self.add_schedule()
@@ -699,7 +695,6 @@ class Main(newSchedStack):
         sched.job = "apigw"
         sched.archive.timeout = 1200
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Create API Gateway"
         sched.on_success = ["sns_subscription"]
         self.add_schedule()
@@ -709,7 +704,6 @@ class Main(newSchedStack):
         sched.job = "sns_subscription"
         sched.archive.timeout = 1200
         sched.archive.timewait = 120
-        sched.automation_phase = "infrastructure"
         sched.human_description = "Create CodeBuild Complete Trigger"
         self.add_schedule()
 
