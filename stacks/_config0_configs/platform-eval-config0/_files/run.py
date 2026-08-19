@@ -44,6 +44,11 @@ def run(stackargs):
         "purpose": "eval-config0"
     }
 
+    env_global_labels = {
+        "environment": "dev",
+        "purpose": "eval-config0-env"
+    }
+
     billing_tag = "eval-config0-2024"
 
     #####################################################
@@ -89,6 +94,12 @@ def run(stackargs):
                 }
             }
         }
+    }
+
+    env_cloud_tags_hash = deepcopy(cloud_tags_hash)
+    env_cloud_tags_hash["values"]["cloud_tags_hash"] = {
+        **env_global_labels,
+        "billing": billing_tag
     }
 
     # network related arguments
@@ -151,6 +162,14 @@ def run(stackargs):
         }
     }
 
+    env_netvars_set_labels_hash = deepcopy(netvars_set_labels_hash)
+    env_netvars_set_labels_hash["values"]["netvars_set_labels_hash"] = {
+        **env_global_labels,
+        "region": aws_default_region,
+        "area": "network",
+        "provider": "aws"
+    }
+
     netvars_set_arguments_hash = {
         "name": "netvars_set_arguments_hash",
         "values": {
@@ -209,6 +228,11 @@ def run(stackargs):
     general = {
         "name": "general",
         "values": global_labels
+    }
+
+    env_general = {
+        "name": "general",
+        "values": env_global_labels
     }
 
     aws_cloud = {
@@ -521,24 +545,28 @@ def run(stackargs):
                            general
                        ])
 
-    env_selectors = [
+    env_selectors = deepcopy([
         network_vars,
         eks_info,
         aws_base_network,
         vpc_info,
         sg_info
-    ]
+    ])
+    for selector in env_selectors:
+        selector["match"]["labels"] = {
+            **env_global_labels
+        }
 
     stack.add_substack('config0-hub:::devops-solutions::env_sql',
                        arguments=[
                            aws_default_region_args,
-                           cloud_tags_hash,
+                           env_cloud_tags_hash,
                            env_sql_arguments,
                            netvars_set_arguments_hash,
-                           netvars_set_labels_hash
+                           env_netvars_set_labels_hash
                        ],
                        labels=[
-                           general
+                           env_general
                        ],
                        selectors=env_selectors,
                        inputvars=["infracost"],
@@ -547,13 +575,13 @@ def run(stackargs):
     stack.add_substack('config0-hub:::devops-solutions::env_nosql',
                        arguments=[
                            aws_default_region_args,
-                           cloud_tags_hash,
+                           env_cloud_tags_hash,
                            env_nosql_arguments,
                            netvars_set_arguments_hash,
-                           netvars_set_labels_hash
+                           env_netvars_set_labels_hash
                        ],
                        labels=[
-                           general
+                           env_general
                        ],
                        selectors=env_selectors,
                        inputvars=["infracost"],
@@ -562,13 +590,13 @@ def run(stackargs):
     stack.add_substack('config0-hub:::devops-solutions::env_streaming',
                        arguments=[
                            aws_default_region_args,
-                           cloud_tags_hash,
+                           env_cloud_tags_hash,
                            env_streaming_arguments,
                            netvars_set_arguments_hash,
-                           netvars_set_labels_hash
+                           env_netvars_set_labels_hash
                        ],
                        labels=[
-                           general
+                           env_general
                        ],
                        inputvars=["infracost"],
                        selectors=env_selectors,
