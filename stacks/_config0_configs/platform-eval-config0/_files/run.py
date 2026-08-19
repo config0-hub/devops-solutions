@@ -315,7 +315,8 @@ def run(stackargs):
             },
             "filter": {
                 "resource_type": "eks"
-            }
+            },
+            "expect": {"optional": True}
         }
     }
 
@@ -556,6 +557,9 @@ def run(stackargs):
         selector["match"]["labels"] = {
             **env_global_labels
         }
+        # at_launch stamps these with the run identity, so they can only match
+        # records this run writes - always a forward reference at parent dispatch
+        selector["match"]["expect"] = {"optional": True}
 
     stack.add_substack('config0-hub:::devops-solutions::env_sql',
                        arguments=[
