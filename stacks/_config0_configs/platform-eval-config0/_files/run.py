@@ -193,7 +193,7 @@ def run(stackargs):
         "name": "env_sql_arguments",
         "values": {
             "db_engine": "MySQL",
-            "db_engine_version": "5.7.44"
+            "db_engine_version": "8.0.46"
         }
     }
 
