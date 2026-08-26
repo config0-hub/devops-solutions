@@ -150,6 +150,10 @@ class Main(newSchedStack):
                                types="int",
                                default=1)
 
+        # selects the ssm_ec2_exec_eventbridge install the host orders run through
+        self.parse.add_required(key="install_name",
+                               types="str")
+
         self.parse.add_required(key="db_sg_id",
                                default="null")
 
@@ -173,6 +177,7 @@ class Main(newSchedStack):
         arguments = {
             "aws_default_region": self.stack.aws_default_region,
             "kafka_cluster": self.stack.kafka_cluster,
+            "install_name": self.stack.install_name,
             "subnet_ids": self.stack.public_subnet_ids,
             "cloud_tags_hash": self.stack.cloud_tags_hash,
             "ami": self.stack.kafka_ami,

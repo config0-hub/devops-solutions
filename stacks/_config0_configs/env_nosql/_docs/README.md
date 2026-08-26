@@ -2,6 +2,7 @@
 
 ## Description
 This stack creates a complete three-tier environment in AWS, including networking infrastructure, an EKS cluster for application hosting, and a MongoDB replicaset for the database. It sets up networking, deploys a MongoDB cluster with the specified number of replica nodes, and creates an EKS Kubernetes cluster with configured node groups.
+Server access goes through the regional SSM executor (ssm_ec2_exec_eventbridge_install); the legacy bastion host is intentionally not used.
 
 ## Variables
 
@@ -11,8 +12,11 @@ This stack creates a complete three-tier environment in AWS, including networkin
 |------|-------------|---------|
 | env_name | Configuration for env name | &nbsp; |
 | vpc_id | VPC network identifier | &nbsp; |
-| bastion_sg_id | Bastion host security group | &nbsp; |
-| bastion_subnet_ids | Subnets for bastion hosts | &nbsp; |
+| ssh_key_name | EC2 key pair name for the MongoDB instances | &nbsp; |
+| instance_profile_name | IAM instance profile granting SSM access | &nbsp; |
+| managed_tag_key | Tag key the SSM executor matches on | &nbsp; |
+| managed_tag_value | Tag value the SSM executor matches on | &nbsp; |
+| install_name | Name of the `ssm_ec2_exec_eventbridge_install` record the host orders run through | &nbsp; |
 | db_sg_id | Database security group ID | &nbsp; |
 
 ### Optional Variables
@@ -38,9 +42,6 @@ This stack creates a complete three-tier environment in AWS, including networkin
 | eks_node_disksize | Disk size for EKS nodes (GB) | 25 |
 | eks_node_instance_types | EC2 instance types for EKS nodes | ["t3.medium","t3.large"] |
 | eks_node_ami_type | AMI type for EKS nodes | AL2_x86_64 |
-| bastion_ami | Bastion host AMI ID | null |
-| bastion_ami_filter | Bastion AMI filter criteria | null |
-| bastion_ami_owner | Bastion AMI owner ID | null |
 | mongodb_num_of_replicas | MongoDB replica count | 3 |
 | mongodb_ami | MongoDB node AMI ID | null |
 | mongodb_ami_filter | MongoDB AMI filter criteria | null |

@@ -171,6 +171,10 @@ def run(stackargs):
                              types="int",
                              default=1)
 
+    # selects the ssm_ec2_exec_eventbridge install the host orders run through
+    stack.parse.add_required(key="install_name",
+                             types="str")
+
     stack.parse.add_required(key="db_sg_id",
                              default="null")
 
@@ -226,6 +230,7 @@ def run(stackargs):
         "bastion_ami": stack.bastion_ami,
         "bastion_ami_filter": stack.bastion_ami_filter,
         "bastion_ami_owner": stack.bastion_ami_owner,
+        "install_name": stack.install_name,
         "db_sg_id": stack.db_sg_id,
         "kafka_instance_type": stack.kafka_instance_type,
         "kafka_num_of_zookeeper": stack.kafka_num_of_zookeeper,

@@ -13,6 +13,7 @@ This stack creates a three-tier environment with Kafka and EKS clusters on AWS. 
 | bastion_sg_id | Bastion host security group | &nbsp; |
 | bastion_subnet_ids | Subnets for bastion hosts | &nbsp; |
 | db_sg_id | Database security group ID | &nbsp; |
+| install_name | Name of the `ssm_ec2_exec_eventbridge_install` record the host orders run through | &nbsp; |
 | kafka_num_of_zookeeper | ZooKeeper node count | 1 |
 | kafka_num_of_broker | Kafka broker count | 1 |
 | kafka_num_of_schema_registry | Schema registry node count | 1 |

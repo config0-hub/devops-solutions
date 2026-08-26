@@ -26,6 +26,40 @@ This stack configures a platform environment including networking, security grou
 | netvars_set_arguments_hash | Arguments in base64 for network variable set | &nbsp; |
 | eks_node_role_arn | IAM role ARN for EKS nodes | &nbsp; |
 
+## Region prerequisite: server-config
+
+`env_nosql` and `mongodb_replica_on_ec2` configure their hosts over the SSM executor -
+there is no bastion host. Both catalogue entries pre-set `ssh_key_name`,
+`instance_profile_name`, `managed_tag_key`, `managed_tag_value` and `install_name` off
+two selectors, `keypair_vars` (`resource_type: ssh_key_pair`) and `install_vars`
+(`resource_type: ssm_ec2_exec_eventbridge_install`), both matching
+`purpose: server-configuration` plus `region: <aws_default_region>`.
+
+Those records come from the region's server-config install, run once per region. The
+platform pins `aws_default_region` (currently `eu-west-1`), so the **`server-euw1`
+install (`server-config-euw1/config0.yaml`) must already be present in the platform's
+region** before either child is launched - not the `ap-northeast-1` `server-config`
+install. Without it the two selectors match nothing and the launch fails on the required
+MongoDB arguments.
+
+## Purpose namespaces
+
+The catalogue puts the two environment children in separate `purpose` namespaces so
+their records can never satisfy each other's checks and either can be live while the
+other is torn down:
+
+| Child | `general` label | Forward selectors match |
+|-------|-----------------|-------------------------|
+| `env_sql` | `environment: dev`, `purpose: eval-config0-env` | `purpose: eval-config0-env` |
+| `env_nosql` | `environment: dev`, `purpose: eval-config0-nosql` | `purpose: eval-config0-nosql` |
+
+The `cloud_tags_hash` and `netvars_set_labels_hash` arguments carry the same purpose as
+the child's own `general` label. `keypair_vars` and `install_vars` are unaffected: they
+stay on `purpose: server-configuration`, since they match the region's pre-existing
+server-config records.
+
+Every other child stays on `purpose: eval-config0`.
+
 ## Dependencies
 
 ### Substacks

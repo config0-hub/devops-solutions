@@ -21,6 +21,7 @@ This stack creates an AWS RDS database instance and an EKS cluster in parallel. 
 | cloud_tags_hash | Resource tags for cloud provider | &nbsp; |
 | public_subnet_ids | Public subnet IDs | null |
 | private_subnet_ids | Private subnet IDs | null |
+| db_name | Database name passed to aws_rds | `_random` |
 | db_allocated_storage | Configuration for db allocated storage | 30 |
 | db_engine | Configuration for db engine | MySQL |
 | db_engine_version | Configuration for db engine version | 8.0.35 |

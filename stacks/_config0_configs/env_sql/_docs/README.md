@@ -34,6 +34,7 @@ This stack creates a complete three-tier environment in AWS, including networkin
 | eks_node_disksize | Disk size for EKS nodes (GB) | 25 |
 | eks_node_instance_types | EC2 instance types for EKS nodes | ["t3.medium","t3.large"] |
 | eks_node_ami_type | AMI type for EKS nodes | AL2_x86_64 |
+| db_name | Database name passed to aws_rds | `_random` |
 | db_allocated_storage | Configuration for db allocated storage | 30 |
 | db_engine | Configuration for db engine | MySQL |
 | db_engine_version | Configuration for db engine version | 8.0.35 |

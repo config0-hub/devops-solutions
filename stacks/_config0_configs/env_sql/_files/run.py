@@ -109,6 +109,10 @@ def run(stackargs):
     stack.parse.add_required(key="db_sg_id",
                              types="str")
 
+    stack.parse.add_optional(key="db_name",
+                             default="_random",
+                             types="str")
+
     stack.parse.add_optional(key="db_allocated_storage",
                              default=30,
                              types="int")
@@ -190,6 +194,7 @@ def run(stackargs):
         "public_subnet_ids": stack.public_subnet_ids,
         "private_subnet_ids": stack.private_subnet_ids,
         "db_allocated_storage": stack.db_allocated_storage,
+        "db_name": stack.db_name,
         "db_engine": stack.db_engine,
         "db_engine_version": stack.db_engine_version,
         "db_instance_class": stack.db_instance_class,

@@ -49,6 +49,14 @@ def run(stackargs):
         "purpose": "eval-config0-env"
     }
 
+    # env_nosql runs in its own purpose namespace so its records never collide
+    # with env_sql's - the two are independent stories and either can be live
+    # while the other is torn down.
+    nosql_global_labels = {
+        "environment": "dev",
+        "purpose": "eval-config0-nosql"
+    }
+
     billing_tag = "eval-config0-2024"
 
     #####################################################
@@ -99,6 +107,12 @@ def run(stackargs):
     env_cloud_tags_hash = deepcopy(cloud_tags_hash)
     env_cloud_tags_hash["values"]["cloud_tags_hash"] = {
         **env_global_labels,
+        "billing": billing_tag
+    }
+
+    nosql_cloud_tags_hash = deepcopy(cloud_tags_hash)
+    nosql_cloud_tags_hash["values"]["cloud_tags_hash"] = {
+        **nosql_global_labels,
         "billing": billing_tag
     }
 
@@ -170,6 +184,14 @@ def run(stackargs):
         "provider": "aws"
     }
 
+    nosql_netvars_set_labels_hash = deepcopy(netvars_set_labels_hash)
+    nosql_netvars_set_labels_hash["values"]["netvars_set_labels_hash"] = {
+        **nosql_global_labels,
+        "region": aws_default_region,
+        "area": "network",
+        "provider": "aws"
+    }
+
     netvars_set_arguments_hash = {
         "name": "netvars_set_arguments_hash",
         "values": {
@@ -200,11 +222,22 @@ def run(stackargs):
     env_sql_arguments["values"].update(_env_network_values)
 
     # env nosql
+    # no bastion host: the mongodb replicas are configured over the ssm executor
+    # installed once per region by server-config (see _docs/README.md). the four
+    # keys below are read off that install + its keypair, exactly the way
+    # _env_network_values reads network_vars/sg_info for env_sql.
+    _server_config_values = {
+        "ssh_key_name": "selector:::keypair_vars::key_name",
+        "instance_profile_name": "selector:::install_vars::instance_profile_name",
+        "managed_tag_key": "selector:::install_vars::managed_tag_key",
+        "managed_tag_value": "selector:::install_vars::managed_tag_value",
+        "install_name": "selector:::install_vars::install_name"
+    }
+
     env_nosql_arguments = {
         "name": "env_nosql_arguments",
         "values": {
-            "bastion_sg_id": "selector:::sg_info::bastion_sg_id",
-            "bastion_subnet_ids": "selector:::vpc_info::public_subnet_ids",
+            **_server_config_values
         }
     }
 
@@ -222,6 +255,15 @@ def run(stackargs):
 
     env_streaming_arguments["values"].update(_env_network_values)
 
+    # mongodb replica set, standalone catalogue child. same server-config
+    # prerequisites as env_nosql, under this stack's own key names.
+    mongodb_replica_arguments = {
+        "name": "mongodb_replica_arguments",
+        "values": {
+            **_server_config_values
+        }
+    }
+
     #####################################################
     # stack labels
     #####################################################
@@ -233,6 +275,11 @@ def run(stackargs):
     env_general = {
         "name": "general",
         "values": env_global_labels
+    }
+
+    nosql_general = {
+        "name": "general",
+        "values": nosql_global_labels
     }
 
     aws_cloud = {
@@ -300,6 +347,38 @@ def run(stackargs):
             },
             "filter": {
                 "resource_type": "vars_set"
+            }
+        }
+    }
+
+    # region prerequisites, installed once per region by server-config. unlike the
+    # env_* forward references these match records that ALREADY exist, so they are
+    # never folded into env_selectors and carry no at_launch identity stamp.
+    _server_config_match_labels = {
+        "purpose": "server-configuration",
+        "region": aws_default_region
+    }
+
+    keypair_vars = {
+        "name": "keypair_vars",
+        "match": {
+            "labels": {
+                **_server_config_match_labels
+            },
+            "filter": {
+                "resource_type": "ssh_key_pair"
+            }
+        }
+    }
+
+    install_vars = {
+        "name": "install_vars",
+        "match": {
+            "labels": {
+                **_server_config_match_labels
+            },
+            "filter": {
+                "resource_type": "ssm_ec2_exec_eventbridge_install"
             }
         }
     }
@@ -464,14 +543,17 @@ def run(stackargs):
     stack.add_substack('config0-hub:::mongodb::mongodb_replica_on_ec2',
                        arguments=[
                            aws_default_region_args,
-                           cloud_tags_hash
+                           cloud_tags_hash,
+                           mongodb_replica_arguments
                        ],
                        labels=[
                            general,
                            aws_cloud
                        ],
                        selectors=[
-                           network_vars
+                           network_vars,
+                           keypair_vars,
+                           install_vars
                        ],
                        inputvars=["infracost"])
 
@@ -576,20 +658,35 @@ def run(stackargs):
                        inputvars=["infracost"],
                        at_launch=["labels", "selectors"])
 
+    # env_nosql also reads the two server-config prerequisites, which match
+    # records that ALREADY exist and must NOT carry the launching project's
+    # identity. at_launch=["labels", "selectors"] stamps EVERY selector on the
+    # entry (scan_stacks/substack_catalogue.py:132-140 overwrites each one), so
+    # this child declares at_launch=["labels"] and stamps its own five forward
+    # references explicitly, leaving keypair_vars/install_vars unstamped.
+    env_nosql_selectors = deepcopy(env_selectors)
+    for selector in env_nosql_selectors:
+        # own purpose namespace, so 109 never matches a live 105 record
+        selector["match"]["labels"] = {
+            **nosql_global_labels
+        }
+        selector["at_launch"] = {"labels": {"fields": {"_": {"insert": "*"}}}}
+    env_nosql_selectors += [keypair_vars, install_vars]
+
     stack.add_substack('config0-hub:::devops-solutions::env_nosql',
                        arguments=[
                            aws_default_region_args,
-                           env_cloud_tags_hash,
+                           nosql_cloud_tags_hash,
                            env_nosql_arguments,
                            netvars_set_arguments_hash,
-                           env_netvars_set_labels_hash
+                           nosql_netvars_set_labels_hash
                        ],
                        labels=[
-                           env_general
+                           nosql_general
                        ],
-                       selectors=env_selectors,
+                       selectors=env_nosql_selectors,
                        inputvars=["infracost"],
-                       at_launch=["labels", "selectors"])
+                       at_launch=["labels"])
 
     stack.add_substack('config0-hub:::devops-solutions::env_streaming',
                        arguments=[

@@ -105,20 +105,21 @@ def run(stackargs):
                              types="str")
 
     # mongodb
-    stack.parse.add_required(key="bastion_sg_id",
-                             default="null")
+    stack.parse.add_required(key="ssh_key_name",
+                             types="str")
 
-    stack.parse.add_required(key="bastion_subnet_ids",
-                             default="null")
+    stack.parse.add_required(key="instance_profile_name",
+                             types="str")
 
-    stack.parse.add_optional(key="bastion_ami",
-                             default="null")
+    stack.parse.add_required(key="managed_tag_key",
+                             types="str")
 
-    stack.parse.add_optional(key="bastion_ami_filter",
-                             default="null")
+    stack.parse.add_required(key="managed_tag_value",
+                             types="str")
 
-    stack.parse.add_optional(key="bastion_ami_owner",
-                             default="null")
+    # selects the ssm_ec2_exec_eventbridge install the host orders run through
+    stack.parse.add_required(key="install_name",
+                             types="str")
 
     stack.parse.add_required(key="mongodb_num_of_replicas",
                              types="int",
@@ -210,20 +211,19 @@ def run(stackargs):
         "mongodb_cluster": stack.mongodb_cluster,
         "vpc_id": stack.vpc_id,
         "cloud_tags_hash": stack.cloud_tags_hash,
-        "num_of_replicas": stack.mongodb_num_of_replicas,
-        "ami": stack.mongodb_ami,
-        "ami_filter": stack.mongodb_ami_filter,
-        "ami_owner": stack.mongodb_ami_owner,
-        "bastion_sg_id": stack.bastion_sg_id,
-        "bastion_subnet_ids": stack.bastion_subnet_ids,
-        "bastion_ami": stack.bastion_ami,
-        "bastion_ami_filter": stack.bastion_ami_filter,
-        "bastion_ami_owner": stack.bastion_ami_owner,
+        "mongodb_num_of_replicas": stack.mongodb_num_of_replicas,
+        "mongodb_ami": stack.mongodb_ami,
+        "mongodb_ami_filter": stack.mongodb_ami_filter,
+        "mongodb_ami_owner": stack.mongodb_ami_owner,
+        "ssh_key_name": stack.ssh_key_name,
+        "instance_profile_name": stack.instance_profile_name,
+        "managed_tag_key": stack.managed_tag_key,
+        "managed_tag_value": stack.managed_tag_value,
+        "install_name": stack.install_name,
         "db_sg_id": stack.db_sg_id,
-        "instance_type": stack.mongodb_instance_type,
-        "disksize": stack.mongodb_disksize,
-        "volume_size": stack.mongodb_volume_size,
-        "publish_to_saas": True,
+        "mongodb_instance_type": stack.mongodb_instance_type,
+        "mongodb_disksize": stack.mongodb_disksize,
+        "mongodb_volume_size": stack.mongodb_volume_size,
         "public_subnet_ids": stack.public_subnet_ids,
         "private_subnet_ids": stack.private_subnet_ids,
         "eks_cluster_version": stack.eks_cluster_version,

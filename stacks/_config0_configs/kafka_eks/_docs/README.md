@@ -14,6 +14,7 @@ This stack deploys a combined infrastructure consisting of a Kafka cluster on EC
 | bastion_sg_id | Bastion host security group | null |
 | bastion_subnet_ids | Subnets for bastion hosts | null |
 | db_sg_id | Database security group ID | null |
+| install_name | Name of the `ssm_ec2_exec_eventbridge_install` record the host orders run through | &nbsp; |
 
 ### Optional Variables
 
