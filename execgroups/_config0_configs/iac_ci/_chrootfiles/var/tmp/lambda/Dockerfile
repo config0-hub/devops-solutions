@@ -1,5 +1,4 @@
-# ref nexus update
-FROM nexus:8083/lambda/python:3.14
+FROM public.ecr.aws/lambda/python:3.14
 
 COPY requirements.txt .
 
