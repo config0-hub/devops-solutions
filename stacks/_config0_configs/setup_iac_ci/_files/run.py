@@ -653,7 +653,6 @@ class Main(newSchedStack):
         Returns:
             dict: Finalized details of all executed jobs.
         """
-        self.stack.unset_parallel(sched_init=True)
         self.add_job("setup")
         self.add_job("lambda_stepf")
         self.add_job("trigger_stepf")

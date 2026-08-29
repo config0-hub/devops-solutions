@@ -518,7 +518,6 @@ class Main(newSchedStack):
 
     def run(self):
 
-        self.stack.unset_parallel(sched_init=True)
         self.add_job("setup")
         self.add_job("connect_repo")
 

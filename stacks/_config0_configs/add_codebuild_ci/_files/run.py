@@ -770,16 +770,14 @@ class Main(newSchedStack):
         Execute the complete CodeBuild setup process.
 
         This method orchestrates the entire setup by:
-        1. Disabling parallel execution
-        2. Adding setup jobs
-        3. Adding repository connection jobs
-        4. Adding SSM parameter configuration jobs
-        5. Adding CodeBuild project creation jobs
+        1. Adding setup jobs
+        2. Adding repository connection jobs
+        3. Adding SSM parameter configuration jobs
+        4. Adding CodeBuild project creation jobs
 
         Returns:
             dict: Results of all job executions
         """
-        self.stack.unset_parallel(sched_init=True)
         self.add_job("setup")
         self.add_job("connect_repo")
         self.add_job("ssm")

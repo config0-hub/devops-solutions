@@ -250,7 +250,6 @@ class Main(newSchedStack):
         self._kafka()
 
     def run(self):
-        self.stack.unset_parallel(sched_init=True)
         self.add_job("kafka_eks")
 
         return self.finalize_jobs()

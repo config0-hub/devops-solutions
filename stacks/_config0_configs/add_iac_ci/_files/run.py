@@ -236,7 +236,6 @@ class Main(newSchedStack):
             dict: Final job execution results.
         """
 
-        self.stack.unset_parallel(sched_init=True)
         self.add_job("setup")
 
         return self.finalize_jobs()

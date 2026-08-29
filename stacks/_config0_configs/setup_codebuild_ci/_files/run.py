@@ -617,7 +617,6 @@ class Main(newSchedStack):
         return self.stack.sns_subscription.insert(display=True, **inputargs)
 
     def run(self):
-        self.stack.unset_parallel(sched_init=True)
         self.add_job("setup")
         self.add_job("lambda_stepf")
         self.add_job("trigger_stepf")
