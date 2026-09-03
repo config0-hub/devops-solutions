@@ -42,7 +42,7 @@ class Main(newSchedStack):
 
         self.parse.add_optional(key="tf_runtime",
                                 types="str",
-                                default="tofu:1.9.1")
+                                default="tofu:1.10.6")
 
         self.parse.add_optional(key="app_name",
                                 types="str",
