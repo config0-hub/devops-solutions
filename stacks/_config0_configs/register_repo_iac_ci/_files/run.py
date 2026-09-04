@@ -325,7 +325,10 @@ class Main(newSchedStack):
         if self.stack.get_attr("schedule_id"):
             item["schedule_id"] = {"S": str(self.stack.schedule_id)}
 
-        if self.stack.get_attr("project_id"):
+        # project_id is the reserved run-env built-in (stack.py resolves it off
+        # CONFIG0_PROJECT_ID), never a class_var, so get_attr cannot see it -
+        # read the built-in, guarding the unset-env AttributeError.
+        if getattr(self.stack, "project_id", None):
             item["project_id"] = {"S": str(self.stack.project_id)}
 
         if self.stack.get_attr("job_instance_id"):
