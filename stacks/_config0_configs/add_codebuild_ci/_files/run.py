@@ -31,9 +31,6 @@ class Main(newSchedStack):
         self.parse.add_required(key="git_url",
                                 types="str")
 
-        self.parse.add_required(key="project_id",
-                                types="str")
-
         self.parse.add_optional(key="slack_channel",
                                 types="str")
 
@@ -627,8 +624,9 @@ class Main(newSchedStack):
         if self.stack.get_attr("schedule_id"):
             item["schedule_id"] = {"S": str(self.stack.schedule_id)}
 
-        if self.stack.get_attr("project_id"):
-            item["project_id"] = {"S": str(self.stack.project_id)}
+        # The run's own project: a Stack built-in (CONFIG0_PROJECT_ID), never
+        # a declared argument - the runtime refuses that declaration.
+        item["project_id"] = {"S": str(self.stack.project_id)}
 
         if self.stack.get_attr("job_instance_id"):
             item["job_instance_id"] = {"S": str(self.stack.job_instance_id)}
