@@ -125,8 +125,21 @@ class Main(newSchedStack):
         if self.stack.vars_set_arguments_hash:
             arguments["arguments_hash"] = self.stack.vars_set_arguments_hash
 
-        if self.stack.vars_set_labels_hash:
+        # Human decision 2026-09-12 (run williaumwu_gvrrsw, project envsql-track):
+        # "It doesn't mean that it's a necessary requirement, but we're going to
+        # force it as a requirement. We're going to be very opinionated about
+        # this because we don't want users making this mistake. It's very
+        # detrimental if it can't find or query variable sets to actually
+        # resolve into actual variables to be used in stacks."
+        # network_vars_set now requires labels_hash. Always pass it: use the
+        # fixture-supplied vars_set_labels_hash when present, otherwise reuse
+        # this run's own cloud-tag source (the same one run_vpc and
+        # run_nat_instance already stamp on their resources) rather than
+        # invent a new label.
+        if self.stack.get_attr("vars_set_labels_hash"):
             arguments["labels_hash"] = self.stack.vars_set_labels_hash
+        else:
+            arguments["labels_hash"] = self._set_cloud_tag_hash()
 
         human_description = f'Create network_vars_set "{self.stack.network_vars_set}"'
 
