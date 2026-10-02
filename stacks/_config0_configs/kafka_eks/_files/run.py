@@ -49,7 +49,7 @@ class Main(newSchedStack):
 
         self.parse.add_optional(key="eks_cluster_version",
                                types="str",
-                               default="1.29")
+                               default="1.37")
 
         self.parse.add_optional(key="eks_cluster_sg_id",
                                default="null",

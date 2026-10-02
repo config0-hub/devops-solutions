@@ -70,7 +70,7 @@ def run(stackargs):
 
     stack.parse.add_optional(key="eks_cluster_version",
                              types="str",
-                             default="1.29")
+                             default="1.37")
 
     stack.parse.add_optional(key="eks_cluster_sg_id",
                              default="null",
