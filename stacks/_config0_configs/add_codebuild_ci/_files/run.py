@@ -15,6 +15,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import os
+
+
 class Main(newSchedStack):
 
     def __init__(self, stackargs):
@@ -212,7 +215,9 @@ class Main(newSchedStack):
         return self.stack.get_resource(name=self.stack.ecr_repo_name,
                                       resource_type="ecr_repo",
                                       provider="aws",
-                                      must_exists=True)[0]["repository_uri"]
+                                      match={"aws_account_id": os.environ["TARGET_AWS_ACCOUNT"]},
+                                      must_exists=True,
+                                      must_be_one=True)[0]["repository_uri"]
 
     def _set_codebuild_buckets(self):
         """
