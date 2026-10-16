@@ -154,10 +154,10 @@ def run(stackargs):
         arguments["multi_az"] = stack.db_multi_az
 
     if stack.db_master_username:
-        arguments["master_username"] = stack.db_master_username
+        arguments["rds_master_username"] = stack.db_master_username
 
     if stack.db_master_password:
-        arguments["master_password"] = stack.db_master_password
+        arguments["rds_master_password"] = stack.db_master_password
 
     inputargs = {
         "arguments": arguments,
