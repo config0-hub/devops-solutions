@@ -77,11 +77,6 @@ def run(stackargs):
                            do_cloud
                        ])
 
-    # drift detection of resources
-    stack.add_substack('config0-hub:::config0_core::check_drift_resources',
-                       arguments=[cloud_tags],
-                       labels=[general])
-
     stack.init_substacks()
 
     return stack.get_results()

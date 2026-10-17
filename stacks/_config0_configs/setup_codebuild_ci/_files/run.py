@@ -79,9 +79,10 @@ class Main(newSchedStack):
         return self.stack.serialize(self.stack.ci_environment, json=False)[0:int(self.stack.suffix_length)].lower()
 
     def _set_cloud_tag_hash(self):
-        try:
+        # cloud_tags_hash is optional: unset means no caller tags.
+        if self.stack.get_attr("cloud_tags_hash"):
             cloud_tags = self.stack.deserialize(self.stack.cloud_tags_hash, json=True)
-        except:
+        else:
             cloud_tags = {}
 
         cloud_tags.update({

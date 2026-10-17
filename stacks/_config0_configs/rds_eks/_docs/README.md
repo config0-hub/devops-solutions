@@ -29,7 +29,8 @@ This stack creates an AWS RDS database instance and an EKS cluster in parallel. 
 | db_multi_az | Configuration for db multi az | false |
 | db_storage_type | Configuration for db storage type | gp2 |
 | db_master_username | Database admin username | &nbsp; |
-| db_master_password | Database admin password | &nbsp; |
+| publish_to_saas | Passed to aws_rds; publishes the ARN of the Secrets Manager secret that holds the master user name and password | &nbsp; |
+| eks_cluster | EKS cluster name | `<env_name>-eks` |
 | eks_cluster_version | Kubernetes version for EKS | 1.29 |
 | eks_cluster_sg_id | EKS cluster security group ID | null |
 | eks_node_role_arn | IAM role ARN for EKS nodes | null |

@@ -78,7 +78,6 @@ Every other child stays on `purpose: eval-config0`.
 - [config0-hub:::aws_eks::aws_eks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_eks)
 - [config0-hub:::do::jenkins_on_do](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/jenkins_on_do)
 - [config0-hub:::do::doks](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/doks)
-- [config0-hub:::config0_core::check_drift_resources](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/check_drift_resources)
 - [config0-hub:::devops-solutions::env_sql](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/env_sql)
 - [config0-hub:::devops-solutions::env_nosql](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/env_nosql)
 - [config0-hub:::devops-solutions::env_streaming](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/env_streaming)

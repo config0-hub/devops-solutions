@@ -42,7 +42,6 @@ This stack creates a complete three-tier environment in AWS, including networkin
 | db_multi_az | Configuration for db multi az | false |
 | db_storage_type | Configuration for db storage type | gp2 |
 | db_master_username | Database admin username | &nbsp; |
-| db_master_password | Database admin password | &nbsp; |
 
 ## Dependencies
 

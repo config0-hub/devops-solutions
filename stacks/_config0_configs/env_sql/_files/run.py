@@ -141,10 +141,6 @@ def run(stackargs):
                              default=None,
                              types="str")
 
-    stack.parse.add_optional(key="db_master_password",
-                             default=None,
-                             types="str")
-
     # Initialize required infrastructure components
     stack.add_substack("config0-hub:::devops-solutions::network")
     stack.add_substack("config0-hub:::devops-solutions::rds_eks")
@@ -216,9 +212,6 @@ def run(stackargs):
 
     if stack.db_master_username:
         arguments["db_master_username"] = stack.db_master_username
-
-    if stack.db_master_password:
-        arguments["db_master_password"] = stack.db_master_password
 
     if stack.eks_cluster_sg_id:
         arguments["eks_cluster_sg_id"] = stack.eks_cluster_sg_id

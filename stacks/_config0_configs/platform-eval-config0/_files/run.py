@@ -619,15 +619,6 @@ def run(stackargs):
                        ],
                        inputvars=["infracost"])
 
-    # drift detection of resources
-    stack.add_substack('config0-hub:::config0_core::check_drift_resources',
-                       arguments=[
-                           cloud_tags_hash
-                       ],
-                       labels=[
-                           general
-                       ])
-
     env_selectors = deepcopy([
         network_vars,
         eks_info,

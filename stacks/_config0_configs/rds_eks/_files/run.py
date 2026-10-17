@@ -75,12 +75,18 @@ def run(stackargs):
                              default=None,
                              types="str")
 
-    stack.parse.add_optional(key="db_master_password",
+    # publishes the ARN of the Secrets Manager secret that holds the master
+    # user name and password, through aws_rds
+    stack.parse.add_optional(key="publish_to_saas",
                              default=None,
-                             types="str")
+                             types="bool")
 
     # eks
     stack.parse.add_required(key="vpc_id",
+                             types="str")
+
+    stack.parse.add_optional(key="eks_cluster",
+                             default="null",
                              types="str")
 
     stack.parse.add_optional(key="eks_cluster_version",
@@ -156,8 +162,10 @@ def run(stackargs):
     if stack.db_master_username:
         arguments["rds_master_username"] = stack.db_master_username
 
-    if stack.db_master_password:
-        arguments["rds_master_password"] = stack.db_master_password
+    # None stays unset, so aws_rds keeps its own default. A False must reach
+    # it too: tf_executor publishes outputs by default.
+    if stack.get_attr("publish_to_saas") is not None:
+        arguments["publish_to_saas"] = stack.get_attr("publish_to_saas")
 
     inputargs = {
         "arguments": arguments,
@@ -169,7 +177,8 @@ def run(stackargs):
                          **inputargs)
 
     # eks
-    eks_cluster = f'{stack.env_name}-eks'
+    if not stack.get_attr("eks_cluster"):
+        stack.set_variable("eks_cluster", f'{stack.env_name}-eks')
 
     arguments = {
         "aws_default_region": stack.aws_default_region,
@@ -185,7 +194,7 @@ def run(stackargs):
         "eks_node_instance_types": stack.eks_node_instance_types,
         "eks_node_ami_type": stack.eks_node_ami_type,
         "cloud_tags_hash": stack.cloud_tags_hash,
-        "eks_cluster": eks_cluster,
+        "eks_cluster": stack.eks_cluster,
     }
 
     if stack.eks_cluster_sg_id:
@@ -194,7 +203,7 @@ def run(stackargs):
     inputargs = {
         "arguments": arguments,
         "automation_phase": "infrastructure",
-        "human_description": f'create eks cluster "{eks_cluster}"'
+        "human_description": f'create eks cluster "{stack.eks_cluster}"'
     }
 
     stack.aws_eks.insert(display=True,

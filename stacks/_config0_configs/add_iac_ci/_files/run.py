@@ -99,7 +99,7 @@ class Main(newSchedStack):
             "must_be_one": True,
             "resource_type": "iac_ci",
             "provider": "user_input",
-            "iac_ci_repo": self.stack.repo_name}
+            "match": {"iac_ci_repo": self.stack.repo_name}}
 
         resource = self.stack.get_resource(**_lookup)[0]
 
