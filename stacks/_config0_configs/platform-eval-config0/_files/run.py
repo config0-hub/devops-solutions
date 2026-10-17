@@ -437,40 +437,6 @@ def run(stackargs):
                            sg_info
                        ])
 
-    # iac-ci with aws
-    stack.add_substack('config0-hub:::devops-solutions::setup_iac_ci',
-                       arguments=[
-                           aws_default_region_args,
-                           cloud_tags_hash
-                       ],
-                       labels=[
-                           general,
-                           aws_cloud
-                       ],
-                       inputvars=["infracost"])
-
-    stack.add_substack('config0-hub:::devops-solutions::register_repo_iac_ci',
-                       arguments=[
-                           aws_default_region_args,
-                           cloud_tags_hash
-                       ],
-                       labels=[
-                           general,
-                           aws_cloud
-                       ],
-                       inputvars=["infracost"])
-
-    stack.add_substack('config0-hub:::devops-solutions::add_iac_ci',
-                       arguments=[
-                           aws_default_region_args,
-                           cloud_tags_hash
-                       ],
-                       labels=[
-                           general,
-                           aws_cloud
-                       ],
-                       inputvars=["infracost"])
-
     # ci with aws codebuild
     stack.add_substack('config0-hub:::devops-solutions::setup_codebuild_ci',
                        arguments=[

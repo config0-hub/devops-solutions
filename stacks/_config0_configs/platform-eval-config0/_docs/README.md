@@ -65,9 +65,6 @@ Every other child stays on `purpose: eval-config0`.
 ### Substacks
 - [config0-hub:::aws_networking::aws_vpc_simple](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_vpc_simple)
 - [config0-hub:::config0_core::network_vars_set](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/network_vars_set)
-- [config0-hub:::devops-solutions::setup_iac_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/setup_iac_ci)
-- [config0-hub:::devops-solutions::register_repo_iac_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/register_repo_iac_ci)
-- [config0-hub:::devops-solutions::add_iac_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/add_iac_ci)
 - [config0-hub:::devops-solutions::setup_codebuild_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/setup_codebuild_ci)
 - [config0-hub:::devops-solutions::add_codebuild_ci](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/add_codebuild_ci)
 - [config0-hub:::aws_networking::aws_nat_inst_vpc](https://api-app.config0.com/web_api/v1.0/stacks/config0-hub/aws_nat_inst_vpc)
