@@ -31,7 +31,7 @@ GitHub repository (hooked by add_codebuild_ci: github_webhook, secret = settings
                                  polls batch_get_builds, pulls the build log from the tmp bucket, closes the run row
 EventBridge rule "CodeBuild Build State Change" -> SNS topic `<ci_environment>-codebuild-complete-trigger`
     (codebuild_complete_trigger / execgroup aws::codebuild_evntbrdg_sns_lambda)
-    -> the same `<ci_environment>-check-codebuild` Lambda, so a finished build is also reported by event.
+    -> the same `<ci_environment>-check-codebuild` Lambda, so a finished build also reaches that Lambda by event.
 ```
 
 The repository is reached two ways, both set up by the stacks (no GitHub OIDC trust on the
@@ -53,6 +53,12 @@ with the key pair; the `ssh_key_pair` row names that parameter in `private_key_s
 `add_codebuild_ci` passes the name on, as the settings row's `ssm_ssh_key` (the pkgcode-to-s3
 Lambda reads it with decryption) and as the buildspec's `parameter-store` entry `SSH_KEY`. Config0
 never copies the private half anywhere.
+
+A build's result stays in the user's account. The check-codebuild Lambda closes the run's row in the
+DynamoDB table `ci-shared-runs` with the build's status and, when `add_codebuild_ci` was given a Slack
+webhook, posts a Slack message (status, repository, commit hash, build id). The Lambdas do not post the
+result to Config0 (decided 2026-10-18, CON-101); a dashboard view of these runs is a possible later
+feature (CON-102).
 
 ## Variables
 

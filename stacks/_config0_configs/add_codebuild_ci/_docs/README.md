@@ -6,7 +6,13 @@ The deploy key is an EC2 key pair made by `new_github_ssh_key`: EC2 keeps the pr
 Parameter Store at `/ec2/keypair/<key_pair_id>`, and the `ssh_key_pair` row names that parameter in
 `private_key_ssm_path`. This stack hands the NAME to the Lambdas (settings row `ssm_ssh_key`) and to
 the CodeBuild project (buildspec `parameter-store` entry `SSH_KEY`); the `ssm` job uploads the
-callback token and the optional Docker token and Slack webhook, never the key.
+optional Docker token and Slack webhook, never the key.
+
+The `ci-shared-settings` row the `connect_repo` job writes carries what the Lambdas need to run a build:
+the repository and branch, the webhook secret, the deploy key's SSM parameter name, the buckets and the
+registry. It carries no Config0 endpoint: the Lambdas do not post a build's result to Config0 (decided
+2026-10-18, CON-101). The result is the run row in `ci-shared-runs` and, with a Slack webhook, the Slack
+message.
 
 ## Variables
 
@@ -17,9 +23,7 @@ callback token and the optional Docker token and Slack webhook, never the key.
 | codebuild_name | CodeBuild project name | &nbsp; |
 | git_repo | GitHub repository name | &nbsp; |
 | git_url | Git repository URL | &nbsp; |
-| project_id | Config0 project ID | &nbsp; |
 | ci_environment | CI/CD environment name | &nbsp; |
-| security_group_id | Security group ID | null |
 
 ### Optional Variables
 
@@ -43,12 +47,13 @@ callback token and the optional Docker token and Slack webhook, never the key.
 | suffix_id | Unique suffix for resource names | &nbsp; |
 | suffix_length | Length of generated suffix | "4" |
 | docker_registry | Docker registry type | "ecr" |
-| aws_default_region | Default AWS region | "us-west-1" |
 | cloud_tags_hash | Resource tags for cloud resources | &nbsp; |
 | bucket_acl | S3 bucket access permissions | "private" |
 | bucket_expire_days | Days until bucket objects expire | "1" |
-| subnet_ids | Subnet IDs for VPC configuration | "null" |
-| vpc_id | VPC ID for network configuration | "null" |
+| subnet_ids | Subnet IDs for VPC configuration | None |
+| vpc_id | VPC ID for network configuration | None |
+| security_group_id | Security group ID | None |
+| aws_default_region | Default AWS region | "us-east-1" |
 
 ## Dependencies
 

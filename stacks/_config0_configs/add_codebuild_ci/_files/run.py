@@ -291,7 +291,6 @@ class Main(newSchedStack):
         if self.stack.get_attr("ecr_repo_name"):
             self._add_ecr_repo()
         self._sshdeploy()
-        self._token()
         return self._s3()
 
     def run_connect_repo(self):
@@ -429,12 +428,12 @@ class Main(newSchedStack):
         Configure AWS Systems Manager (SSM) parameters.
 
         Stores sensitive information in SSM Parameter Store including:
-        - Config0 callback token
         - Docker token (if provided)
         - Slack webhook URL (if provided)
 
         The deploy key is not copied here: EC2 already keeps its private half
-        in SSM (see _get_ssh_key_ssm_path).
+        in SSM (see _get_ssh_key_ssm_path). With neither credential given the
+        job emits only its parallel anchor.
 
         Returns:
             bool: True if successful
@@ -444,21 +443,6 @@ class Main(newSchedStack):
         self._eval_inputvars()
         self._set_ssm_keys()
         self.stack.set_parallel()
-
-        # add config0 token
-        arguments = {
-            "ssm_key": self.stack.ssm_callback_token,
-            "ssm_value": self._get_token(),
-            "aws_default_region": self.stack.aws_default_region
-        }
-
-        inputargs = {
-            "arguments": arguments,
-            "automation_phase": "continuous_delivery",
-            "human_description": "Config0 callback token to ssm"
-        }
-
-        self.stack.aws_ssm_param.insert(display=True, **inputargs)
 
         if self.stack.get_attr("docker_token"):
             arguments = {
@@ -579,7 +563,6 @@ class Main(newSchedStack):
             "trigger_id": {"S": str(self.stack.trigger_id)},
             "secret": {"S": str(self.stack.secret)},
             "ssm_ssh_key": {"S": str(self.stack.ssm_ssh_key)},
-            "ssm_callback_key": {"S": str(self.stack.ssm_callback_token)},
             "s3_bucket": {"S": str(s3_bucket)},
             "s3_bucket_tmp": {"S": str(s3_bucket_tmp)},
             "s3_bucket_output": {"S": str(self.s3_bucket_output)},
@@ -598,9 +581,6 @@ class Main(newSchedStack):
             item["slack_channel"] = {"S": str(self.stack.slack_channel)}
 
         self._set_docker_items(item)
-
-        # config0 settings
-        item["user_endpoint"] = {"S": str(self.stack.get_user_endpoint())}
 
         if self.stack.get_attr("sched_name"):
             item["sched_name"] = {"S": str(self.stack.sched_name)}
@@ -636,9 +616,6 @@ class Main(newSchedStack):
         self.stack.set_variable("ssm_ssh_key",
                                 self._get_ssh_key_ssm_path())
 
-        self.stack.set_variable("ssm_callback_token",
-                                f"/codebuild/{self.stack.codebuild_name}/config0/callback_token")
-
         if self.stack.get_attr("docker_token"):
             self.stack.set_variable("ssm_docker_token",
                                     f"/codebuild/{self.stack.codebuild_name}/config0/docker_token")
@@ -646,21 +623,6 @@ class Main(newSchedStack):
         if self.stack.get_attr("slack_webhook_hash"):
             self.stack.set_variable("ssm_slack_webhook_hash",
                                     f"/codebuild/{self.stack.codebuild_name}/config0/slack_webhook_hash")
-
-    def _get_token(self):
-        _lookup = {
-            "must_be_one": True,
-            "resource_type": "config0_token",
-            "provider": "config0",
-            "name": self.stack.codebuild_name
-        }
-
-        return str(self.stack.get_resource(**_lookup)[0]["token"])
-
-    def _token(self):
-        self.stack.add_callback_token(name=self.stack.codebuild_name)
-
-        return True
 
     def _dynamodb(self):
         table_name = "ci-shared-settings"
@@ -790,7 +752,7 @@ class Main(newSchedStack):
         sched.job = "ssm"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.human_description = "Upload callback token and credentials to ssm"
+        sched.human_description = "Upload credentials to ssm"
         sched.on_success = ["codebuild"]
         self.add_schedule()
 
