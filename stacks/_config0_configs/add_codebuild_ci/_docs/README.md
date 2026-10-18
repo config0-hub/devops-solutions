@@ -2,6 +2,12 @@
 
 This stack automates the setup of AWS CodeBuild CI/CD pipelines, including the necessary AWS resources like S3 buckets, ECR repositories, SSH keys, and GitHub webhooks.
 
+The deploy key is an EC2 key pair made by `new_github_ssh_key`: EC2 keeps the private half in SSM
+Parameter Store at `/ec2/keypair/<key_pair_id>`, and the `ssh_key_pair` row names that parameter in
+`private_key_ssm_path`. This stack hands the NAME to the Lambdas (settings row `ssm_ssh_key`) and to
+the CodeBuild project (buildspec `parameter-store` entry `SSH_KEY`); the `ssm` job uploads the
+callback token and the optional Docker token and Slack webhook, never the key.
+
 ## Variables
 
 ### Required Variables

@@ -113,15 +113,17 @@ class Main(newSchedStack):
                                 types="int",
                                 default="1")
 
+        # VPC placement for the CodeBuild project: all three or none. Unset is
+        # None, never the string "null", which is truthy in the rewrite.
         self.parse.add_optional(key="subnet_ids",
-                                default="null")
+                                default=None)
 
         self.parse.add_optional(key="vpc_id",
-                                default="null",
+                                default=None,
                                 types="str")
 
-        self.parse.add_required(key="security_group_id",
-                                default="null",
+        self.parse.add_optional(key="security_group_id",
+                                default=None,
                                 types="str")
 
         self.parse.add_optional(key="aws_default_region",
@@ -178,26 +180,32 @@ class Main(newSchedStack):
 
         return os.path.join(str(results["base_url"]), str(self.stack.trigger_id))
 
-    def _get_ssh_private_key(self):
+    def _get_ssh_key_ssm_path(self):
         """
-        Retrieve the SSH private key for the CodeBuild deployment.
+        Name of the SSM parameter holding the deploy key's private half.
+
+        new_github_ssh_key (the setup job) makes the key pair through
+        aws::ssh_key_pair: EC2 generates it and keeps the private half in SSM
+        at /ec2/keypair/<key_pair_id>. The ssh_key_pair row names that
+        parameter in private_key_ssm_path. This stack passes the NAME on to
+        the Lambdas (settings row "ssm_ssh_key") and to the CodeBuild project
+        (buildspec parameter-store SSH_KEY); nothing here reads the key.
 
         Returns:
-            str: Base64 encoded private key
+            str: the SSM parameter name, never the key
 
         Raises:
-            Exception: If the SSH key resource cannot be found
+            ValueError: unless exactly one ssh_key_pair row matches
         """
         key_name = f"{self.stack.codebuild_name}-codebuild-deploy-key"
 
         _lookup = {"must_be_one": True,
                   "resource_type": "ssh_key_pair",
-                  "provider": "config0",
-                  "name": key_name}
+                  "provider": "aws",
+                  "name": key_name,
+                  "match": {"aws_account_id": os.environ["TARGET_AWS_ACCOUNT"]}}
 
-        results = self.stack.get_resource(**_lookup)[0]
-
-        return self.stack.serialize(results["private_key"], json=False)
+        return str(self.stack.get_resource(**_lookup)[0]["private_key_ssm_path"])
 
     def _get_ecr_uri(self):
         """
@@ -221,16 +229,15 @@ class Main(newSchedStack):
 
     def _set_codebuild_buckets(self):
         """
-        Set the S3 bucket names for CodeBuild cache and output.
+        Set the S3 bucket name for the CodeBuild build output.
 
-        This method generates unique S3 bucket names using the codebuild_name
-        and suffix_id. The buckets are used for:
-        - Cache storage (s3_bucket_cache)
-        - Build output storage (s3_bucket_output)
+        The name is unique through codebuild_name and suffix_id. The cache
+        bucket is not named or made here: the codebuild execgroup's module
+        makes it with the project and destroys it with the project
+        (CON-101, decided 2026-10-17).
         """
         suffix_id = self._determine_suffix_id()
 
-        self.s3_bucket_cache = f"{self.stack.codebuild_name}-codebuild-{suffix_id}-cache"
         self.s3_bucket_output = f"{self.stack.codebuild_name}-codebuild-{suffix_id}-output"
 
     def _webhook(self):
@@ -279,7 +286,10 @@ class Main(newSchedStack):
         self.stack.verify_variables()
         self.stack.set_parallel()
 
-        self._add_ecr_repo()
+        # the repository is made only when the user names one; with
+        # ecr_repository_uri alone there is nothing to make
+        if self.stack.get_attr("ecr_repo_name"):
+            self._add_ecr_repo()
         self._sshdeploy()
         self._token()
         return self._s3()
@@ -326,25 +336,6 @@ class Main(newSchedStack):
         self._set_codebuild_buckets()
 
         arguments = {
-            "bucket": self.s3_bucket_cache,
-            "acl": self.stack.bucket_acl,
-            "expire_days": self.stack.bucket_expire_days,
-            "force_destroy": "true",
-            "enable_lifecycle": "true",
-            "aws_default_region": self.stack.aws_default_region
-        }
-
-        if self.stack.get_attr("cloud_tags_hash"):
-            arguments["cloud_tags_hash"] = self.stack.cloud_tags_hash
-
-        human_description = f'Create s3 bucket "{self.s3_bucket_cache}" cache'
-        inputargs = {"arguments": arguments,
-                    "automation_phase": "continuous_delivery",
-                    "human_description": human_description}
-
-        self.stack.aws_s3_bucket.insert(display=True, **inputargs)
-
-        arguments = {
             "bucket": self.s3_bucket_output,
             "acl": self.stack.bucket_acl,
             "expire_days": self.stack.bucket_expire_days,
@@ -364,6 +355,9 @@ class Main(newSchedStack):
         return self.stack.aws_s3_bucket.insert(display=True, **inputargs)
 
     def _sshdeploy(self):
+        # The key pair (EC2 keeps the private half in SSM) and the read-only
+        # repository deploy key. See _get_ssh_key_ssm_path for how the
+        # parameter name reaches the Lambdas and the CodeBuild project.
         key_name = f"{self.stack.codebuild_name}-codebuild-deploy-key"
 
         arguments = {
@@ -436,9 +430,11 @@ class Main(newSchedStack):
 
         Stores sensitive information in SSM Parameter Store including:
         - Config0 callback token
-        - SSH private key
         - Docker token (if provided)
         - Slack webhook URL (if provided)
+
+        The deploy key is not copied here: EC2 already keeps its private half
+        in SSM (see _get_ssh_key_ssm_path).
 
         Returns:
             bool: True if successful
@@ -460,21 +456,6 @@ class Main(newSchedStack):
             "arguments": arguments,
             "automation_phase": "continuous_delivery",
             "human_description": "Config0 callback token to ssm"
-        }
-
-        self.stack.aws_ssm_param.insert(display=True, **inputargs)
-
-        # add ssh key
-        arguments = {
-            "ssm_key": self.stack.ssm_ssh_key,
-            "ssm_value": self._get_ssh_private_key(),
-            "aws_default_region": self.stack.aws_default_region
-        }
-
-        inputargs = {
-            "arguments": arguments,
-            "automation_phase": "continuous_delivery",
-            "human_description": "Upload private ssh key to ssm"
         }
 
         self.stack.aws_ssm_param.insert(display=True, **inputargs)
@@ -601,7 +582,6 @@ class Main(newSchedStack):
             "ssm_callback_key": {"S": str(self.stack.ssm_callback_token)},
             "s3_bucket": {"S": str(s3_bucket)},
             "s3_bucket_tmp": {"S": str(s3_bucket_tmp)},
-            "s3_bucket_cache": {"S": str(self.s3_bucket_cache)},
             "s3_bucket_output": {"S": str(self.s3_bucket_output)},
             "suffix_id": {"S": str(suffix_id)},
             "saas_env": {"S": str(self.stack.saas_env)},
@@ -652,8 +632,9 @@ class Main(newSchedStack):
         self.stack.set_variable("ssm_docker_token", None)
         self.stack.set_variable("ssm_slack_webhook_hash", None)
 
+        # EC2's parameter for the deploy key, read off the ssh_key_pair row.
         self.stack.set_variable("ssm_ssh_key",
-                                f"/codebuild/{self.stack.codebuild_name}/sshkeys/private")
+                                self._get_ssh_key_ssm_path())
 
         self.stack.set_variable("ssm_callback_token",
                                 f"/codebuild/{self.stack.codebuild_name}/config0/callback_token")
@@ -754,7 +735,6 @@ class Main(newSchedStack):
 
         arguments.update({
             "s3_bucket": f"{self._get_s3_bucket()}-tmp",
-            "s3_bucket_cache": self.s3_bucket_cache,
             "s3_bucket_output": self.s3_bucket_output
             })
 
@@ -810,7 +790,7 @@ class Main(newSchedStack):
         sched.job = "ssm"
         sched.archive.timeout = 1800
         sched.archive.timewait = 120
-        sched.human_description = "Upload deploy key to ssm"
+        sched.human_description = "Upload callback token and credentials to ssm"
         sched.on_success = ["codebuild"]
         self.add_schedule()
 

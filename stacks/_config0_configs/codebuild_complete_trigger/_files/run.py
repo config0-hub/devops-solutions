@@ -60,8 +60,9 @@ def run(stackargs):
         "topic_name": stack.topic_name,
     })
 
-    tf.output(keys=["id",
-                    "topic_arn",
+    # the codebuild_evntbrdg_sns_lambda execgroup's output names
+    tf.output(keys=["sns_topic_arn",
+                    "cloudwatch_arn",
                     "endpoint"])
 
     # finalize the tf_executor
